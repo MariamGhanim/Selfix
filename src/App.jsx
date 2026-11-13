@@ -45,7 +45,8 @@ function ThemedApp() {
   const { theme, ready, syncing, syncError, retrySync } = useJournal()
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
+    const safeTheme = theme === 'midnight' ? 'midnight' : 'pinky'
+    document.documentElement.setAttribute('data-theme', safeTheme)
   }, [theme])
 
   if (syncError && !ready) {

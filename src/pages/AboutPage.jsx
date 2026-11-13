@@ -66,7 +66,7 @@ export default function AboutPage() {
             'Gym, outings, reading, teeth, shower, and to-do trackers',
             'Focus timer that can auto-log deep-work sessions',
             'Ambient music capsule for cozy journaling sessions',
-            'Six eye-friendly themes (Soft Rose, Soft Sky, Matcha, Lavender, Sand, Midnight) with the same book layout',
+            'Soft Rose and Midnight Soft themes with the same book layout',
             'Secure account access with email verification',
             'Cloud sync so your journal follows you across devices',
           ].map((item) => (

@@ -163,7 +163,11 @@ export function JournalProvider({ children }) {
       ...state.profile,
     }
 
-    const setTheme = (theme) => setState((s) => ({ ...s, theme }))
+    const setTheme = (theme) =>
+      setState((s) => ({
+        ...s,
+        theme: theme === 'midnight' ? 'midnight' : 'pinky',
+      }))
 
     const setProfile = (patch) =>
       setState((s) => ({ ...s, profile: { ...s.profile, ...patch } }))
@@ -292,7 +296,7 @@ export function JournalProvider({ children }) {
       syncError,
       retrySync,
       year,
-      theme: state.theme || 'pinky',
+      theme: state.theme === 'midnight' ? 'midnight' : 'pinky',
       profile,
       setTheme,
       setProfile,

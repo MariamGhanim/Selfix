@@ -4,21 +4,22 @@ import { useJournal } from '../context/JournalContext'
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useJournal()
+  const activeTheme = theme === 'midnight' ? 'midnight' : 'pinky'
 
   return (
     <div
-      className="inline-flex max-w-[min(100vw-8rem,20rem)] flex-wrap items-center gap-0.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] p-0.5 shadow-md backdrop-blur"
+      className="inline-flex items-center gap-0.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] p-0.5 shadow-md backdrop-blur"
       role="group"
       aria-label="Color theme"
     >
       {Object.values(THEMES).map((t) => {
-        const active = theme === t.id
+        const active = activeTheme === t.id
         return (
           <button
             key={t.id}
             type="button"
             onClick={() => setTheme(t.id)}
-            className="relative flex h-7 min-w-7 items-center justify-center rounded-full px-1.5"
+            className="relative flex h-7 items-center justify-center rounded-full px-2"
             title={t.label}
             aria-label={t.label}
             aria-pressed={active}
@@ -37,7 +38,7 @@ export default function ThemeToggle() {
               style={{ background: t.swatch }}
             />
             <span
-              className={`relative z-10 ml-1 hidden text-[9px] font-bold lg:inline ${
+              className={`relative z-10 ml-1 text-[9px] font-bold sm:text-[10px] ${
                 active ? 'text-white' : 'text-[var(--ink-soft)]'
               }`}
             >

@@ -9,7 +9,7 @@ const FAQ = [
   },
   {
     q: 'How do I switch themes?',
-    a: 'Open your journal and use the theme dots in the top header. Pick Soft Rose, Soft Sky, Matcha Calm, Lavender Haze, Warm Sand, or Midnight Soft — the open-book layout stays the same while colors gently shift.',
+    a: 'Open your journal and use the theme dots in the top header. Choose Soft Rose or Midnight Soft — the open-book layout stays the same while colors gently shift.',
   },
   {
     q: 'Is Selfix free?',
