@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { Plus } from 'lucide-react'
 import { useJournal } from '../../context/JournalContext'
 import {
+  ENERGY_BATTERY,
   ENERGY_DRAINERS,
   ENERGY_DRIVERS,
+  ENERGY_PEAK_TIMES,
   FOCUS_ENVIRONMENTS,
   FOCUS_QUICK_ADDS,
   FOCUS_VIBES,
@@ -35,14 +37,37 @@ import {
   ChoiceChips,
   CompactDailyNotes,
   FieldLabel,
+  MiniQuiz,
   PanelShell,
   ReviewHeading,
+  ReviewPanelFrame,
   SelectChip,
   SoftInput,
   toggleInList,
   toggleSingle,
 } from './panelUi'
+import {
+  FRUITS_QUIZ,
+  OUTINGS_QUIZ,
+  READING_QUIZ,
+  SHOWER_QUIZ,
+  SLEEP_QUIZ,
+  STUDY_QUIZ,
+  SWEETS_QUIZ,
+  TEETH_QUIZ,
+  VITAMINS_QUIZ,
+  WATER_QUIZ,
+  WORKOUT_QUIZ,
+} from '../../data/miniQuizzes'
 import TodoList from './TodoList'
+
+function quizAnswers(data) {
+  return { q1: data.q1 ?? null, q2: data.q2 ?? null, q3: data.q3 ?? null }
+}
+
+function setQuizAnswer(patch, key, value) {
+  patch({ [key]: value })
+}
 
 function usePanel(trackerId, month, day) {
   const { getPanel, setPanel } = useJournal()
@@ -198,23 +223,123 @@ export function RatingPanel({ month, day }) {
   )
 }
 
+const ENERGY_DRIVER_IDS = new Set(ENERGY_DRIVERS.map((d) => d.id))
+const ENERGY_DRAINER_IDS = new Set(ENERGY_DRAINERS.map((d) => d.id))
+
 export function EnergyPanel({ month, day }) {
   const { data, patch } = usePanel('energy', month, day)
-  const toggle = (id) => patch({ choices: toggleInList(data.choices, id) })
+
+  useEffect(() => {
+    const legacy = data.choices || []
+    if (!legacy.length) return
+    const hasNew =
+      (data.drivers || []).length > 0 ||
+      (data.drainers || []).length > 0 ||
+      data.peakTime != null ||
+      data.battery != null
+    if (hasNew) {
+      patch({ choices: [] })
+      return
+    }
+    patch({
+      drivers: legacy.filter((id) => ENERGY_DRIVER_IDS.has(id)),
+      drainers: legacy.filter((id) => ENERGY_DRAINER_IDS.has(id)),
+      choices: [],
+    })
+  }, [month, day])
+
+  const drivers = (data.drivers || []).filter((id) => ENERGY_DRIVER_IDS.has(id))
+  const drainers = (data.drainers || []).filter((id) => ENERGY_DRAINER_IDS.has(id))
 
   return (
-    <PanelShell month={month} day={day} title="Energy check-in" trackerId="energy">
-      <ChipGroup label="Drivers">
-        <ChoiceChips options={ENERGY_DRIVERS} selected={data.choices} onToggle={toggle} />
-      </ChipGroup>
-      <ChipGroup label="Drainers">
-        <ChoiceChips
-          options={ENERGY_DRAINERS}
-          selected={data.choices}
-          onToggle={toggle}
-          startIndex={ENERGY_DRIVERS.length}
-        />
-      </ChipGroup>
+    <PanelShell month={month} day={day} title="Energy check-in" trackerId="energy" hideNotes>
+      <div
+        data-no-flip
+        className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 overflow-hidden"
+      >
+        <section className="shrink-0">
+          <ReviewHeading className="mb-1">Energy Boosters (Drivers)</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {ENERGY_DRIVERS.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={drivers.includes(opt.id)}
+                onClick={() => patch({ drivers: toggleInList(drivers, opt.id), choices: [] })}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="shrink-0">
+          <ReviewHeading className="mb-1">Energy Drainers</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {ENERGY_DRAINERS.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={drainers.includes(opt.id)}
+                onClick={() => patch({ drainers: toggleInList(drainers, opt.id), choices: [] })}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="shrink-0 rounded-2xl border border-[var(--page-edge)]/60 bg-[var(--accent-glow)]/70 px-2 py-1.5">
+          <ReviewHeading className="mb-1">Quick Energy Check</ReviewHeading>
+          <div className="space-y-1.5">
+            <div>
+              <ReviewHeading className="mb-0.5 !text-[10px] sm:!text-[11px]">
+                Peak Energy Time:
+              </ReviewHeading>
+              <div className="flex flex-wrap gap-1">
+                {ENERGY_PEAK_TIMES.map((opt) => (
+                  <SelectChip
+                    key={opt.id}
+                    compact
+                    emoji={opt.emoji}
+                    label={opt.label}
+                    active={data.peakTime === opt.id}
+                    onClick={() => patch({ peakTime: toggleSingle(data.peakTime, opt.id) })}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <ReviewHeading className="mb-0.5 !text-[10px] sm:!text-[11px]">
+                Social & Mental Battery:
+              </ReviewHeading>
+              <div className="flex flex-wrap gap-1">
+                {ENERGY_BATTERY.map((opt) => (
+                  <SelectChip
+                    key={opt.id}
+                    compact
+                    emoji={opt.emoji}
+                    label={opt.label}
+                    active={data.battery === opt.id}
+                    onClick={() => patch({ battery: toggleSingle(data.battery, opt.id) })}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="flex min-h-0 flex-1 flex-col border-t border-[var(--page-edge)]/50 pt-1.5">
+          <CompactDailyNotes
+            month={month}
+            day={day}
+            tall
+            accentLabel
+            label="Daily Notes"
+            placeholder="How did your energy feel today…"
+          />
+        </section>
+      </div>
     </PanelShell>
   )
 }
@@ -223,14 +348,29 @@ export function ShowerPanel({ month, day }) {
   const { data, patch } = usePanel('shower', month, day)
 
   return (
-    <PanelShell month={month} day={day} title="Shower & hair care" trackerId="shower">
-      <ChipGroup label="Routine details">
-        <ChoiceChips
-          options={SHOWER_ROUTINE}
-          selected={data.choices}
-          onToggle={(id) => patch({ choices: toggleInList(data.choices, id) })}
+    <PanelShell month={month} day={day} title="Shower & hair care" trackerId="shower" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Shower thoughts, hair notes…">
+        <section>
+          <ReviewHeading className="mb-1">Routine details</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {SHOWER_ROUTINE.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => patch({ choices: toggleInList(data.choices, opt.id) })}
+              />
+            ))}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={SHOWER_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -245,34 +385,46 @@ export function FruitsPanel({ month, day }) {
   }
 
   return (
-    <PanelShell month={month} day={day} title="Fruits & vegetables" trackerId="fruits">
-      <ChipGroup label="What I ate">
-        <ChoiceChips
-          options={FRUIT_FOODS}
-          selected={data.choices}
-          onToggle={(id) => {
-            const adding = !(data.choices || []).includes(id)
-            const choices = toggleInList(data.choices, id)
-            const nextServings = Math.max(0, adding ? servings + 1 : servings - 1)
-            patch({ choices, servings: nextServings }, nextServings === 0 ? null : Math.min(4, nextServings))
-          }}
+    <PanelShell month={month} day={day} title="Fruits & vegetables" trackerId="fruits" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Fruit & veggie notes…">
+        <section>
+          <ReviewHeading className="mb-1">What I ate</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {FRUIT_FOODS.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => {
+                  const adding = !(data.choices || []).includes(opt.id)
+                  const choices = toggleInList(data.choices, opt.id)
+                  const nextServings = Math.max(0, adding ? servings + 1 : servings - 1)
+                  patch(
+                    { choices, servings: nextServings },
+                    nextServings === 0 ? null : Math.min(4, nextServings),
+                  )
+                }}
+              />
+            ))}
+          </div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-1">
+            <SelectChip compact emoji="➕" label="+1 Serving" active={false} onClick={() => setServings(servings + 1)} />
+            <span className="rounded-full bg-white/85 px-2 py-1 text-[10px] font-bold text-[var(--ink)]">
+              {servings} serving{servings === 1 ? '' : 's'}
+            </span>
+            {servings > 0 && (
+              <SelectChip compact emoji="➖" label="-1" active={false} onClick={() => setServings(servings - 1)} />
+            )}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={FRUITS_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
-      <div className="mb-1 flex flex-wrap items-center gap-1.5">
-        <Chip
-          emoji="➕"
-          label="+1 Serving"
-          active={false}
-          colorIndex={2}
-          onClick={() => setServings(servings + 1)}
-        />
-        <span className="rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold text-[var(--ink)]">
-          {servings} serving{servings === 1 ? '' : 's'}
-        </span>
-        {servings > 0 && (
-          <Chip emoji="➖" label="-1" active={false} colorIndex={7} onClick={() => setServings(servings - 1)} />
-        )}
-      </div>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -287,28 +439,43 @@ export function SweetsPanel({ month, day }) {
   }
 
   return (
-    <PanelShell month={month} day={day} title="Sweets & sugar" trackerId="sweets">
-      <ChipGroup label="Treats">
-        <ChoiceChips
-          options={SWEET_TREATS}
-          selected={data.choices}
-          onToggle={(id) => {
-            const adding = !(data.choices || []).includes(id)
-            const choices = toggleInList(data.choices, id)
-            const nextCount = Math.max(0, adding ? count + 1 : count - 1)
-            patch({ choices, count: nextCount }, nextCount === 0 ? null : Math.min(4, nextCount))
-          }}
+    <PanelShell month={month} day={day} title="Sweets & sugar" trackerId="sweets" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Sweet tooth notes…">
+        <section>
+          <ReviewHeading className="mb-1">Treats</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {SWEET_TREATS.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => {
+                  const adding = !(data.choices || []).includes(opt.id)
+                  const choices = toggleInList(data.choices, opt.id)
+                  const nextCount = Math.max(0, adding ? count + 1 : count - 1)
+                  patch({ choices, count: nextCount }, nextCount === 0 ? null : Math.min(4, nextCount))
+                }}
+              />
+            ))}
+          </div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-1">
+            <SelectChip compact emoji="➕" label="+1 Sweet" active={false} onClick={() => setCount(count + 1)} />
+            <span className="rounded-full bg-white/85 px-2 py-1 text-[10px] font-bold text-[var(--ink)]">
+              {count} treat{count === 1 ? '' : 's'}
+            </span>
+            {count > 0 && (
+              <SelectChip compact emoji="➖" label="-1" active={false} onClick={() => setCount(count - 1)} />
+            )}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={SWEETS_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
-      <div className="mb-1 flex flex-wrap items-center gap-1.5">
-        <Chip emoji="➕" label="+1 Sweet" active={false} colorIndex={3} onClick={() => setCount(count + 1)} />
-        <span className="rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold text-[var(--ink)]">
-          {count} treat{count === 1 ? '' : 's'}
-        </span>
-        {count > 0 && (
-          <Chip emoji="➖" label="-1" active={false} colorIndex={7} onClick={() => setCount(count - 1)} />
-        )}
-      </div>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -325,32 +492,45 @@ export function WaterPanel({ month, day }) {
   }
 
   return (
-    <PanelShell month={month} day={day} title="Water intake" trackerId="water">
-      <div className="mb-2 rounded-full bg-white/85 px-3 py-1.5 text-center text-xs font-bold text-[var(--ink)]">
-        {cups} cups · {ml} ml
-      </div>
-      <ChipGroup label="Hydration controls">
-        <div className="flex flex-wrap gap-1.5">
-          {WATER_ACTIONS.map((opt, i) => (
-            <Chip
-              key={opt.id}
-              emoji={opt.emoji}
-              label={opt.label}
-              active={false}
-              colorIndex={i}
-              onClick={() => applyAction(opt)}
-            />
-          ))}
-        </div>
-      </ChipGroup>
-      <ChipGroup label="Infusions & perks">
-        <ChoiceChips
-          options={WATER_PERKS}
-          selected={data.choices}
-          onToggle={(id) => patch({ choices: toggleInList(data.choices, id) })}
-          startIndex={4}
+    <PanelShell month={month} day={day} title="Water intake" trackerId="water" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Hydration notes…">
+        <section>
+          <div className="mb-1 rounded-full bg-white/85 px-3 py-1 text-center text-[11px] font-bold text-[var(--ink)]">
+            {cups} cups · {ml} ml
+          </div>
+          <ReviewHeading className="mb-1">Hydration controls</ReviewHeading>
+          <div className="mb-1.5 flex flex-wrap gap-1">
+            {WATER_ACTIONS.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={false}
+                onClick={() => applyAction(opt)}
+              />
+            ))}
+          </div>
+          <ReviewHeading className="mb-1">Infusions & perks</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {WATER_PERKS.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => patch({ choices: toggleInList(data.choices, opt.id) })}
+              />
+            ))}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={WATER_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -379,48 +559,62 @@ export function VitaminsPanel({ month, day }) {
   }
 
   return (
-    <PanelShell month={month} day={day} title="Vitamins & supplements" trackerId="vitamins">
-      <ChipGroup label="Today's stack">
-        <ChoiceChips
-          options={VITAMIN_LIST}
-          selected={data.choices}
-          onToggle={(id) => {
-            const choices = toggleInList(data.choices, id)
-            patch({ choices }, syncLevel(choices, data.custom))
-          }}
-        />
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
-          {(data.custom || []).map((name, i) => (
-            <Chip
-              key={name}
-              emoji="➕"
-              label={`${name} ×`}
-              active
-              colorIndex={i}
-              onClick={() => {
-                const custom = (data.custom || []).filter((c) => c !== name)
-                patch({ custom }, syncLevel(data.choices, custom))
-              }}
+    <PanelShell month={month} day={day} title="Vitamins & supplements" trackerId="vitamins" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Supplement notes…">
+        <section>
+          <ReviewHeading className="mb-1">Today&apos;s stack</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {VITAMIN_LIST.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => {
+                  const choices = toggleInList(data.choices, opt.id)
+                  patch({ choices }, syncLevel(choices, data.custom))
+                }}
+              />
+            ))}
+            {(data.custom || []).map((name) => (
+              <SelectChip
+                key={name}
+                compact
+                emoji="➕"
+                label={`${name} ×`}
+                active
+                onClick={() => {
+                  const custom = (data.custom || []).filter((c) => c !== name)
+                  patch({ custom }, syncLevel(data.choices, custom))
+                }}
+              />
+            ))}
+          </div>
+          <div className="mt-1.5 flex gap-1.5">
+            <SoftInput
+              value={customText}
+              onChange={(e) => setCustomText(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && addCustom()}
+              placeholder="+ Add custom supplement"
+              className="!py-1.5 !text-[11px]"
             />
-          ))}
-        </div>
-      </ChipGroup>
-      <FieldLabel>Add custom supplement</FieldLabel>
-      <div className="mb-1 flex gap-1.5">
-        <SoftInput
-          value={customText}
-          onChange={(e) => setCustomText(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && addCustom()}
-          placeholder="+ Add custom supplement"
+            <button
+              type="button"
+              data-no-flip
+              onClick={addCustom}
+              className="rounded-xl bg-[var(--accent-deep)] px-2.5 text-white"
+            >
+              <Plus size={14} />
+            </button>
+          </div>
+        </section>
+        <MiniQuiz
+          questions={VITAMINS_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-        <button
-          type="button"
-          onClick={addCustom}
-          className="rounded-xl bg-[var(--accent-deep)] px-2.5 text-white"
-        >
-          <Plus size={14} />
-        </button>
-      </div>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -431,42 +625,52 @@ export function StudyPanel({ month, day }) {
   const setDuration = (id) => {
     const block = SELF_DEV_DURATIONS.find((d) => d.id === id)
     const next = data.duration === id ? null : id
-    const level = next
-      ? block?.level ?? 1
-      : data.choices?.length
-        ? 1
-        : null
+    const level = next ? block?.level ?? 1 : data.choices?.length ? 1 : null
     patch({ duration: next }, level)
   }
 
   return (
-    <PanelShell month={month} day={day} title="Self-development" trackerId="study">
-      <ChipGroup label="Topics">
-        <ChoiceChips
-          options={SELF_DEV_TOPICS}
-          selected={data.choices}
-          onToggle={(id) => {
-            const choices = toggleInList(data.choices, id)
-            const block = SELF_DEV_DURATIONS.find((d) => d.id === data.duration)
-            const level = block?.level ?? (choices.length ? 1 : null)
-            patch({ choices }, level)
-          }}
+    <PanelShell month={month} day={day} title="Self-development" trackerId="study" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Growth notes & takeaways…">
+        <section>
+          <ReviewHeading className="mb-1">Topics</ReviewHeading>
+          <div className="mb-1.5 flex flex-wrap gap-1">
+            {SELF_DEV_TOPICS.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => {
+                  const choices = toggleInList(data.choices, opt.id)
+                  const block = SELF_DEV_DURATIONS.find((d) => d.id === data.duration)
+                  const level = block?.level ?? (choices.length ? 1 : null)
+                  patch({ choices }, level)
+                }}
+              />
+            ))}
+          </div>
+          <ReviewHeading className="mb-1">Duration</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {SELF_DEV_DURATIONS.map((d) => (
+              <SelectChip
+                key={d.id}
+                compact
+                emoji={d.emoji}
+                label={d.label}
+                active={data.duration === d.id}
+                onClick={() => setDuration(d.id)}
+              />
+            ))}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={STUDY_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
-      <ChipGroup label="Duration">
-        <div className="flex flex-wrap gap-1.5">
-          {SELF_DEV_DURATIONS.map((d, i) => (
-            <Chip
-              key={d.id}
-              emoji={d.emoji}
-              label={d.label}
-              active={data.duration === d.id}
-              colorIndex={i}
-              onClick={() => setDuration(d.id)}
-            />
-          ))}
-        </div>
-      </ChipGroup>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -494,48 +698,54 @@ export function ReadingPanel({ month, day }) {
   }
 
   return (
-    <PanelShell month={month} day={day} title="Reading log" trackerId="reading">
-      <FieldLabel>Current book title & author</FieldLabel>
-      <SoftInput
-        value={book}
-        onChange={(e) => setBook(e.target.value)}
-        onBlur={() => patch({ book: book.trim() })}
-        placeholder="Current book title & author"
-        className="mb-2"
-      />
-      <ChipGroup label="Genre & session">
-        <ChoiceChips
-          options={READING_CHOICES}
-          selected={data.choices}
-          onToggle={(id) => patch({ choices: toggleInList(data.choices, id) })}
+    <PanelShell month={month} day={day} title="Reading log" trackerId="reading" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Reading reflections…">
+        <section>
+          <ReviewHeading className="mb-1">Current book</ReviewHeading>
+          <SoftInput
+            value={book}
+            onChange={(e) => setBook(e.target.value)}
+            onBlur={() => patch({ book: book.trim() })}
+            placeholder="Current book title & author"
+            className="mb-1.5 !py-1.5 !text-[11px]"
+          />
+          <ReviewHeading className="mb-1">Genre & session</ReviewHeading>
+          <div className="mb-1.5 flex flex-wrap gap-1">
+            {READING_CHOICES.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => patch({ choices: toggleInList(data.choices, opt.id) })}
+              />
+            ))}
+          </div>
+          <ReviewHeading className="mb-1">Fast pages</ReviewHeading>
+          <div className="flex flex-wrap items-center gap-1">
+            <span className="rounded-full bg-white/85 px-2 py-1 text-[10px] font-bold">{pages} pages</span>
+            {READING_PAGE_BOOSTS.map((b) => (
+              <SelectChip
+                key={b.id}
+                compact
+                emoji={b.emoji}
+                label={b.label}
+                active={false}
+                onClick={() => addPages(b.pages)}
+              />
+            ))}
+            {pages > 0 && (
+              <SelectChip compact emoji="↩️" label="-5 pages" active={false} onClick={() => addPages(-5)} />
+            )}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={READING_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
-      <ChipGroup label="Fast pages session">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <span className="rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold">
-            {pages} pages
-          </span>
-          {READING_PAGE_BOOSTS.map((b, i) => (
-            <Chip
-              key={b.id}
-              emoji={b.emoji}
-              label={b.label}
-              active={false}
-              colorIndex={i + 2}
-              onClick={() => addPages(b.pages)}
-            />
-          ))}
-          {pages > 0 && (
-            <Chip
-              emoji="↩️"
-              label="-5 pages"
-              active={false}
-              colorIndex={7}
-              onClick={() => addPages(-5)}
-            />
-          )}
-        </div>
-      </ChipGroup>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -552,17 +762,32 @@ export function TeethPanel({ month, day }) {
   }
 
   return (
-    <PanelShell month={month} day={day} title="Teeth brushing" trackerId="teeth">
-      <ChipGroup label="Oral care routine">
-        <ChoiceChips
-          options={TEETH_ROUTINE}
-          selected={data.choices}
-          onToggle={(id) => {
-            const choices = toggleInList(data.choices, id)
-            patch({ choices }, syncLevel(choices))
-          }}
+    <PanelShell month={month} day={day} title="Teeth brushing" trackerId="teeth" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Dental care notes…">
+        <section>
+          <ReviewHeading className="mb-1">Oral care routine</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {TEETH_ROUTINE.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => {
+                  const choices = toggleInList(data.choices, opt.id)
+                  patch({ choices }, syncLevel(choices))
+                }}
+              />
+            ))}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={TEETH_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -581,31 +806,45 @@ export function WorkoutPanel({ month, day }) {
   }
 
   return (
-    <PanelShell month={month} day={day} title="Gym & stretching" trackerId="workout">
-      <ChipGroup label="Workout">
-        <ChoiceChips
-          options={WORKOUT_CHIPS}
-          selected={data.choices}
-          onToggle={(id) => {
-            const choices = toggleInList(data.choices, id)
-            patch({ choices }, syncLevel(choices))
-          }}
+    <PanelShell month={month} day={day} title="Gym & stretching" trackerId="workout" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Workout notes…">
+        <section>
+          <ReviewHeading className="mb-1">Workout</ReviewHeading>
+          <div className="mb-1.5 flex flex-wrap gap-1">
+            {WORKOUT_CHIPS.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => {
+                  const choices = toggleInList(data.choices, opt.id)
+                  patch({ choices }, syncLevel(choices))
+                }}
+              />
+            ))}
+          </div>
+          <ReviewHeading className="mb-1">Duration</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {WORKOUT_DURATIONS.map((d) => (
+              <SelectChip
+                key={d.id}
+                compact
+                emoji={d.emoji}
+                label={d.label}
+                active={data.duration === d.id}
+                onClick={() => patch({ duration: toggleSingle(data.duration, d.id) })}
+              />
+            ))}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={WORKOUT_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
-      <ChipGroup label="Duration">
-        <div className="flex flex-wrap gap-1.5">
-          {WORKOUT_DURATIONS.map((d, i) => (
-            <Chip
-              key={d.id}
-              emoji={d.emoji}
-              label={d.label}
-              active={data.duration === d.id}
-              colorIndex={i}
-              onClick={() => patch({ duration: data.duration === d.id ? null : d.id })}
-            />
-          ))}
-        </div>
-      </ChipGroup>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -716,61 +955,74 @@ export function SleepPanel({ month, day }) {
   }
 
   return (
-    <PanelShell month={month} day={day} title="Sleep & rest" trackerId="sleep">
-      <ChipGroup label="Sleep duration">
-        <div className="flex flex-wrap gap-1.5">
-          {SLEEP_DURATIONS.map((d, i) => (
-            <Chip
-              key={d.id}
-              emoji={d.emoji}
-              label={d.label}
-              active={data.duration === d.id}
-              colorIndex={i}
-              onClick={() => setDuration(d.id)}
-            />
-          ))}
-        </div>
-      </ChipGroup>
-
-      <div className="mb-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-        <div>
-          <FieldLabel>Sleep Time (From)</FieldLabel>
-          <SoftInput
-            type="time"
-            value={sleepTime}
-            onChange={(e) => setSleepTime(e.target.value)}
-            onBlur={() => patch({ sleepTime })}
-            aria-label="Sleep Time From"
-          />
-        </div>
-        <div>
-          <FieldLabel>Wake Up Time (To)</FieldLabel>
-          <SoftInput
-            type="time"
-            value={wakeTime}
-            onChange={(e) => setWakeTime(e.target.value)}
-            onBlur={() => patch({ wakeTime })}
-            aria-label="Wake Up Time To"
-          />
-        </div>
-      </div>
-
-      <ChipGroup label="Sleeping location">
-        <ChoiceChips
-          options={SLEEP_LOCATIONS}
-          selected={data.locations}
-          onToggle={(id) => patch({ locations: toggleInList(data.locations, id) })}
+    <PanelShell month={month} day={day} title="Sleep & rest" trackerId="sleep" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Sleep dreams & notes…">
+        <section>
+          <ReviewHeading className="mb-1">Sleep duration</ReviewHeading>
+          <div className="mb-1.5 flex flex-wrap gap-1">
+            {SLEEP_DURATIONS.map((d) => (
+              <SelectChip
+                key={d.id}
+                compact
+                emoji={d.emoji}
+                label={d.label}
+                active={data.duration === d.id}
+                onClick={() => setDuration(d.id)}
+              />
+            ))}
+          </div>
+          <div className="mb-1.5 grid grid-cols-2 gap-1.5">
+            <div>
+              <ReviewHeading className="mb-0.5 !text-[10px]">Sleep Time</ReviewHeading>
+              <SoftInput
+                type="time"
+                value={sleepTime}
+                onChange={(e) => setSleepTime(e.target.value)}
+                onBlur={() => patch({ sleepTime })}
+                className="!py-1 !text-[11px]"
+              />
+            </div>
+            <div>
+              <ReviewHeading className="mb-0.5 !text-[10px]">Wake Up</ReviewHeading>
+              <SoftInput
+                type="time"
+                value={wakeTime}
+                onChange={(e) => setWakeTime(e.target.value)}
+                onBlur={() => patch({ wakeTime })}
+                className="!py-1 !text-[11px]"
+              />
+            </div>
+          </div>
+          <ReviewHeading className="mb-1">Location & quality</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {SLEEP_LOCATIONS.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.locations || []).includes(opt.id)}
+                onClick={() => patch({ locations: toggleInList(data.locations, opt.id) })}
+              />
+            ))}
+            {SLEEP_QUALITY.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.quality || []).includes(opt.id)}
+                onClick={() => patch({ quality: toggleInList(data.quality, opt.id) })}
+              />
+            ))}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={SLEEP_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
-
-      <ChipGroup label="Sleep quality & vibe">
-        <ChoiceChips
-          options={SLEEP_QUALITY}
-          selected={data.quality}
-          onToggle={(id) => patch({ quality: toggleInList(data.quality, id) })}
-          startIndex={2}
-        />
-      </ChipGroup>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }
@@ -792,27 +1044,42 @@ export function OutingsPanel({ month, day }) {
   }
 
   return (
-    <PanelShell month={month} day={day} title="Outings & hangouts" trackerId="outings">
-      <FieldLabel>Who I was with</FieldLabel>
-      <SoftInput
-        value={withWho}
-        onChange={(e) => setWithWho(e.target.value)}
-        onBlur={() => saveWithWho(withWho)}
-        onKeyDown={(e) => e.key === 'Enter' && saveWithWho(withWho)}
-        placeholder="Who I was with"
-        className="mb-2"
-      />
-      <ChipGroup label="Outing vibe">
-        <ChoiceChips
-          options={OUTING_VIBES}
-          selected={data.choices}
-          onToggle={(id) => {
-            const choices = toggleInList(data.choices, id)
-            const who = (data.withWho || withWho || '').trim()
-            patch({ choices }, choices.length ? 2 : who ? 1 : null)
-          }}
+    <PanelShell month={month} day={day} title="Outings & hangouts" trackerId="outings" hideNotes>
+      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Outing memories…">
+        <section>
+          <ReviewHeading className="mb-1">Who I was with</ReviewHeading>
+          <SoftInput
+            value={withWho}
+            onChange={(e) => setWithWho(e.target.value)}
+            onBlur={() => saveWithWho(withWho)}
+            onKeyDown={(e) => e.key === 'Enter' && saveWithWho(withWho)}
+            placeholder="Who I was with"
+            className="mb-1.5 !py-1.5 !text-[11px]"
+          />
+          <ReviewHeading className="mb-1">Outing vibe</ReviewHeading>
+          <div className="flex flex-wrap gap-1">
+            {OUTING_VIBES.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={(data.choices || []).includes(opt.id)}
+                onClick={() => {
+                  const choices = toggleInList(data.choices, opt.id)
+                  const who = (data.withWho || withWho || '').trim()
+                  patch({ choices }, choices.length ? 2 : who ? 1 : null)
+                }}
+              />
+            ))}
+          </div>
+        </section>
+        <MiniQuiz
+          questions={OUTINGS_QUIZ}
+          answers={quizAnswers(data)}
+          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
         />
-      </ChipGroup>
+      </ReviewPanelFrame>
     </PanelShell>
   )
 }

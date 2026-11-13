@@ -45,6 +45,19 @@ export const ENERGY_DRAINERS = [
   { id: 'doomscroll', emoji: '📱', label: 'Doomscrolling Fatigue' },
 ]
 
+export const ENERGY_PEAK_TIMES = [
+  { id: 'morning', emoji: '🌅', label: 'Morning' },
+  { id: 'afternoon', emoji: '☀️', label: 'Afternoon' },
+  { id: 'night', emoji: '🌙', label: 'Night Owl' },
+  { id: 'low', emoji: '🪫', label: 'Low All Day' },
+]
+
+export const ENERGY_BATTERY = [
+  { id: 'charged', emoji: '🔋', label: 'Fully Charged' },
+  { id: 'steady', emoji: '⚖️', label: 'Steady' },
+  { id: 'solo', emoji: '🫂', label: 'Need Solo Recharge' },
+]
+
 export const SHOWER_ROUTINE = [
   { id: 'scalp-shampoo', emoji: '🧴', label: 'Deep Scalp Shampoo' },
   { id: 'hair-mask', emoji: '🍯', label: 'Intensive Hair Mask' },
@@ -302,29 +315,32 @@ export const OUTING_VIBES = [
 
 export const PANEL_DEFAULTS = {
   rating: { choices: [], highlight: '', dayType: null, meaningful: null },
-  energy: { choices: [] },
-  shower: { choices: [] },
-  fruits: { choices: [], servings: 0 },
-  sweets: { choices: [], count: 0 },
-  water: { cups: 0, ml: 0, choices: [] },
+  energy: { drivers: [], drainers: [], peakTime: null, battery: null },
+  shower: { choices: [], q1: null, q2: null, q3: null },
+  fruits: { choices: [], servings: 0, q1: null, q2: null, q3: null },
+  sweets: { choices: [], count: 0, q1: null, q2: null, q3: null },
+  water: { cups: 0, ml: 0, choices: [], q1: null, q2: null, q3: null },
   sleep: {
     duration: null,
     sleepTime: '',
     wakeTime: '',
     locations: [],
     quality: [],
+    q1: null,
+    q2: null,
+    q3: null,
   },
   focus: {
     minutes: 0,
     vibes: [],
     environments: [],
   },
-  vitamins: { choices: [], custom: [] },
-  study: { choices: [], duration: null },
-  reading: { book: '', pages: 0, choices: [] },
-  teeth: { choices: [] },
-  workout: { choices: [], duration: null },
-  outings: { withWho: '', choices: [] },
+  vitamins: { choices: [], custom: [], q1: null, q2: null, q3: null },
+  study: { choices: [], duration: null, q1: null, q2: null, q3: null },
+  reading: { book: '', pages: 0, choices: [], q1: null, q2: null, q3: null },
+  teeth: { choices: [], q1: null, q2: null, q3: null },
+  workout: { choices: [], duration: null, q1: null, q2: null, q3: null },
+  outings: { withWho: '', choices: [], q1: null, q2: null, q3: null },
 }
 
 export const PASTEL_CHIP_COLORS = [

@@ -54,13 +54,71 @@ export function SelectChip({ active, onClick, emoji, label, title, compact = fal
   )
 }
 
-export function ReviewHeading({ children, className = '' }) {
+export function ReviewHeading({ children, className = '', asQuestion = false }) {
   return (
     <p
-      className={`text-[11px] font-bold uppercase tracking-wide text-[var(--accent-deep)] sm:text-xs ${className}`}
+      className={`${
+        asQuestion
+          ? 'text-[11px] font-bold leading-snug tracking-normal text-[var(--accent-deep)] sm:text-xs'
+          : 'text-[11px] font-bold uppercase tracking-wide text-[var(--accent-deep)] sm:text-xs'
+      } ${className}`}
     >
       {children}
     </p>
+  )
+}
+
+export function toggleSingle(current, id) {
+  return current === id ? null : id
+}
+
+export function MiniQuiz({ questions, answers, onAnswer }) {
+  return (
+    <section className="shrink-0 rounded-2xl border border-[var(--page-edge)]/60 bg-[var(--accent-glow)]/70 px-2 py-1.5">
+      <ReviewHeading className="mb-1">Daily Mini-Quiz</ReviewHeading>
+      <div className="space-y-1.5">
+        {questions.map((q) => (
+          <div key={q.key}>
+            <ReviewHeading asQuestion className="mb-0.5">
+              {q.question}
+            </ReviewHeading>
+            <div className="flex flex-wrap gap-1">
+              {q.options.map((opt) => (
+                <SelectChip
+                  key={opt.id}
+                  compact
+                  emoji={opt.emoji}
+                  label={opt.label}
+                  active={answers?.[q.key] === opt.id}
+                  onClick={() => onAnswer(q.key, toggleSingle(answers?.[q.key], opt.id))}
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+export function ReviewPanelFrame({ month, day, notesPlaceholder = 'Quick note for today…', children }) {
+  return (
+    <div
+      data-no-flip
+      className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 overflow-hidden"
+    >
+      <div className="shrink-0 space-y-1.5">{children}</div>
+      <section className="flex min-h-0 flex-1 flex-col border-t border-[var(--page-edge)]/50 pt-1.5">
+        <CompactDailyNotes
+          month={month}
+          day={day}
+          tall
+          accentLabel
+          label="Daily Notes"
+          placeholder={notesPlaceholder}
+        />
+      </section>
+    </div>
   )
 }
 
@@ -187,10 +245,6 @@ export function CompactDailyNotes({
 export function toggleInList(list, item) {
   const arr = list || []
   return arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item]
-}
-
-export function toggleSingle(current, id) {
-  return current === id ? null : id
 }
 
 export function ChoiceChips({ options, selected, onToggle, startIndex = 0 }) {
