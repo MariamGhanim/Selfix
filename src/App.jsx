@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { JournalProvider, useJournal } from './context/JournalContext'
 import AuthPage from './components/Auth/AuthPage'
@@ -6,6 +7,10 @@ import VerifyEmailBanner from './components/Auth/VerifyEmailBanner'
 import SyncErrorScreen from './components/Auth/SyncErrorScreen'
 import Book from './components/Book/Book'
 import AmbientMusicPlayer from './components/AmbientMusicPlayer'
+import AboutPage from './pages/AboutPage'
+import PrivacyPage from './pages/PrivacyPage'
+import TermsPage from './pages/TermsPage'
+import ContactPage from './pages/ContactPage'
 
 function LoadingScreen({ label = 'Opening Selfix…' }) {
   return (
@@ -66,8 +71,17 @@ function ThemedApp() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Gate />
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Gate />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   )
 }

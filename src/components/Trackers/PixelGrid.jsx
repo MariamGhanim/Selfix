@@ -49,12 +49,19 @@ export default function PixelGrid({ trackerId, levels, onSelectDay, selectedDay 
                   title={valid ? `${MONTHS_FULL[m.id]} ${day}` : 'Invalid'}
                   onClick={() => {
                     if (!valid) return
-                    paintPixel(trackerId, m.id, day, levels)
-                    onSelectDay?.({ month: m.id, day })
+                    if (isSelected) {
+                      paintPixel(trackerId, m.id, day, levels)
+                    } else {
+                      onSelectDay?.({ month: m.id, day })
+                    }
                   }}
                   className={`pixel-btn h-full min-h-0 w-full rounded-[3px] ${
                     !valid ? 'cursor-not-allowed opacity-35' : 'cursor-pointer'
-                  } ${isSelected ? 'ring-1 ring-[var(--accent-deep)] ring-offset-0' : ''}`}
+                  } ${
+                    isSelected
+                      ? 'z-[1] ring-2 ring-[var(--accent-deep)] ring-offset-1 ring-offset-[var(--paper)]'
+                      : ''
+                  }`}
                   style={{
                     background: valid ? colorFor(value) : 'var(--invalid-cell)',
                   }}

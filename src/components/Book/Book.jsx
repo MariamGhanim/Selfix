@@ -22,6 +22,7 @@ import {
 import ThemeToggle from '../ThemeToggle'
 import FocusTimer from '../FocusTimer'
 import SettingsModal from '../Settings/SettingsModal'
+import LegalFooter from '../Legal/LegalFooter'
 import PageFlipStage, { flipToPage } from './PageFlipStage'
 import { TRACKERS } from '../../data/trackers'
 import { useJournal } from '../../context/JournalContext'
@@ -198,6 +199,8 @@ export default function Book() {
             Next <ChevronRight size={14} />
           </button>
         </div>
+
+        <LegalFooter />
       </div>
     </div>
   )

@@ -18,6 +18,17 @@ import {
 import PixelGrid from '../Trackers/PixelGrid'
 import Legend from '../Trackers/Legend'
 import RightPage from './RightPage'
+import { useJournal } from '../../context/JournalContext'
+
+function formatSelectedDate(year, month, day) {
+  const date = new Date(year, month, day)
+  return date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
 
 const ICONS = {
   Star,
@@ -38,7 +49,12 @@ const ICONS = {
 }
 
 export default function Spread({ tracker, selectedDay, onSelectDay }) {
+  const { year } = useJournal()
   const Icon = ICONS[tracker.icon] || Star
+  const selectedLabel =
+    selectedDay != null
+      ? formatSelectedDate(year, selectedDay.month, selectedDay.day)
+      : null
 
   return (
     <div className="grid h-full min-h-0 w-full grid-cols-1 overflow-y-auto md:grid-cols-2 md:overflow-hidden">
@@ -61,6 +77,14 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
         <div className="mb-1.5 shrink-0">
           <Legend trackerId={tracker.id} levels={tracker.levels} />
         </div>
+
+        {selectedLabel && (
+          <div className="mb-1.5 shrink-0 rounded-full bg-[var(--accent-glow)]/90 px-3 py-1 text-center">
+            <p className="font-display text-[11px] font-semibold text-[var(--accent-deep)] sm:text-xs">
+              {selectedLabel}
+            </p>
+          </div>
+        )}
 
         <div className="min-h-0 flex-1">
           <PixelGrid

@@ -154,9 +154,10 @@ export function JournalProvider({ children }) {
 
     const cyclePixel = (trackerId, month, day, levels) => {
       const current = getPixel(trackerId, month, day)
-      const idx = levels.findIndex((l) => l.value === current)
-      const next = levels[(idx + 1) % levels.length]
-      setPixel(trackerId, month, day, next.value)
+      const sequence = [null, ...levels.map((l) => l.value)]
+      const idx = sequence.findIndex((v) => v === current)
+      const next = sequence[(idx + 1) % sequence.length]
+      setPixel(trackerId, month, day, next)
     }
 
     const paintPixel = (trackerId, month, day, levels) => {
