@@ -21,7 +21,7 @@ export default function SyncErrorScreen({ message, onRetry, busy }) {
           </p>
         )}
 
-        <ol className="mt-4 space-y-1.5 rounded-2xl bg-white/80 px-4 py-3 text-left text-[11px] leading-relaxed text-[var(--ink)]">
+        <ol className="mt-4 space-y-1.5 rounded-2xl bg-[var(--surface)] px-4 py-3 text-left text-[11px] leading-relaxed text-[var(--ink)]">
           <li>
             1. Open Firebase Console → project <strong>selfix-1211</strong>
           </li>

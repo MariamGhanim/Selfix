@@ -40,7 +40,7 @@ export function SelectChip({ active, onClick, emoji, label, title, compact = fal
       } ${
         active
           ? 'scale-[1.02] border-[var(--accent-deep)] bg-[var(--accent-deep)] text-white shadow-md'
-          : 'border-[var(--page-edge)] bg-white/70 text-[var(--ink-soft)] opacity-80 hover:opacity-100 hover:shadow-sm'
+          : 'border-[var(--page-edge)] bg-[var(--surface)] text-[var(--ink-soft)] opacity-80 hover:opacity-100 hover:shadow-sm'
       }`}
     >
       {active && <span className="shrink-0 text-[10px] leading-none">✓</span>}
@@ -147,7 +147,7 @@ export function SoftInput(props) {
   return (
     <input
       {...props}
-      className={`w-full rounded-xl border border-[var(--page-edge)] bg-white/80 px-2.5 py-1.5 text-xs outline-none focus:ring-1 focus:ring-[var(--accent)] ${props.className || ''}`}
+      className={`w-full rounded-xl border border-[var(--page-edge)] bg-[var(--surface)] px-2.5 py-1.5 text-xs outline-none focus:ring-1 focus:ring-[var(--accent)] ${props.className || ''}`}
     />
   )
 }
@@ -156,7 +156,7 @@ export function SoftTextarea(props) {
   return (
     <textarea
       {...props}
-      className={`min-h-0 w-full flex-1 resize-none rounded-xl border border-[var(--page-edge)] bg-white/80 px-2.5 py-1.5 text-[11px] leading-relaxed outline-none focus:ring-1 focus:ring-[var(--accent)] ${props.className || ''}`}
+      className={`min-h-0 w-full flex-1 resize-none rounded-xl border border-[var(--page-edge)] bg-[var(--surface)] px-2.5 py-1.5 text-[11px] leading-relaxed outline-none focus:ring-1 focus:ring-[var(--accent)] ${props.className || ''}`}
     />
   )
 }
@@ -189,7 +189,7 @@ export function PanelShell({
         <button
           type="button"
           onClick={clearToday}
-          className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--page-edge)] bg-white/80 px-2 py-1 text-[9px] font-bold text-[var(--ink-soft)] transition hover:bg-white hover:text-[var(--ink)]"
+          className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] px-2 py-1 text-[9px] font-bold text-[var(--ink-soft)] transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]"
           title="Clear today's selections for this tracker"
         >
           <RotateCcw size={11} />

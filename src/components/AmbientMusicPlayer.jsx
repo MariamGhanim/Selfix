@@ -196,7 +196,7 @@ export default function AmbientMusicPlayer() {
       >
         {!expanded && (
           <div
-            className="inline-flex items-center gap-0.5 rounded-full border border-white/80 bg-white/92 p-1 shadow-lg backdrop-blur-md"
+            className="inline-flex items-center gap-0.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] p-1 shadow-lg backdrop-blur-md"
             style={{ boxShadow: '0 8px 22px var(--shadow)' }}
           >
             <button
@@ -223,7 +223,7 @@ export default function AmbientMusicPlayer() {
 
         {expanded && (
           <div
-            className="rounded-2xl border border-white/70 bg-white/94 backdrop-blur-md"
+            className="rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] backdrop-blur-md"
             style={{ boxShadow: '0 12px 32px var(--shadow)' }}
           >
             <div className="flex items-center gap-1 px-2 py-1.5">

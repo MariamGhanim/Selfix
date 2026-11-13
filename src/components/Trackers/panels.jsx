@@ -411,7 +411,7 @@ export function FruitsPanel({ month, day }) {
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-1">
             <SelectChip compact emoji="➕" label="+1 Serving" active={false} onClick={() => setServings(servings + 1)} />
-            <span className="rounded-full bg-white/85 px-2 py-1 text-[10px] font-bold text-[var(--ink)]">
+            <span className="rounded-full bg-[var(--surface)] px-2 py-1 text-[10px] font-bold text-[var(--ink)]">
               {servings} serving{servings === 1 ? '' : 's'}
             </span>
             {servings > 0 && (
@@ -462,7 +462,7 @@ export function SweetsPanel({ month, day }) {
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-1">
             <SelectChip compact emoji="➕" label="+1 Sweet" active={false} onClick={() => setCount(count + 1)} />
-            <span className="rounded-full bg-white/85 px-2 py-1 text-[10px] font-bold text-[var(--ink)]">
+            <span className="rounded-full bg-[var(--surface)] px-2 py-1 text-[10px] font-bold text-[var(--ink)]">
               {count} treat{count === 1 ? '' : 's'}
             </span>
             {count > 0 && (
@@ -495,7 +495,7 @@ export function WaterPanel({ month, day }) {
     <PanelShell month={month} day={day} title="Water intake" trackerId="water" hideNotes>
       <ReviewPanelFrame month={month} day={day} notesPlaceholder="Hydration notes…">
         <section>
-          <div className="mb-1 rounded-full bg-white/85 px-3 py-1 text-center text-[11px] font-bold text-[var(--ink)]">
+          <div className="mb-1 rounded-full bg-[var(--surface)] px-3 py-1 text-center text-[11px] font-bold text-[var(--ink)]">
             {cups} cups · {ml} ml
           </div>
           <ReviewHeading className="mb-1">Hydration controls</ReviewHeading>
@@ -724,7 +724,7 @@ export function ReadingPanel({ month, day }) {
           </div>
           <ReviewHeading className="mb-1">Fast pages</ReviewHeading>
           <div className="flex flex-wrap items-center gap-1">
-            <span className="rounded-full bg-white/85 px-2 py-1 text-[10px] font-bold">{pages} pages</span>
+            <span className="rounded-full bg-[var(--surface)] px-2 py-1 text-[10px] font-bold">{pages} pages</span>
             {READING_PAGE_BOOSTS.map((b) => (
               <SelectChip
                 key={b.id}
@@ -869,7 +869,7 @@ export function FocusPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Focus & deep work" trackerId="focus">
-      <div className="mb-2 rounded-full bg-white/85 px-3 py-1.5 text-center text-xs font-bold text-[var(--ink)]">
+      <div className="mb-2 rounded-full bg-[var(--surface)] px-3 py-1.5 text-center text-xs font-bold text-[var(--ink)]">
         Today: {minutes} min · {hours}h logged
       </div>
 

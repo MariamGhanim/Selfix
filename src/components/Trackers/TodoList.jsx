@@ -66,7 +66,7 @@ export default function TodoList({ month, day, embedded = false }) {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && add()}
           placeholder="Add a task..."
-          className="min-w-0 flex-1 rounded-xl border border-[var(--page-edge)] bg-white/80 px-2.5 py-1.5 text-xs outline-none focus:ring-1 focus:ring-[var(--accent)]"
+          className="min-w-0 flex-1 rounded-xl border border-[var(--page-edge)] bg-[var(--surface)] px-2.5 py-1.5 text-xs outline-none focus:ring-1 focus:ring-[var(--accent)]"
         />
         <button
           type="button"
@@ -79,14 +79,14 @@ export default function TodoList({ month, day, embedded = false }) {
 
       <ul className="min-h-0 flex-1 space-y-1.5 overflow-y-auto pr-0.5">
         {todos.length === 0 && (
-          <li className="rounded-xl bg-white/50 px-3 py-4 text-center text-[11px] text-[var(--ink-soft)]">
+          <li className="rounded-xl bg-[var(--surface)] px-3 py-4 text-center text-[11px] text-[var(--ink-soft)]">
             No tasks yet — add one above
           </li>
         )}
         {todos.map((todo) => (
           <li
             key={todo.id}
-            className="flex items-center gap-2 rounded-xl bg-white/75 px-2.5 py-1.5 shadow-sm"
+            className="flex items-center gap-2 rounded-xl bg-[var(--surface)] px-2.5 py-1.5 shadow-sm"
           >
             <button
               type="button"

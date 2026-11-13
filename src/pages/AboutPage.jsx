@@ -66,13 +66,13 @@ export default function AboutPage() {
             'Gym, outings, reading, teeth, shower, and to-do trackers',
             'Focus timer that can auto-log deep-work sessions',
             'Ambient music capsule for cozy journaling sessions',
-            'Pinky Cute and Soft Sky themes with the same book layout',
+            'Six eye-friendly themes (Soft Rose, Soft Sky, Matcha, Lavender, Sand, Midnight) with the same book layout',
             'Secure account access with email verification',
             'Cloud sync so your journal follows you across devices',
           ].map((item) => (
             <li
               key={item}
-              className="rounded-2xl border border-[var(--page-edge)] bg-white/70 px-3.5 py-2.5 text-sm text-[var(--ink)]"
+              className="rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-2.5 text-sm text-[var(--ink)]"
             >
               {item}
             </li>

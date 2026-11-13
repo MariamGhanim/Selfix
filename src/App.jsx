@@ -15,7 +15,7 @@ import ContactPage from './pages/ContactPage'
 function LoadingScreen({ label = 'Opening Selfix…' }) {
   return (
     <div className="flex h-screen w-screen items-center justify-center">
-      <div className="rounded-full bg-white/85 px-5 py-2.5 text-sm font-bold text-[var(--ink-soft)] shadow-md">
+      <div className="rounded-full bg-[var(--surface)] px-5 py-2.5 text-sm font-bold text-[var(--ink-soft)] shadow-md">
         {label}
       </div>
     </div>

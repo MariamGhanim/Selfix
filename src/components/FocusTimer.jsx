@@ -134,7 +134,7 @@ export default function FocusTimer() {
         className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-bold shadow-md backdrop-blur transition ${
           running
             ? 'bg-[var(--accent-deep)] text-white animate-pulse'
-            : 'bg-white/85 text-[var(--ink)] hover:scale-[1.02]'
+            : 'bg-[var(--surface)] text-[var(--ink)] hover:scale-[1.02]'
         }`}
       >
         <Timer size={14} />
@@ -142,7 +142,7 @@ export default function FocusTimer() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-[calc(100%+8px)] z-40 w-72 rounded-3xl border border-white/60 bg-white/95 p-4 shadow-2xl backdrop-blur">
+        <div className="absolute right-0 top-[calc(100%+8px)] z-40 w-72 rounded-3xl border border-[var(--page-edge)] bg-[var(--surface-strong)] p-4 shadow-2xl backdrop-blur">
           <p className="mb-2 font-display text-sm font-semibold text-[var(--ink)]">Focus Timer</p>
           <div className="mb-3 grid grid-cols-2 gap-1.5">
             {TIMER_PRESETS.map((p) => (

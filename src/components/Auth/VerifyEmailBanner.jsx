@@ -69,7 +69,7 @@ export default function VerifyEmailBanner() {
             type="button"
             disabled={busy}
             onClick={resend}
-            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-2xl border border-[var(--page-edge)] bg-white/85 px-4 py-2.5 text-sm font-bold text-[var(--ink)] disabled:opacity-60"
+            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-4 py-2.5 text-sm font-bold text-[var(--ink)] disabled:opacity-60"
           >
             <RefreshCw size={14} />
             Resend verification email

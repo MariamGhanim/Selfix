@@ -79,13 +79,13 @@ export default function Book() {
     <div className="flex h-screen w-screen flex-col overflow-hidden px-3 py-2 sm:px-5 sm:py-3">
       <header className="mb-1.5 flex shrink-0 flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className="rounded-full bg-white/85 px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur">
+          <div className="rounded-full bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur">
             <span className="font-display text-[var(--accent-deep)]">Selfix</span>
             {profile.displayName && profile.displayName !== 'Selfix' ? (
               <span className="text-[var(--ink-soft)]"> · {profile.displayName}</span>
             ) : null}
           </div>
-          <div className="inline-flex items-center rounded-full bg-white/85 px-1.5 py-0.5 shadow-md">
+          <div className="inline-flex items-center rounded-full bg-[var(--surface)] px-1.5 py-0.5 shadow-md">
             <button
               type="button"
               onClick={() => setYear(year - 1)}
@@ -111,7 +111,7 @@ export default function Book() {
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
-            className="rounded-full bg-white/85 p-2 text-[var(--ink-soft)] shadow-md backdrop-blur transition hover:bg-white hover:text-[var(--ink)]"
+            className="rounded-full bg-[var(--surface)] p-2 text-[var(--ink-soft)] shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]"
             title="Account settings"
             aria-label="Account settings"
           >
@@ -153,7 +153,7 @@ export default function Book() {
           })}
         </div>
 
-        <div className="book-shadow relative flex min-h-0 flex-1 overflow-hidden rounded-b-[28px] rounded-t-[18px] border border-white/50">
+        <div className="book-shadow relative flex min-h-0 flex-1 overflow-hidden rounded-b-[28px] rounded-t-[18px] border border-[var(--page-edge)]">
           <div className="pointer-events-none absolute -left-1 top-3 bottom-3 z-40 w-2 rounded-l-md bg-[var(--page-edge)] opacity-80" />
           <div className="pointer-events-none absolute -left-2 top-5 bottom-5 z-40 w-2 rounded-l-md bg-[var(--accent-soft)] opacity-50" />
           <div className="pointer-events-none absolute -right-1 top-3 bottom-3 z-40 w-2 rounded-r-md bg-[var(--page-edge)] opacity-80" />
@@ -186,7 +186,7 @@ export default function Book() {
             type="button"
             disabled={pageIndex === 0}
             onClick={() => go(pageIndex - 1)}
-            className="inline-flex items-center gap-1 rounded-2xl bg-white/85 px-3 py-1.5 text-xs font-bold shadow-md disabled:opacity-35"
+            className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md disabled:opacity-35"
           >
             <ChevronLeft size={14} /> Previous
           </button>
@@ -194,7 +194,7 @@ export default function Book() {
             type="button"
             disabled={pageIndex === TRACKERS.length - 1}
             onClick={() => go(pageIndex + 1)}
-            className="inline-flex items-center gap-1 rounded-2xl bg-white/85 px-3 py-1.5 text-xs font-bold shadow-md disabled:opacity-35"
+            className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md disabled:opacity-35"
           >
             Next <ChevronRight size={14} />
           </button>

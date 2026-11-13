@@ -35,7 +35,7 @@ export function AuthInput({ label, error, className = '', ...props }) {
       </span>
       <input
         {...props}
-        className={`w-full rounded-2xl border border-[var(--page-edge)] bg-white/85 px-3.5 py-2.5 text-sm text-[var(--ink)] outline-none transition placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)] ${className}`}
+        className={`w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-2.5 text-sm text-[var(--ink)] outline-none transition placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)] ${className}`}
       />
       {error && <span className="mt-1 block text-xs font-semibold text-[#b8385c]">{error}</span>}
     </label>
@@ -53,7 +53,7 @@ export function AuthButton({
   const styles =
     variant === 'primary'
       ? 'bg-[var(--accent-deep)] text-white shadow-md hover:brightness-105'
-      : 'bg-white/85 text-[var(--ink)] border border-[var(--page-edge)] hover:bg-white'
+      : 'bg-[var(--surface)] text-[var(--ink)] border border-[var(--page-edge)] hover:bg-[var(--surface-strong)]'
 
   return (
     <button

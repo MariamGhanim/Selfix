@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { Cloud, Heart } from 'lucide-react'
 import { THEMES } from '../data/themes'
 import { useJournal } from '../context/JournalContext'
 
@@ -7,17 +6,22 @@ export default function ThemeToggle() {
   const { theme, setTheme } = useJournal()
 
   return (
-    <div className="inline-flex items-center gap-0.5 rounded-full bg-white/85 p-0.5 shadow-md backdrop-blur">
+    <div
+      className="inline-flex max-w-[min(100vw-8rem,20rem)] flex-wrap items-center gap-0.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] p-0.5 shadow-md backdrop-blur"
+      role="group"
+      aria-label="Color theme"
+    >
       {Object.values(THEMES).map((t) => {
         const active = theme === t.id
-        const Icon = t.id === 'pinky' ? Heart : Cloud
         return (
           <button
             key={t.id}
             type="button"
             onClick={() => setTheme(t.id)}
-            className="relative rounded-full px-2.5 py-1 text-[10px] font-bold"
+            className="relative flex h-7 min-w-7 items-center justify-center rounded-full px-1.5"
             title={t.label}
+            aria-label={t.label}
+            aria-pressed={active}
           >
             {active && (
               <motion.span
@@ -27,12 +31,17 @@ export default function ThemeToggle() {
               />
             )}
             <span
-              className={`relative z-10 inline-flex items-center gap-1 ${
+              className={`relative z-10 h-3.5 w-3.5 rounded-full border shadow-sm ${
+                active ? 'border-white/80' : 'border-[var(--page-edge)]'
+              }`}
+              style={{ background: t.swatch }}
+            />
+            <span
+              className={`relative z-10 ml-1 hidden text-[9px] font-bold lg:inline ${
                 active ? 'text-white' : 'text-[var(--ink-soft)]'
               }`}
             >
-              <Icon size={11} />
-              <span className="hidden sm:inline">{t.label}</span>
+              {t.short}
             </span>
           </button>
         )

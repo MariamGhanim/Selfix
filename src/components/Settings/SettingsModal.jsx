@@ -96,7 +96,7 @@ export default function SettingsModal({ open, onClose }) {
         </div>
 
         <div className="px-5 py-4">
-          <div className="mb-4 flex items-start gap-3 rounded-2xl bg-white/80 px-3.5 py-3">
+          <div className="mb-4 flex items-start gap-3 rounded-2xl bg-[var(--surface)] px-3.5 py-3">
             <div className="mt-0.5 rounded-full bg-[var(--accent-glow)] p-2 text-[var(--accent-deep)]">
               <Mail size={15} />
             </div>

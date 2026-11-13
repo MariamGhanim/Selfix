@@ -9,7 +9,7 @@ const FAQ = [
   },
   {
     q: 'How do I switch themes?',
-    a: 'Open your journal and use the theme toggle in the top header. Choose Pinky Cute or Soft Sky — the open-book layout stays the same while colors gently shift.',
+    a: 'Open your journal and use the theme dots in the top header. Pick Soft Rose, Soft Sky, Matcha Calm, Lavender Haze, Warm Sand, or Midnight Soft — the open-book layout stays the same while colors gently shift.',
   },
   {
     q: 'Is Selfix free?',
@@ -68,7 +68,7 @@ export default function ContactPage() {
       <Section title="Send a message">
         {submitted ? (
           <SoftCard className="bg-[var(--accent-glow)]/80 text-center">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-[var(--accent-deep)] shadow">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--surface-strong)] text-[var(--accent-deep)] shadow">
               <CheckCircle2 size={24} />
             </div>
             <p className="font-display text-lg font-semibold text-[var(--ink)]">Message received</p>
@@ -94,7 +94,7 @@ export default function ContactPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
-                className="w-full rounded-2xl border border-[var(--page-edge)] bg-white/85 px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
               />
               {errors.name && (
                 <span className="mt-1 block text-xs font-semibold text-[#b8385c]">{errors.name}</span>
@@ -110,7 +110,7 @@ export default function ContactPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@email.com"
-                className="w-full rounded-2xl border border-[var(--page-edge)] bg-white/85 px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
               />
               {errors.email && (
                 <span className="mt-1 block text-xs font-semibold text-[#b8385c]">{errors.email}</span>
@@ -126,7 +126,7 @@ export default function ContactPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="How can we help?"
                 rows={5}
-                className="w-full resize-y rounded-2xl border border-[var(--page-edge)] bg-white/85 px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="w-full resize-y rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
               />
               {errors.message && (
                 <span className="mt-1 block text-xs font-semibold text-[#b8385c]">

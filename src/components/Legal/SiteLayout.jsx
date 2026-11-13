@@ -17,13 +17,13 @@ export default function SiteLayout({ title, subtitle, children }) {
       <header className="mx-auto mb-4 flex w-full max-w-4xl shrink-0 flex-wrap items-center justify-between gap-3">
         <Link
           to="/"
-          className="rounded-full bg-white/85 px-3.5 py-1.5 text-xs font-bold shadow-md backdrop-blur transition hover:bg-white"
+          className="rounded-full bg-[var(--surface)] px-3.5 py-1.5 text-xs font-bold shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)]"
         >
           <span className="font-display text-[var(--accent-deep)]">Selfix</span>
         </Link>
         <Link
           to="/"
-          className="inline-flex items-center gap-1.5 rounded-full border border-[var(--page-edge)] bg-white/85 px-3 py-1.5 text-xs font-bold text-[var(--ink-soft)] shadow-sm transition hover:bg-white hover:text-[var(--ink)]"
+          className="inline-flex items-center gap-1.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] px-3 py-1.5 text-xs font-bold text-[var(--ink-soft)] shadow-sm transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]"
         >
           <ArrowLeft size={13} />
           Back to Journal
@@ -70,7 +70,7 @@ export function Section({ title, children }) {
 export function SoftCard({ children, className = '' }) {
   return (
     <div
-      className={`rounded-2xl border border-[var(--page-edge)] bg-white/75 px-4 py-4 shadow-sm sm:px-5 ${className}`}
+      className={`rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-4 py-4 shadow-sm sm:px-5 ${className}`}
     >
       {children}
     </div>
