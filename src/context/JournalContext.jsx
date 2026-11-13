@@ -56,6 +56,12 @@ export function JournalProvider({ children }) {
   const [retryTick, setRetryTick] = useState(0)
   const skipNextSave = useRef(true)
   const saveTimer = useRef(null)
+  const stateRef = useRef(state)
+  const readyRef = useRef(ready)
+  const dirtyRef = useRef(false)
+
+  stateRef.current = state
+  readyRef.current = ready
 
   const retrySync = useCallback(() => {
     setRetryTick((n) => n + 1)
@@ -69,6 +75,7 @@ export function JournalProvider({ children }) {
       setSyncError('')
       setSyncing(true)
       skipNextSave.current = true
+      dirtyRef.current = false
 
       if (!uid || !emailVerified) {
         setState(defaultState)
@@ -82,6 +89,7 @@ export function JournalProvider({ children }) {
         if (cancelled) return
         setState(normalizeState(cloud))
         skipNextSave.current = true
+        dirtyRef.current = false
         setReady(true)
         setSyncError('')
       } catch (err) {
@@ -106,20 +114,47 @@ export function JournalProvider({ children }) {
       return undefined
     }
 
+    dirtyRef.current = true
     if (saveTimer.current) window.clearTimeout(saveTimer.current)
     saveTimer.current = window.setTimeout(async () => {
       try {
-        await saveJournalToCloud(uid, state)
+        await saveJournalToCloud(uid, stateRef.current)
+        dirtyRef.current = false
         setSyncError('')
       } catch (err) {
         setSyncError(err.message || 'Could not save to Firebase.')
       }
-    }, 500)
+    }, 250)
 
     return () => {
       if (saveTimer.current) window.clearTimeout(saveTimer.current)
     }
   }, [state, uid, emailVerified, ready])
+
+  useEffect(() => {
+    if (!uid || !emailVerified) return undefined
+
+    const flush = () => {
+      if (!readyRef.current || !dirtyRef.current) return
+      if (saveTimer.current) {
+        window.clearTimeout(saveTimer.current)
+        saveTimer.current = null
+      }
+      dirtyRef.current = false
+      void saveJournalToCloud(uid, stateRef.current).catch(() => {})
+    }
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') flush()
+    }
+
+    window.addEventListener('pagehide', flush)
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      window.removeEventListener('pagehide', flush)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [uid, emailVerified])
 
   const api = useMemo(() => {
     const year = state.profile?.year ?? new Date().getFullYear()

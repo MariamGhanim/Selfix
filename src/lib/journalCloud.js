@@ -80,14 +80,10 @@ export async function saveJournalToCloud(uid, state) {
   try {
     const clean = sanitizeForFirestore(state)
     await withTimeout(
-      setDoc(
-        journalDocRef(uid),
-        {
-          ...clean,
-          updatedAt: serverTimestamp(),
-        },
-        { merge: true },
-      ),
+      setDoc(journalDocRef(uid), {
+        ...clean,
+        updatedAt: serverTimestamp(),
+      }),
       SYNC_TIMEOUT_MS,
       'Saving journal',
     )
