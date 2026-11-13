@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fredoka", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, sans-serif;
+}
+
+:root,
+[data-theme="pinky"] {
+  --paper: #fff8f5;
+  --paper-deep: #ffe8ef;
+  --ink: #5c3d4a;
+  --ink-soft: #8a6574;
+  --accent: #e891a8;
+  --accent-deep: #d46b88;
+  --accent-soft: #f7c4d0;
+  --accent-glow: #fce4ec;
+  --gold: #c9a27a;
+  --gold-soft: #e8d0b8;
+  --shadow: rgba(180, 100, 120, 0.22);
+  --page-edge: #f2d4dc;
+  --spine: #d48a9e;
+  --bg-1: #ffe4ec;
+  --bg-2: #fff0f5;
+  --bg-3: #ffe8d6;
+  --empty-cell: #f5e6ea;
+  --invalid-cell: #efe4e8;
+  --c1: #f8c8d4;
+  --c2: #f2a0b5;
+  --c3: #e87a96;
+  --c4: #d45678;
+  --c5: #b8385c;
+}
+
+[data-theme="sky"] {
+  --paper: #f7fbff;
+  --paper-deep: #e8f3fc;
+  --ink: #2f4560;
+  --ink-soft: #5a7390;
+  --accent: #7eb8e8;
+  --accent-deep: #4f92d0;
+  --accent-soft: #b8d9f2;
+  --accent-glow: #e3f0fb;
+  --gold: #8aa8c4;
+  --gold-soft: #c5d6e6;
+  --shadow: rgba(80, 130, 180, 0.22);
+  --page-edge: #cfe0ef;
+  --spine: #7aa8d0;
+  --bg-1: #dceefb;
+  --bg-2: #eef6fc;
+  --bg-3: #e4eef8;
+  --empty-cell: #e6eef6;
+  --invalid-cell: #e0e8f0;
+  --c1: #c5dff5;
+  --c2: #8fc0ea;
+  --c3: #5a9fd8;
+  --c4: #3a7fb8;
+  --c5: #255f94;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 15% 20%, var(--bg-1), transparent 42%),
+    radial-gradient(ellipse at 85% 80%, var(--bg-3), transparent 40%),
+    linear-gradient(165deg, var(--bg-2), var(--bg-1) 45%, var(--bg-3));
+  background-attachment: fixed;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-soft);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.paper-texture {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.5), transparent 28%),
+    radial-gradient(circle at 88% 72%, rgba(0, 0, 0, 0.02), transparent 35%);
+}
+
+.book-shadow {
+  box-shadow:
+    0 22px 50px var(--shadow),
+    0 6px 16px rgba(0, 0, 0, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.pixel-btn {
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.pixel-btn:hover:not(:disabled) {
+  transform: scale(1.18);
+  filter: brightness(1.05);
+  z-index: 2;
+}
+
+.pixel-btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.page-flip-stage {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.page-flip-sheet {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform: translateZ(0);
+}
+
+.page-flip-gradient {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.07) 16%,
+      transparent 40%,
+      rgba(0, 0, 0, 0.05) 78%,
+      rgba(0, 0, 0, 0.18) 100%
+    );
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.page-back-pattern {
+  background-color: var(--paper-deep);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 11px,
+      rgba(0, 0, 0, 0.025) 11px,
+      rgba(0, 0, 0, 0.025) 12px
+    ),
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.35), transparent 40%);
+}
+
+.page-edge-hint {
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 40%, transparent),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.page-corner-hint {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  background:
+    linear-gradient(225deg, transparent 42%, color-mix(in srgb, var(--accent) 45%, transparent) 100%);
+  border-radius: 0 0 12px 0;
+  clip-path: polygon(35% 100%, 100% 35%, 100% 100%);
+}
+
+.page-flip-stage:hover .page-edge-hint,
+.page-flip-stage:hover .page-corner-hint {
+  opacity: 0.65;
+}
+
+.page-corner-curl {
+  filter: drop-shadow(-2px -2px 6px rgba(0, 0, 0, 0.15));
+}
+
+#root {
+  background: inherit;
+}
