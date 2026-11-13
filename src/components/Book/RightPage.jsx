@@ -39,7 +39,11 @@ export default function RightPage({ tracker, selectedDay }) {
   const Panel = PANELS[tracker?.panel] || RatingPanel
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden p-3 sm:p-4">
+    <div
+      data-right-page
+      data-no-flip
+      className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-3 sm:p-4"
+    >
       <Panel month={month} day={day} />
     </div>
   )

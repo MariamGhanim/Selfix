@@ -10,6 +10,8 @@ import {
   FRUIT_FOODS,
   focusMinutesToLevel,
   OUTING_VIBES,
+  RATING_DAY_TYPES,
+  RATING_MEANINGFUL,
   RATING_VIBES,
   READING_CHOICES,
   READING_PAGE_BOOSTS,
@@ -31,10 +33,14 @@ import {
   Chip,
   ChipGroup,
   ChoiceChips,
+  CompactDailyNotes,
   FieldLabel,
   PanelShell,
+  ReviewHeading,
+  SelectChip,
   SoftInput,
   toggleInList,
+  toggleSingle,
 } from './panelUi'
 import TodoList from './TodoList'
 
@@ -47,32 +53,147 @@ function usePanel(trackerId, month, day) {
   return { data, patch }
 }
 
+const RATING_VIBE_IDS = new Set(RATING_VIBES.map((v) => v.id))
+
 export function RatingPanel({ month, day }) {
   const { data, patch } = usePanel('rating', month, day)
   const [highlight, setHighlight] = useState(data.highlight || '')
+  const [limitHint, setLimitHint] = useState(false)
+  const choices = (data.choices || []).filter((id) => RATING_VIBE_IDS.has(id))
 
   useEffect(() => {
     setHighlight(data.highlight || '')
   }, [month, day, data.highlight])
 
+  useEffect(() => {
+    const raw = data.choices || []
+    const cleaned = raw.filter((id) => RATING_VIBE_IDS.has(id))
+    if (cleaned.length !== raw.length) patch({ choices: cleaned })
+  }, [month, day, data.choices, patch])
+
+  const toggleVibe = (id) => {
+    if (choices.includes(id)) {
+      setLimitHint(false)
+      patch({ choices: choices.filter((x) => x !== id) })
+      return
+    }
+    if (choices.length >= 3) {
+      setLimitHint(true)
+      window.setTimeout(() => setLimitHint(false), 1600)
+      return
+    }
+    setLimitHint(false)
+    patch({ choices: [...choices, id] })
+  }
+
   return (
-    <PanelShell month={month} day={day} title="Mood & vibe" trackerId="rating">
-      <ChipGroup label="Day rating choices">
-        <ChoiceChips
-          options={RATING_VIBES}
-          selected={data.choices}
-          onToggle={(id) => patch({ choices: toggleInList(data.choices, id) })}
-        />
-      </ChipGroup>
-      <FieldLabel>Best moment of the day</FieldLabel>
-      <SoftInput
-        value={highlight}
-        onChange={(e) => setHighlight(e.target.value)}
-        onBlur={() => patch({ highlight: highlight.trim() })}
-        onKeyDown={(e) => e.key === 'Enter' && patch({ highlight: highlight.trim() })}
-        placeholder="Best moment of the day"
-        className="mb-1"
-      />
+    <PanelShell
+      month={month}
+      day={day}
+      title="End-of-Day Review"
+      trackerId="rating"
+      hideNotes
+    >
+      <div
+        data-no-flip
+        className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 overflow-hidden"
+      >
+        <section className="shrink-0">
+          <div className="mb-0.5 flex items-end justify-between gap-2">
+            <ReviewHeading>How would you sum up today?</ReviewHeading>
+            <span
+              className={`text-[9px] font-bold ${
+                choices.length >= 3 ? 'text-[var(--accent-deep)]' : 'text-[var(--ink-soft)]'
+              }`}
+            >
+              {choices.length}/3 vibes
+            </span>
+          </div>
+          <p className="mb-1 text-[9px] text-[var(--ink-soft)]">
+            Pick up to 3 vibe tags — tap again to remove
+          </p>
+          {limitHint && (
+            <p className="mb-1 rounded-xl bg-[#fde8ee] px-2 py-1 text-[9px] font-semibold text-[#b8385c]">
+              You already picked 3. Deselect one first, then choose another.
+            </p>
+          )}
+          <div className="flex flex-wrap gap-1">
+            {RATING_VIBES.map((opt) => (
+              <SelectChip
+                key={opt.id}
+                compact
+                emoji={opt.emoji}
+                label={opt.label}
+                active={choices.includes(opt.id)}
+                onClick={() => toggleVibe(opt.id)}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="shrink-0 rounded-2xl border border-[var(--page-edge)]/60 bg-[var(--accent-glow)]/70 px-2 py-1.5">
+          <ReviewHeading className="mb-1">Quick Day Check-in</ReviewHeading>
+          <div className="space-y-1.5">
+            <div>
+              <ReviewHeading className="mb-0.5 !text-[10px] sm:!text-[11px]">Day Type:</ReviewHeading>
+              <div className="flex flex-wrap gap-1">
+                {RATING_DAY_TYPES.map((opt) => (
+                  <SelectChip
+                    key={opt.id}
+                    compact
+                    emoji={opt.emoji}
+                    label={opt.label}
+                    active={data.dayType === opt.id}
+                    onClick={() => patch({ dayType: toggleSingle(data.dayType, opt.id) })}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <ReviewHeading className="mb-0.5 !text-[10px] sm:!text-[11px]">
+                Did today feel meaningful?
+              </ReviewHeading>
+              <div className="flex flex-wrap gap-1">
+                {RATING_MEANINGFUL.map((opt) => (
+                  <SelectChip
+                    key={opt.id}
+                    compact
+                    emoji={opt.emoji}
+                    label={opt.label}
+                    active={data.meaningful === opt.id}
+                    onClick={() =>
+                      patch({ meaningful: toggleSingle(data.meaningful, opt.id) })
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="shrink-0">
+          <ReviewHeading className="mb-1">Highlight of the Day</ReviewHeading>
+          <SoftInput
+            value={highlight}
+            onChange={(e) => setHighlight(e.target.value)}
+            onBlur={() => patch({ highlight: highlight.trim() })}
+            onKeyDown={(e) => e.key === 'Enter' && patch({ highlight: highlight.trim() })}
+            placeholder="Best moment or small win today…"
+            className="!py-1.5 !text-[11px]"
+          />
+        </section>
+
+        <section className="flex min-h-0 flex-1 flex-col border-t border-[var(--page-edge)]/50 pt-1.5">
+          <CompactDailyNotes
+            month={month}
+            day={day}
+            tall
+            accentLabel
+            label="Daily Journal / Brain Dump"
+            placeholder="Brain dump, feelings, unfinished thoughts…"
+          />
+        </section>
+      </div>
     </PanelShell>
   )
 }

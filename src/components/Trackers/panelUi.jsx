@@ -27,6 +27,43 @@ export function Chip({ active, onClick, emoji, label, colorIndex = 0, title }) {
   )
 }
 
+export function SelectChip({ active, onClick, emoji, label, title, compact = false }) {
+  return (
+    <button
+      type="button"
+      data-no-flip
+      title={title || (active ? `${label} (selected — click to deselect)` : label)}
+      onClick={onClick}
+      aria-pressed={active}
+      className={`relative z-10 inline-flex max-w-full cursor-pointer items-center rounded-full border text-left font-bold leading-tight transition ${
+        compact ? 'gap-0.5 px-2 py-1 text-[9px] sm:text-[10px]' : 'gap-1 px-2.5 py-1.5 text-[10px] sm:text-[11px]'
+      } ${
+        active
+          ? 'scale-[1.02] border-[var(--accent-deep)] bg-[var(--accent-deep)] text-white shadow-md'
+          : 'border-[var(--page-edge)] bg-white/70 text-[var(--ink-soft)] opacity-80 hover:opacity-100 hover:shadow-sm'
+      }`}
+    >
+      {active && <span className="shrink-0 text-[10px] leading-none">✓</span>}
+      {emoji && (
+        <span className={`shrink-0 leading-none ${compact ? 'text-[11px]' : 'text-[12px]'}`}>
+          {emoji}
+        </span>
+      )}
+      <span className="truncate">{label}</span>
+    </button>
+  )
+}
+
+export function ReviewHeading({ children, className = '' }) {
+  return (
+    <p
+      className={`text-[11px] font-bold uppercase tracking-wide text-[var(--accent-deep)] sm:text-xs ${className}`}
+    >
+      {children}
+    </p>
+  )
+}
+
 export function ChipGroup({ label, children }) {
   return (
     <div className="mb-2 shrink-0">
@@ -66,7 +103,15 @@ export function SoftTextarea(props) {
   )
 }
 
-export function PanelShell({ month, day, title, trackerId, onClear, children }) {
+export function PanelShell({
+  month,
+  day,
+  title,
+  trackerId,
+  onClear,
+  hideNotes = false,
+  children,
+}) {
   const { resetPanel } = useJournal()
 
   const clearToday = () => {
@@ -93,15 +138,30 @@ export function PanelShell({ month, day, title, trackerId, onClear, children }) 
           Clear Today
         </button>
       </div>
-      <div className="min-h-0 flex-[3] overflow-y-auto pr-0.5">{children}</div>
-      <div className="mt-1.5 min-h-0 flex-1 border-t border-[var(--page-edge)]/50 pt-1.5">
-        <CompactDailyNotes month={month} day={day} />
+      <div
+        className={`min-h-0 pr-0.5 ${
+          hideNotes ? 'flex flex-1 flex-col overflow-hidden' : 'flex-[3] overflow-y-auto'
+        }`}
+      >
+        {children}
       </div>
+      {!hideNotes && (
+        <div className="mt-1.5 min-h-0 flex-1 border-t border-[var(--page-edge)]/50 pt-1.5">
+          <CompactDailyNotes month={month} day={day} />
+        </div>
+      )}
     </div>
   )
 }
 
-function CompactDailyNotes({ month, day }) {
+export function CompactDailyNotes({
+  month,
+  day,
+  label = 'Daily Notes',
+  placeholder,
+  tall,
+  accentLabel = false,
+}) {
   const { getDailyNote, setDailyNote } = useJournal()
   const saved = getDailyNote(month, day)
   const [text, setText] = useState(saved)
@@ -111,13 +171,14 @@ function CompactDailyNotes({ month, day }) {
   }, [month, day, saved])
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <FieldLabel>Daily Notes</FieldLabel>
+    <div className={`flex min-h-0 flex-col ${tall ? 'flex-1' : 'h-full'}`}>
+      {accentLabel ? <ReviewHeading className="mb-1">{label}</ReviewHeading> : <FieldLabel>{label}</FieldLabel>}
       <SoftTextarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         onBlur={() => setDailyNote(month, day, text)}
-        placeholder="Quick note for today..."
+        placeholder={placeholder || 'Quick note for today...'}
+        className={tall ? 'min-h-[5.5rem] flex-1' : ''}
       />
     </div>
   )

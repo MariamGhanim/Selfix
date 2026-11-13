@@ -144,20 +144,28 @@ export default function PageFlipStage({
 
   const onPointerDown = (e) => {
     if (busy.current || flipping) return
-    if (e.target.closest?.('button, input, textarea, a, label, [data-no-flip]')) return
+    if (
+      e.target.closest?.(
+        'button, input, textarea, a, label, select, [data-no-flip], [role="dialog"]',
+      )
+    ) {
+      return
+    }
 
     const rect = stageRef.current?.getBoundingClientRect()
     if (!rect) return
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
-    const edgeX = Math.max(36, rect.width * 0.13)
-    const corner = Math.max(56, rect.width * 0.16)
+    const mid = rect.width / 2
+    const edgeX = Math.max(28, rect.width * 0.08)
+    const corner = Math.max(48, rect.width * 0.12)
     const nearRight = x > rect.width - edgeX
     const nearLeft = x < edgeX
     const bottomRight = x > rect.width - corner && y > rect.height - corner
     const bottomLeft = x < corner && y > rect.height - corner
 
     if (!nearRight && !nearLeft && !bottomRight && !bottomLeft) return
+    if (x > mid && e.target.closest?.('[data-right-page]')) return
 
     const direction = nearRight || bottomRight ? 1 : -1
     e.preventDefault()

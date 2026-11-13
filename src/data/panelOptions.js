@@ -1,19 +1,28 @@
 export const RATING_VIBES = [
-  { id: 'productive', emoji: '🚀', label: 'Highly Productive Day' },
-  { id: 'peaceful', emoji: '✨', label: 'Peaceful & Calm' },
-  { id: 'deep-work', emoji: '💻', label: 'Deep Work Mode' },
-  { id: 'cozy-lazy', emoji: '🛋️', label: 'Cozy & Lazy Day' },
-  { id: 'coffee-vibe', emoji: '☕', label: 'Amazing Coffee Vibe' },
-  { id: 'music', emoji: '🎧', label: 'Non-stop Music Session' },
+  { id: 'productive', emoji: '🚀', label: 'Highly Productive' },
+  { id: 'cozy-lazy', emoji: '🛋️', label: 'Cozy & Lazy' },
+  { id: 'peaceful', emoji: '🌿', label: 'Peaceful' },
+  { id: 'grateful', emoji: '🥺', label: 'Grateful' },
   { id: 'creative', emoji: '🎨', label: 'Creative Flow' },
-  { id: 'shopping', emoji: '🛍️', label: 'Retail Therapy / Shopping' },
-  { id: 'cleaning', emoji: '🧹', label: 'Deep Cleaning & Tidying' },
-  { id: 'reading-learn', emoji: '📚', label: 'Reading & Learning' },
-  { id: 'cooking', emoji: '🍳', label: 'Cooking / Baking Time' },
-  { id: 'stressed', emoji: '🔥', label: 'Stressed / Overwhelmed' },
-  { id: 'grateful', emoji: '🥺', label: 'Grateful & Blessed' },
-  { id: 'late-night', emoji: '🌙', label: 'Late Night Chill' },
-  { id: 'busy', emoji: '🏃‍♀️', label: 'Fast-paced / Busy Day' },
+  { id: 'stressed', emoji: '🔥', label: 'Stressed' },
+  { id: 'memorable', emoji: '💫', label: 'Memorable' },
+  { id: 'shopping', emoji: '🛍️', label: 'Retail Therapy' },
+  { id: 'social', emoji: '💬', label: 'Social & Connected' },
+  { id: 'restful', emoji: '😴', label: 'Restful Reset' },
+  { id: 'busy', emoji: '🏃‍♀️', label: 'Fast-Paced' },
+  { id: 'inspired', emoji: '✨', label: 'Inspired' },
+]
+
+export const RATING_DAY_TYPES = [
+  { id: 'smooth', emoji: '☀️', label: 'Smooth Sailing' },
+  { id: 'rollercoaster', emoji: '🎢', label: 'Rollercoaster' },
+  { id: 'tough', emoji: '🌧️', label: 'Tough Day' },
+]
+
+export const RATING_MEANINGFUL = [
+  { id: 'yes', emoji: '✨', label: 'Yes, definitely' },
+  { id: 'normal', emoji: '➖', label: 'Just a normal day' },
+  { id: 'reset', emoji: '💭', label: 'Need a reset' },
 ]
 
 export const ENERGY_DRIVERS = [
@@ -292,7 +301,7 @@ export const OUTING_VIBES = [
 ]
 
 export const PANEL_DEFAULTS = {
-  rating: { choices: [], highlight: '' },
+  rating: { choices: [], highlight: '', dayType: null, meaningful: null },
   energy: { choices: [] },
   shower: { choices: [] },
   fruits: { choices: [], servings: 0 },
