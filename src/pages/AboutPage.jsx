@@ -146,7 +146,7 @@ export default function AboutPage() {
     document.documentElement.setAttribute('data-theme', 'pinky')
     const title = 'About Selfix Life · Year in Pixels Journal — Soft Pastel Habit & Mood Tracking'
     const description =
-      'Selfix Life is a soft pastel space for your days, thoughts, and memories. Learn how Year in Pixels helps you track sleep, mood, habits, and daily notes with calm visual clarity.'
+      'Selfix Life is a free soft pastel Year in Pixels journal for sleep, mood, habits, and daily notes — with private cloud sync and on-device encrypted notes.'
     document.title = title
 
     const ensureMeta = (attr, key, content) => {

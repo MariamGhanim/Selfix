@@ -21,11 +21,11 @@
     <title>Selfix Life · Year in Pixels Journal — Track Sleep, Mood, Habits &amp; Daily Notes</title>
     <meta
       name="description"
-      content="A soft pastel space for your days, thoughts, and memories. Track your sleep, mood, habits, and daily journal notes in a visual Year in Pixels grid."
+      content="Selfix Life is a free pastel Year in Pixels journal for sleep, mood, habits, and daily notes. Sign in once for private cloud sync — encrypted notes, soft themes, and a calm open-book layout."
     />
     <meta
       name="keywords"
-      content="Selfix Life, year in pixels, habit tracker, mood tracker, sleep tracker, daily journal, pastel journal, digital diary"
+      content="Selfix Life, year in pixels, habit tracker, mood tracker, sleep tracker, daily journal, pastel journal, free journal app, private diary"
     />
     <meta name="author" content="Selfix Life" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
@@ -41,7 +41,7 @@
     />
     <meta
       property="og:description"
-      content="A soft pastel space for your days, thoughts, and memories. Track your sleep, mood, habits, and daily journal notes in a visual Year in Pixels grid."
+      content="A free soft pastel journal for your days — Year in Pixels, mood, sleep, habits, and private daily notes with calm cloud sync."
     />
     <meta property="og:image" content="https://www.myselfix.me/icons/icon-512.png" />
     <meta property="og:image:alt" content="Selfix Life — Year in Pixels Journal" />
@@ -55,7 +55,7 @@
     />
     <meta
       name="twitter:description"
-      content="A soft pastel space for your days, thoughts, and memories. Track your sleep, mood, habits, and daily journal notes in a visual Year in Pixels grid."
+      content="A free soft pastel journal for your days — Year in Pixels, mood, sleep, habits, and private daily notes with calm cloud sync."
     />
     <meta name="twitter:image" content="https://www.myselfix.me/icons/icon-512.png" />
 
@@ -69,41 +69,202 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebApplication",
+        "@type": "SoftwareApplication",
         "name": "Selfix Life",
         "url": "https://www.myselfix.me/",
         "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web",
-        "description": "A soft pastel Year in Pixels journal for tracking sleep, mood, habits, and daily notes.",
+        "applicationSubCategory": "Journaling / Habit Tracking",
+        "operatingSystem": "Web Browser",
+        "browserRequirements": "Requires JavaScript and a modern browser",
+        "description": "A soft pastel Year in Pixels journal for tracking sleep, mood, habits, and daily notes. Free for personal journaling with private cloud sync and encrypted notes.",
+        "featureList": [
+          "Year in Pixels visual grids",
+          "Mood and energy tracking",
+          "Sleep tracking",
+          "Habit tracking",
+          "Daily notes with client-side encryption",
+          "Cloud sync across devices",
+          "Soft Rose and Midnight Soft themes",
+          "Insights logbook reports"
+        ],
         "offers": {
           "@type": "Offer",
           "price": "0",
-          "priceCurrency": "USD"
+          "priceCurrency": "USD",
+          "description": "Free for personal journaling"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Selfix Life",
+          "url": "https://www.myselfix.me/"
         }
+      }
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is Selfix Life free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Selfix Life is currently free to use for personal journaling. Create an account to open your book. If pricing ever changes, we will communicate clearly beforehand."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How is my journal data stored?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "After you sign in and verify your email, your pixels, panels, notes, and settings sync to Firebase Cloud Firestore under your account. Your browser may also use LocalStorage for temporary client-side state. Private notes are AES-encrypted on your device before they are written to the cloud."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use Selfix Life on more than one device?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Sign in with the same verified account on another device and your cloud-synced journal continues with you."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I save or print insights from my journal?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The Insights Logbook can generate text and printable reports from your real logged entries so you can keep a soft backup of patterns and reflections."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What can I track in Selfix Life?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Year in Pixels grids for mood, sleep, habits, hydration, focus, reading, workouts, and more — plus per-day notes beside each tracker."
+            }
+          }
+        ]
       }
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Crawlable static fallback; React replaces this on mount. -->
+      <main class="seo-landing" aria-label="Selfix Life overview">
+        <header class="seo-landing__hero">
+          <p class="seo-landing__brand">Selfix Life</p>
+          <p class="seo-landing__badge">Free for personal journaling · Soft account to sync</p>
+          <h1>A soft space for your days, thoughts, and memories</h1>
+          <p class="seo-landing__lead">
+            Not a spreadsheet — a pastel Year in Pixels journal for sleep, mood, habits, and daily notes.
+            Create a free account, verify your email, and paint your year one gentle day at a time.
+          </p>
+          <p class="seo-landing__cta-hint">
+            <a href="https://www.myselfix.me/">Open Selfix Life</a>
+            ·
+            <a href="/about">About</a>
+            ·
+            <a href="/contact">Contact</a>
+          </p>
+        </header>
+
+        <section class="seo-landing__section" aria-labelledby="seo-pricing">
+          <h2 id="seo-pricing">Value &amp; pricing</h2>
+          <p>
+            <strong>Selfix Life is free</strong> for personal journaling today. There is no paid wall to open
+            your book — just a calm sign-in so your journal can stay private and travel with you.
+            Features may evolve; if pricing ever changes, we will say so clearly first.
+          </p>
+        </section>
+
+        <section class="seo-landing__section" aria-labelledby="seo-privacy">
+          <h2 id="seo-privacy">Data privacy &amp; storage</h2>
+          <p>
+            After sign-in and email verification, your pixels, panels, notes, and settings sync to
+            <strong>Firebase Cloud Firestore</strong> under your account. Your browser may also keep
+            temporary state in <strong>LocalStorage</strong> on this device. Private notes are
+            <strong>AES-encrypted on your device</strong> before they are written to the cloud.
+          </p>
+          <p>
+            The Insights Logbook can save or print reports from your real entries — a soft way to keep
+            patterns and reflections beyond the screen. Read more in our
+            <a href="/privacy">Privacy Policy</a>.
+          </p>
+        </section>
+
+        <section class="seo-landing__section" aria-labelledby="seo-features">
+          <h2 id="seo-features">Core features</h2>
+          <ul>
+            <li>
+              <strong>Year in Pixels</strong> — paint each day as a soft pastel square and watch your year
+              become a readable mosaic.
+            </li>
+            <li>
+              <strong>Mood tracking</strong> — gentle color levels and optional chips for how the day felt.
+            </li>
+            <li>
+              <strong>Sleep tracking</strong> — rest and overnight patterns with calm visual clarity.
+            </li>
+            <li>
+              <strong>Habit tracking</strong> — hydration, focus, workouts, reading, and other daily rhythms.
+            </li>
+            <li>
+              <strong>Daily notes</strong> — private per-tracker reflections beside each day.
+            </li>
+          </ul>
+        </section>
+
+        <section class="seo-landing__section" aria-labelledby="seo-benefits">
+          <h2 id="seo-benefits">Why it feels different</h2>
+          <p>
+            Selfix Life is built for reflection without pressure — soft rose mornings, midnight evenings,
+            and an open-book layout that remembers you across devices. Select a day, color it, reflect —
+            no cold dashboards required.
+          </p>
+        </section>
+
+        <section class="seo-landing__section" aria-labelledby="seo-faq">
+          <h2 id="seo-faq">FAQ</h2>
+          <h3>Is Selfix Life free?</h3>
+          <p>
+            Yes. It is currently free for personal journaling. Create an account to open your book.
+          </p>
+          <h3>How is my data stored?</h3>
+          <p>
+            Cloud sync to Firestore after verified sign-in, LocalStorage for temporary browser state,
+            and on-device AES encryption for private notes before cloud write.
+          </p>
+          <h3>Can I continue on another device?</h3>
+          <p>Yes — sign in with the same verified account and your synced journal follows you.</p>
+          <h3>Can I keep a report of my insights?</h3>
+          <p>
+            Yes. Insights reports can be saved as text or printed as PDF from your logged entries.
+          </p>
+        </section>
+
+        <footer class="seo-landing__footer">
+          <p>
+            <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a> ·
+            <a href="/about">About</a> · <a href="/contact">Contact</a>
+          </p>
+        </footer>
+      </main>
+    </div>
 
     <noscript>
-      <main style="max-width: 42rem; margin: 2rem auto; padding: 0 1.25rem; font-family: system-ui, sans-serif; line-height: 1.6; color: #5a4550">
+      <main class="seo-landing" style="max-width: 42rem; margin: 2rem auto; padding: 0 1.25rem">
         <h1>Selfix Life · Year in Pixels Journal</h1>
+        <p><strong>Free for personal journaling.</strong> Enable JavaScript to open your soft pastel journal.</p>
         <p>
-          Selfix Life is a soft pastel space for your days, thoughts, and memories. It is a visual Year in
-          Pixels journal — not a cold spreadsheet — for gently tracking how life feels over a year.
+          Cloud sync via Firebase after sign-in · LocalStorage for temporary state · AES-encrypted notes ·
+          Year in Pixels, mood, sleep, habits, and daily notes.
         </p>
-        <h2>Core features</h2>
-        <ul>
-          <li><strong>Year in Pixels</strong> — paint each day as a soft pastel square and watch your year become a readable mosaic.</li>
-          <li><strong>Sleep tracking</strong> — log rest and overnight patterns with calm, visual clarity.</li>
-          <li><strong>Mood tracking</strong> — note how days felt with gentle color levels and optional chips.</li>
-          <li><strong>Habit tracking</strong> — follow hydration, focus, workouts, reading, and other daily rhythms.</li>
-          <li><strong>Daily notes</strong> — keep private per-day reflections beside each tracker.</li>
-        </ul>
         <p>
-          Learn more on the <a href="/about">About</a> page, or visit
-          <a href="https://www.myselfix.me/">myselfix.me</a> with JavaScript enabled to open your journal.
+          <a href="/about">About</a> · <a href="/privacy">Privacy</a> ·
+          <a href="https://www.myselfix.me/">myselfix.me</a>
         </p>
       </main>
     </noscript>

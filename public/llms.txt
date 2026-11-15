@@ -1,6 +1,6 @@
 ﻿# Selfix Life
 
-> Selfix Life is a cozy Year in Pixels journal at https://www.myselfix.me — a soft pastel web app for tracking sleep, mood, habits, and daily notes without feeling like a spreadsheet.
+> Selfix Life is a free cozy Year in Pixels journal at https://www.myselfix.me — a soft pastel web app for tracking sleep, mood, habits, and daily notes without feeling like a spreadsheet. Sign-in enables private Firebase cloud sync; notes are AES-encrypted on-device before cloud save; LocalStorage holds temporary browser state only.
 
 Selfix Life wraps the classic Year in Pixels method in an open-book experience: binder tabs, gentle page flips, pastel color levels, mini-quizzes, and private notes. The product philosophy is slowing down and painting honest days — not optimizing a streak.
 

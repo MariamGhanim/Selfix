@@ -162,6 +162,28 @@ function AuthBrandPanel() {
           Paint your year in gentle pixels. Keep little notes beside each habit. Return to a journal
           that feels calm, private, and yours.
         </motion.p>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-4 flex flex-wrap gap-2"
+        >
+          <span className="rounded-full bg-[var(--surface)]/80 px-3 py-1 font-display text-[11px] font-semibold text-[var(--accent-deep)] shadow-sm ring-1 ring-[var(--page-edge)]/55">
+            Free for personal journaling
+          </span>
+          <span className="rounded-full bg-[var(--surface)]/80 px-3 py-1 font-display text-[11px] font-semibold text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/55">
+            Private cloud sync
+          </span>
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.45, delay: 0.3 }}
+          className="mt-3 max-w-sm text-[11px] leading-relaxed text-[var(--ink-soft)]/90"
+        >
+          Notes are encrypted on your device before cloud save. LocalStorage only keeps temporary
+          browser state.
+        </motion.p>
       </div>
 
       <motion.div

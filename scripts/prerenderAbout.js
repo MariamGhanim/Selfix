@@ -4,7 +4,7 @@ import path from 'node:path'
 const SITE = 'https://www.myselfix.me'
 const ABOUT_TITLE = 'About Selfix Life · Year in Pixels Journal — Soft Pastel Habit & Mood Tracking'
 const ABOUT_DESCRIPTION =
-  'Selfix Life is a soft pastel space for your days, thoughts, and memories. Learn how Year in Pixels helps you track sleep, mood, habits, and daily notes with calm visual clarity.'
+  'Selfix Life is a free soft pastel Year in Pixels journal for sleep, mood, habits, and daily notes — with private cloud sync and on-device encrypted notes.'
 
 const ABOUT_BODY = `
 <article class="seo-prerender" style="max-width:42rem;margin:2rem auto;padding:0 1.25rem;font-family:system-ui,sans-serif;line-height:1.65;color:#5a4550">

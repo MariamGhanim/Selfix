@@ -5,7 +5,11 @@ import SiteLayout, { Section, SoftCard } from '../components/Legal/SiteLayout'
 const FAQ = [
   {
     q: 'How is my journal data saved?',
-    a: 'After you sign in and verify your email, Selfix Life syncs your pixels, panels, notes, and settings to Firebase (Cloud Firestore) under your user account. Your browser may also use LocalStorage for temporary client-side state. Sign in on another device with the same account to continue your book.',
+    a: 'After you sign in and verify your email, Selfix Life syncs your pixels, panels, notes, and settings to Firebase (Cloud Firestore) under your user account. Private notes are AES-encrypted on your device before cloud write. Your browser may also use LocalStorage for temporary client-side state. Sign in on another device with the same account to continue your book.',
+  },
+  {
+    q: 'Can I save or print insights?',
+    a: 'Yes. The Insights Logbook can export a text report or open a printable page from your real logged entries — a soft backup of patterns and reflections.',
   },
   {
     q: 'How do I switch themes?',
@@ -13,7 +17,7 @@ const FAQ = [
   },
   {
     q: 'Is Selfix Life free?',
-    a: 'Yes. Selfix Life is currently free to use for personal journaling. Features may evolve over time; if pricing ever changes, we will communicate clearly beforehand.',
+    a: 'Yes. Selfix Life is currently free to use for personal journaling. Create an account to open your book. Features may evolve over time; if pricing ever changes, we will communicate clearly beforehand.',
   },
   {
     q: 'Why do I need to verify my email?',

@@ -78,6 +78,117 @@
   box-sizing: border-box;
 }
 
+/* Static SEO landing (shown before JS; replaced when React mounts) */
+.seo-landing {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 3rem;
+  font-family: var(--font-body, 'Nunito', system-ui, sans-serif);
+  color: var(--ink, #5a4550);
+  line-height: 1.65;
+}
+
+.seo-landing__hero {
+  margin-bottom: 2rem;
+  padding: 1.35rem 1.25rem 1.5rem;
+  border-radius: 1.75rem;
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--surface, #fffbfa) 92%, white),
+      color-mix(in srgb, var(--accent-glow, #faf0f3) 80%, var(--paper, #fff9f6))
+    );
+  box-shadow: var(--panel-shadow, 0 12px 32px rgba(160, 110, 125, 0.12));
+  border: 1px solid color-mix(in srgb, var(--page-edge, #ead6dc) 70%, transparent);
+}
+
+.seo-landing__brand {
+  margin: 0;
+  font-family: var(--font-display, 'Fredoka', system-ui, sans-serif);
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--accent-deep, #b87a8c);
+}
+
+.seo-landing__badge {
+  display: inline-block;
+  margin: 0.75rem 0 0;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-family: var(--font-display, 'Fredoka', system-ui, sans-serif);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent-deep, #b87a8c);
+  background: color-mix(in srgb, var(--accent-glow, #faf0f3) 90%, white);
+  box-shadow: 0 1px 0 color-mix(in srgb, white 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--page-edge, #ead6dc) 65%, transparent);
+}
+
+.seo-landing h1 {
+  margin: 0.85rem 0 0;
+  font-family: var(--font-display, 'Fredoka', system-ui, sans-serif);
+  font-size: clamp(1.35rem, 4vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--ink, #5a4550);
+}
+
+.seo-landing__lead,
+.seo-landing__cta-hint {
+  margin: 0.85rem 0 0;
+  color: var(--ink-soft, #8a707a);
+  font-size: 0.95rem;
+}
+
+.seo-landing__section {
+  margin-top: 1.75rem;
+}
+
+.seo-landing h2 {
+  margin: 0 0 0.55rem;
+  font-family: var(--font-display, 'Fredoka', system-ui, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--ink, #5a4550);
+}
+
+.seo-landing h3 {
+  margin: 1rem 0 0.35rem;
+  font-family: var(--font-display, 'Fredoka', system-ui, sans-serif);
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--accent-deep, #b87a8c);
+}
+
+.seo-landing p,
+.seo-landing li {
+  margin: 0.4rem 0 0;
+  font-size: 0.92rem;
+  color: var(--ink, #5a4550);
+}
+
+.seo-landing ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.seo-landing a {
+  color: var(--accent-deep, #b87a8c);
+  font-weight: 600;
+  text-underline-offset: 2px;
+}
+
+.seo-landing__footer {
+  margin-top: 2.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--page-edge, #ead6dc) 70%, transparent);
+  font-size: 0.8rem;
+  color: var(--ink-soft, #8a707a);
+}
+
 html,
 body,
 #root {
