@@ -599,3 +599,117 @@ h3,
 #root {
   background: inherit;
 }
+
+.auth-split-shell {
+  background:
+    radial-gradient(ellipse at 12% 10%, var(--glow-spot), transparent 46%),
+    radial-gradient(ellipse at 88% 18%, var(--glow-spot-2), transparent 42%),
+    linear-gradient(165deg, var(--bg-2), var(--bg-1) 48%, var(--bg-3));
+}
+
+.auth-split-frame {
+  min-height: min(100%, 920px);
+}
+
+.auth-brand-panel {
+  height: 100%;
+  background:
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--accent-glow) 88%, white),
+      color-mix(in srgb, var(--paper-deep) 55%, var(--paper)),
+      color-mix(in srgb, var(--gold-soft) 35%, var(--paper))
+    );
+}
+
+[data-theme="midnight"] .auth-brand-panel {
+  background:
+    linear-gradient(
+      155deg,
+      color-mix(in srgb, var(--accent-glow) 90%, #1a1630),
+      color-mix(in srgb, var(--paper-deep) 80%, var(--paper)),
+      color-mix(in srgb, var(--accent-soft) 40%, var(--paper))
+    );
+}
+
+.auth-brand-glow {
+  background:
+    radial-gradient(ellipse at 20% 15%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 50%),
+    radial-gradient(ellipse at 85% 80%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 45%);
+  animation: auth-glow-breathe 8s ease-in-out infinite;
+}
+
+.auth-brand-orb {
+  filter: blur(8px);
+  opacity: 0.55;
+  animation: auth-orb-drift 11s ease-in-out infinite;
+}
+
+.auth-brand-orb-a {
+  background: radial-gradient(circle, var(--orb-a) 0%, transparent 70%);
+}
+
+.auth-brand-orb-b {
+  background: radial-gradient(circle, var(--orb-b) 0%, transparent 70%);
+  animation-delay: -4s;
+  animation-duration: 13s;
+}
+
+.auth-float {
+  animation: auth-float 6.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.auth-float-slow {
+  animation: auth-float 8s ease-in-out infinite;
+}
+
+.auth-float-delayed {
+  animation: auth-float 7s ease-in-out infinite;
+  animation-delay: -2.5s;
+}
+
+.auth-form-card {
+  backdrop-filter: blur(12px);
+}
+
+@keyframes auth-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes auth-orb-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(12px, -10px) scale(1.06);
+  }
+}
+
+@keyframes auth-glow-breathe {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1023px) {
+  .auth-split-frame {
+    max-height: none;
+    overflow-y: auto;
+  }
+
+  .auth-brand-panel {
+    min-height: auto;
+  }
+}

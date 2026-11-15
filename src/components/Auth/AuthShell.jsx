@@ -1,26 +1,197 @@
+import { motion } from 'framer-motion'
+
+function CozyJournalArt() {
+  return (
+    <svg
+      viewBox="0 0 420 360"
+      className="auth-brand-art mx-auto h-auto w-full max-w-[22rem]"
+      aria-hidden
+    >
+      <defs>
+        <linearGradient id="authBookCover" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="var(--accent-soft)" />
+          <stop offset="100%" stopColor="var(--accent)" />
+        </linearGradient>
+        <linearGradient id="authPageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="var(--surface-strong)" />
+          <stop offset="100%" stopColor="var(--paper)" />
+        </linearGradient>
+      </defs>
+
+      <ellipse cx="210" cy="318" rx="118" ry="18" fill="var(--accent)" opacity="0.18" />
+
+      <g className="auth-float-slow">
+        <rect
+          x="118"
+          y="78"
+          width="168"
+          height="214"
+          rx="18"
+          fill="url(#authBookCover)"
+          stroke="var(--page-edge)"
+          strokeWidth="2"
+        />
+        <rect x="132" y="78" width="10" height="214" fill="var(--spine)" opacity="0.55" />
+        <rect
+          x="148"
+          y="92"
+          width="122"
+          height="186"
+          rx="10"
+          fill="url(#authPageGrad)"
+          stroke="var(--page-edge)"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M162 128h94M162 152h78M162 176h88M162 200h64"
+          stroke="var(--accent)"
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          opacity="0.45"
+        />
+        <circle cx="248" cy="236" r="10" fill="var(--gold)" opacity="0.7" />
+        <circle cx="228" cy="248" r="7" fill="var(--accent-deep)" opacity="0.55" />
+      </g>
+
+      <g className="auth-float">
+        <rect
+          x="286"
+          y="118"
+          width="54"
+          height="54"
+          rx="14"
+          fill="var(--gold-soft)"
+          stroke="var(--gold)"
+          strokeWidth="1.5"
+          opacity="0.9"
+        />
+        <path
+          d="M300 145h26M300 155h18"
+          stroke="var(--gold)"
+          strokeWidth="3"
+          strokeLinecap="round"
+          opacity="0.7"
+        />
+      </g>
+
+      <g className="auth-float-delayed">
+        <circle
+          cx="96"
+          cy="168"
+          r="28"
+          fill="var(--accent-glow)"
+          stroke="var(--accent)"
+          strokeWidth="1.5"
+        />
+        <path
+          d="M86 168c4-10 16-10 20 0c-4 10-16 10-20 0z"
+          fill="var(--accent)"
+          opacity="0.55"
+        />
+      </g>
+    </svg>
+  )
+}
+
+function AuthBrandPanel() {
+  return (
+    <section className="auth-brand-panel relative flex min-h-[220px] flex-col justify-between overflow-hidden px-7 py-8 sm:px-10 sm:py-10 lg:min-h-0 lg:px-12 lg:py-14">
+      <div className="auth-brand-glow pointer-events-none absolute inset-0" aria-hidden />
+      <div className="auth-brand-orb auth-brand-orb-a pointer-events-none absolute -left-10 top-8 h-40 w-40 rounded-full" />
+      <div className="auth-brand-orb auth-brand-orb-b pointer-events-none absolute -right-8 bottom-16 h-48 w-48 rounded-full" />
+
+      <div className="relative z-10">
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--accent-deep)]/80"
+        >
+          Selfix
+        </motion.p>
+        <motion.h2
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-3 max-w-md font-display text-[1.85rem] font-semibold leading-tight tracking-tight text-[var(--ink)] sm:text-[2.15rem]"
+        >
+          A soft space for your day, thoughts, and habits
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-4 max-w-sm font-display text-[14px] leading-relaxed text-[var(--ink-soft)]"
+        >
+          Paint your year in gentle pixels. Keep little notes beside each habit. Return to a journal
+          that feels calm, private, and yours.
+        </motion.p>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 mt-6 hidden sm:block lg:mt-0"
+      >
+        <CozyJournalArt />
+      </motion.div>
+
+      <motion.ul
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.35 }}
+        className="relative z-10 mt-6 flex flex-wrap gap-2 lg:mt-8"
+      >
+        {['Year in pixels', 'Private notes', 'Soft insights'].map((item) => (
+          <li
+            key={item}
+            className="rounded-full bg-[var(--surface)]/70 px-3 py-1.5 font-display text-[11px] font-semibold text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 backdrop-blur-sm"
+          >
+            {item}
+          </li>
+        ))}
+      </motion.ul>
+    </section>
+  )
+}
+
 export default function AuthShell({ title, subtitle, children, footer }) {
   return (
-    <div className="flex h-screen w-screen items-center justify-center overflow-hidden px-4 py-6">
-      <div className="book-shadow paper-texture relative w-full max-w-md overflow-hidden rounded-[28px] border border-[var(--page-edge)]">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-70"
-          style={{
-            background:
-              'radial-gradient(ellipse at 20% 0%, var(--accent-glow), transparent 55%), radial-gradient(ellipse at 90% 100%, var(--paper-deep), transparent 50%)',
-          }}
-        />
-        <div className="relative px-6 py-7 sm:px-8 sm:py-8">
-          <div className="mb-6 text-center">
-            <p className="font-display text-3xl font-semibold tracking-tight text-[var(--accent-deep)]">
-              Selfix
-            </p>
-            <h1 className="mt-2 font-display text-xl font-semibold text-[var(--ink)]">{title}</h1>
-            {subtitle && (
-              <p className="mt-1 text-sm text-[var(--ink-soft)]">{subtitle}</p>
-            )}
-          </div>
-          {children}
-          {footer && <div className="mt-5 text-center text-sm text-[var(--ink-soft)]">{footer}</div>}
+    <div className="auth-split-shell flex h-screen w-screen items-center justify-center overflow-hidden p-3 sm:p-5 lg:p-7">
+      <div className="auth-split-frame book-shadow paper-texture relative grid h-full max-h-[920px] w-full max-w-6xl overflow-hidden rounded-[28px] border border-[var(--page-edge)] lg:grid-cols-12 lg:rounded-[32px]">
+        <div className="min-h-0 lg:col-span-5">
+          <AuthBrandPanel />
+        </div>
+
+        <div className="relative flex min-h-0 items-center justify-center overflow-y-auto border-t border-[var(--page-edge)]/60 bg-[var(--surface)]/55 px-4 py-6 backdrop-blur-md sm:px-8 sm:py-8 lg:col-span-7 lg:border-l lg:border-t-0">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-60"
+            style={{
+              background:
+                'radial-gradient(ellipse at 80% 0%, var(--accent-glow), transparent 55%), radial-gradient(ellipse at 10% 100%, var(--paper-deep), transparent 50%)',
+            }}
+          />
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="auth-form-card relative w-full max-w-md rounded-[1.6rem] border border-[var(--page-edge)]/70 bg-[var(--surface)] px-5 py-6 shadow-[var(--panel-shadow)] sm:px-7 sm:py-7"
+          >
+            <div className="mb-6 text-center">
+              <p className="font-display text-2xl font-semibold tracking-tight text-[var(--accent-deep)] sm:text-3xl">
+                Selfix
+              </p>
+              <h1 className="mt-2 font-display text-xl font-semibold text-[var(--ink)]">{title}</h1>
+              {subtitle ? (
+                <p className="mt-1 text-sm leading-relaxed text-[var(--ink-soft)]">{subtitle}</p>
+              ) : null}
+            </div>
+            {children}
+            {footer ? (
+              <div className="mt-5 text-center text-sm text-[var(--ink-soft)]">{footer}</div>
+            ) : null}
+          </motion.div>
         </div>
       </div>
     </div>
@@ -80,7 +251,10 @@ export function AuthLinkButton({ children, onClick }) {
 }
 
 export function AuthAlert({ tone = 'error', children }) {
-  const bg = tone === 'success' ? 'bg-[#e8f5e9] text-[#2e7d4f]' : 'bg-[#fde8ee] text-[#b8385c]'
+  const bg =
+    tone === 'success'
+      ? 'bg-[#e8f5e9] text-[#2e7d4f]'
+      : 'bg-[#fde8ee] text-[#b8385c]'
   return (
     <div className={`mb-3 rounded-2xl px-3 py-2 text-xs font-semibold ${bg}`}>{children}</div>
   )

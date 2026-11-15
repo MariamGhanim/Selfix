@@ -54,7 +54,7 @@ function ThemedApp() {
   }
 
   if (!ready || syncing) {
-    return <LoadingScreen label="Syncing your journal from Firebase…" />
+    return <LoadingScreen label="Loading…" />
   }
 
   return (

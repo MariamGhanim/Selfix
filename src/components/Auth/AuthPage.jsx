@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
 import { validatePassword, passwordsMatch } from '../../lib/password'
@@ -12,11 +13,11 @@ import AuthShell, {
 const MODES = {
   login: {
     title: 'Welcome back',
-    subtitle: 'Sign in to open your Selfix journal.',
+    subtitle: 'Sign in to open your journal.',
   },
   signup: {
     title: 'Create your journal',
-    subtitle: 'Start tracking your year in soft pastel pixels.',
+    subtitle: 'Begin a soft year of habits and notes.',
   },
   forgot: {
     title: 'Reset password',
@@ -180,6 +181,25 @@ export default function AuthPage() {
             {mode === 'signup' && 'Create account'}
             {mode === 'forgot' && 'Send reset link'}
           </AuthButton>
+
+          {(mode === 'login' || mode === 'signup') && (
+            <p className="mt-3 text-center text-[10px] leading-relaxed tracking-wide text-[var(--ink-soft)]/80">
+              By continuing, you agree to our{' '}
+              <Link
+                to="/terms"
+                className="font-semibold text-[var(--ink-soft)] underline-offset-2 transition hover:text-[var(--accent-deep)] hover:underline"
+              >
+                Terms
+              </Link>
+              {' & '}
+              <Link
+                to="/privacy"
+                className="font-semibold text-[var(--ink-soft)] underline-offset-2 transition hover:text-[var(--accent-deep)] hover:underline"
+              >
+                Privacy
+              </Link>
+            </p>
+          )}
 
           {mode === 'signup' && (
             <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--ink-soft)]">
