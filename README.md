@@ -1,16 +1,16 @@
 # Selfix
 
-### a cozy year-in-pixels journal
+### a soft space for your day
 
 Paint your days in soft pastel pixels.  
-Track mood, sleep, focus, water, workouts, and little life moments — all inside a sweet open-book diary that feels like a keepsake, not a spreadsheet.
+Track sleep, prayer, water, focus, workouts, and little life moments — all inside a cozy open-book journal that feels like a keepsake, not a spreadsheet.
 
 ---
 
 ## What is Selfix?
 
 **Selfix** is a gentle habit & mood journal.  
-Each tracker is a page in your book. Tap chips, log notes, flip pages, and watch your year bloom into a colorful pixel mosaic — saved securely in the cloud with your account.
+Each tracker is a page in your book. Tap chips, leave private notes, flip pages, and watch your year bloom into a colorful pixel mosaic — saved securely in the cloud with your account.
 
 ---
 
@@ -19,11 +19,15 @@ Each tracker is a page in your book. Tap chips, log notes, flip pages, and watch
 | | |
 | :--- | :--- |
 | Open-book UI | Soft page flips, binder tabs, blush pastel themes |
-| Rich daily logs | Mood, energy, sleep, focus, fruits, water, gym & more |
+| Rich daily logs | Sleep, Salah, water, teeth, focus, gym, fruits, energy, day rating & more |
+| Per-tracker notes | Notes stay scoped to each habit and day — no bleed between pages |
+| Insights Logbook | Filter one tracker at a time; see real entries, your notes, and one clear chart |
 | Focus timer | Pomodoro-style sessions that auto-log deep work |
+| Custom pages | Show/hide, reorder, and create custom grid trackers in Settings |
+| Soft Rose / Night | Two cozy themes with a split-screen auth welcome |
 | Ambient music | Tiny cozy YouTube player while you journal |
 | Cloud sync | Firebase Auth + Firestore — your journal follows you |
-| Secure account | Email verification, password reset, settings & logout |
+| Secure account | Email verification, password reset, Terms & Privacy links |
 
 ---
 
@@ -64,17 +68,27 @@ VITE_FIREBASE_MEASUREMENT_ID=
 npm run dev       # start Selfix locally
 npm run build     # production build
 npm run preview   # preview the build
+npm run lint      # lint with oxlint
 ```
 
 ---
 
 ## Stack
 
-React · Vite · Tailwind · Framer Motion · Lucide · Firebase Auth · Firestore
+React · Vite · Tailwind CSS · Framer Motion · Lucide · Recharts · React Router · Firebase Auth · Firestore
+
+---
+
+## Legal pages
+
+- [/about](/about) — About Selfix  
+- [/privacy](/privacy) — Privacy Policy  
+- [/terms](/terms) — Terms of Service  
+- [/contact](/contact) — Contact & FAQ  
 
 ---
 
 <p align="center">
-  <sub>made with soft pixels & warm intention</sub><br/>
+  <sub>A soft space for your day, thoughts, and habits</sub><br/>
   <b>Selfix</b> · your year, one gentle square at a time
 </p>
