@@ -149,10 +149,20 @@
         ]
       }
     </script>
+
+    <style>
+      /* Hide crawlable overview as soon as JS runs — keeps the live app UI clean */
+      html.js #seo-static {
+        display: none !important;
+      }
+    </style>
   </head>
   <body>
-    <div id="root">
-      <!-- Crawlable static fallback; React replaces this on mount. -->
+    <!--
+      Crawlable overview for search engines / no-JS browsers.
+      Hidden immediately when JavaScript is available (see inline script below).
+    -->
+    <div id="seo-static">
       <main class="seo-landing" aria-label="Selfix Life overview">
         <header class="seo-landing__hero">
           <p class="seo-landing__brand">Selfix Life</p>
@@ -163,11 +173,11 @@
             Create a free account, verify your email, and paint your year one gentle day at a time.
           </p>
           <p class="seo-landing__cta-hint">
-            <a href="https://www.myselfix.me/">Open Selfix Life</a>
-            ·
             <a href="/about">About</a>
             ·
             <a href="/contact">Contact</a>
+            ·
+            <a href="/privacy">Privacy</a>
           </p>
         </header>
 
@@ -254,21 +264,19 @@
       </main>
     </div>
 
+    <div id="root"></div>
+
     <noscript>
-      <main class="seo-landing" style="max-width: 42rem; margin: 2rem auto; padding: 0 1.25rem">
-        <h1>Selfix Life · Year in Pixels Journal</h1>
-        <p><strong>Free for personal journaling.</strong> Enable JavaScript to open your soft pastel journal.</p>
-        <p>
-          Cloud sync via Firebase after sign-in · LocalStorage for temporary state · AES-encrypted notes ·
-          Year in Pixels, mood, sleep, habits, and daily notes.
-        </p>
-        <p>
-          <a href="/about">About</a> · <a href="/privacy">Privacy</a> ·
-          <a href="https://www.myselfix.me/">myselfix.me</a>
-        </p>
-      </main>
+      <p style="max-width: 36rem; margin: 1.5rem auto; padding: 0 1.25rem; font-family: system-ui, sans-serif; color: #8a707a; font-size: 0.95rem; line-height: 1.6">
+        Selfix Life needs JavaScript to open the journal. The overview above stays available without it —
+        or visit <a href="/about">About</a> and <a href="/privacy">Privacy</a>.
+      </p>
     </noscript>
 
+    <script>
+      // Mark JS as available and hide the SEO overview before the app paints.
+      document.documentElement.classList.add('js')
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

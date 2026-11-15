@@ -175,15 +175,6 @@ function AuthBrandPanel() {
             Private cloud sync
           </span>
         </motion.div>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.45, delay: 0.3 }}
-          className="mt-3 max-w-sm text-[11px] leading-relaxed text-[var(--ink-soft)]/90"
-        >
-          Notes are encrypted on your device before cloud save. LocalStorage only keeps temporary
-          browser state.
-        </motion.p>
       </div>
 
       <motion.div
