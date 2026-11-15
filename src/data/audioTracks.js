@@ -46,11 +46,7 @@ export const AMBIENT_TRACKS = [
     title: 'Night ambience',
     url: '/audio/night-ambience.mp3',
   },
-  {
-    id: 'cafe-ambience',
-    title: 'Cafe ambience',
-    url: '/audio/cafe-ambience.mp3',
-  },
+  // Prefer longer loops (~30s+). Very short SFX (~1–2s) thrash the player.
 ]
 
 export default AMBIENT_TRACKS

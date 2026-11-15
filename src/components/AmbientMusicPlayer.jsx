@@ -14,12 +14,16 @@ import {
 } from 'lucide-react'
 import { AMBIENT_TRACKS } from '../data/audioTracks'
 
-const MAX_SKIP_TRIES = AMBIENT_TRACKS.length
+const TRACK_COUNT = AMBIENT_TRACKS.length
 
 export default function AmbientMusicPlayer() {
   const audioRef = useRef(null)
+  const indexRef = useRef(0)
   const wantPlayRef = useRef(false)
+  const switchingRef = useRef(false)
   const skipTriesRef = useRef(0)
+  const volumeRef = useRef(0.55)
+
   const [mounted, setMounted] = useState(false)
   const [index, setIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
@@ -31,68 +35,114 @@ export default function AmbientMusicPlayer() {
 
   const track = AMBIENT_TRACKS[index] || AMBIENT_TRACKS[0]
 
+  const applyVolume = (vol, isMuted) => {
+    const audio = audioRef.current
+    if (!audio) return
+    audio.volume = isMuted ? 0 : Math.min(1, Math.max(0, vol))
+    audio.muted = Boolean(isMuted)
+  }
+
+  const loadTrack = (nextIndex, { autoplay } = {}) => {
+    const audio = audioRef.current
+    const next = AMBIENT_TRACKS[nextIndex]
+    if (!audio || !next) return
+
+    indexRef.current = nextIndex
+    setIndex(nextIndex)
+    setUnavailable(false)
+    if (autoplay) wantPlayRef.current = true
+
+    switchingRef.current = true
+    audio.pause()
+    audio.loop = true
+    audio.src = next.url
+    audio.load()
+  }
+
+  const playCurrent = () => {
+    const audio = audioRef.current
+    if (!audio) return
+    wantPlayRef.current = true
+    setUnavailable(false)
+    const p = audio.play()
+    if (p && typeof p.then === 'function') {
+      p.catch(() => {
+        wantPlayRef.current = false
+        setPlaying(false)
+        setUnavailable(true)
+      })
+    }
+  }
+
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  // Bind listeners once; keep audio element stable.
   useEffect(() => {
+    if (!mounted) return
     const audio = audioRef.current
-    if (!audio || !track) return
+    if (!audio) return
 
-    setUnavailable(false)
-    audio.pause()
-    audio.src = track.url
-    audio.load()
+    audio.preload = 'metadata'
+    audio.loop = true
+    applyVolume(volumeRef.current, false)
 
     const onCanPlay = () => {
+      switchingRef.current = false
       skipTriesRef.current = 0
-      if (wantPlayRef.current) {
-        audio.play().catch(() => {
-          wantPlayRef.current = false
-          setPlaying(false)
-        })
-      }
+      // Only start playback after a deliberate load — avoid re-calling play()
+      // on every buffer `canplay` while already playing (causes stutter).
+      if (wantPlayRef.current && audio.paused) playCurrent()
     }
 
-    const onPlay = () => setPlaying(true)
-    const onPause = () => setPlaying(false)
-    const onEnded = () => {
-      wantPlayRef.current = true
+    const onPlaying = () => {
+      switchingRef.current = false
       setPlaying(true)
-      setIndex((i) => (i + 1) % AMBIENT_TRACKS.length)
+    }
+
+    const onPause = () => {
+      // Ignore pauses caused by src swaps / load().
+      if (switchingRef.current) return
+      setPlaying(false)
     }
 
     const onError = () => {
+      switchingRef.current = false
       skipTriesRef.current += 1
-      if (skipTriesRef.current >= MAX_SKIP_TRIES) {
+      if (skipTriesRef.current >= TRACK_COUNT) {
         wantPlayRef.current = false
         setPlaying(false)
         setUnavailable(true)
         return
       }
-      setIndex((i) => (i + 1) % AMBIENT_TRACKS.length)
+      const next = (indexRef.current + 1) % TRACK_COUNT
+      loadTrack(next, { autoplay: wantPlayRef.current })
     }
 
     audio.addEventListener('canplay', onCanPlay)
-    audio.addEventListener('play', onPlay)
+    audio.addEventListener('playing', onPlaying)
     audio.addEventListener('pause', onPause)
-    audio.addEventListener('ended', onEnded)
     audio.addEventListener('error', onError)
+
+    // Initial src only — no autoplay.
+    loadTrack(0, { autoplay: false })
 
     return () => {
       audio.removeEventListener('canplay', onCanPlay)
-      audio.removeEventListener('play', onPlay)
+      audio.removeEventListener('playing', onPlaying)
       audio.removeEventListener('pause', onPause)
-      audio.removeEventListener('ended', onEnded)
       audio.removeEventListener('error', onError)
+      wantPlayRef.current = false
+      audio.pause()
+      audio.removeAttribute('src')
+      audio.load()
     }
-  }, [track?.id, track?.url])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only wiring
+  }, [mounted])
 
   useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-    audio.volume = muted ? 0 : volume
-    audio.muted = muted
+    applyVolume(volume, muted)
   }, [volume, muted])
 
   const togglePlay = (e) => {
@@ -105,21 +155,20 @@ export default function AmbientMusicPlayer() {
       setPlaying(false)
       return
     }
-    wantPlayRef.current = true
-    setUnavailable(false)
-    audio.play().catch(() => {
-      wantPlayRef.current = false
-      setPlaying(false)
-      setUnavailable(true)
-    })
+    playCurrent()
   }
 
   const stop = () => {
     const audio = audioRef.current
     if (!audio) return
     wantPlayRef.current = false
+    switchingRef.current = false
     audio.pause()
-    audio.currentTime = 0
+    try {
+      audio.currentTime = 0
+    } catch {
+      /* ignore */
+    }
     setPlaying(false)
   }
 
@@ -127,14 +176,11 @@ export default function AmbientMusicPlayer() {
 
   const goTo = (nextIndex) => {
     skipTriesRef.current = 0
-    setUnavailable(false)
-    wantPlayRef.current = true
-    setPlaying(true)
-    setIndex(nextIndex)
+    loadTrack(nextIndex, { autoplay: true })
   }
 
-  const prev = () => goTo((index - 1 + AMBIENT_TRACKS.length) % AMBIENT_TRACKS.length)
-  const next = () => goTo((index + 1) % AMBIENT_TRACKS.length)
+  const prev = () => goTo((indexRef.current - 1 + TRACK_COUNT) % TRACK_COUNT)
+  const next = () => goTo((indexRef.current + 1) % TRACK_COUNT)
 
   const collapse = () => {
     setExpanded(false)
@@ -150,16 +196,17 @@ export default function AmbientMusicPlayer() {
         position: 'fixed',
         left: 14,
         bottom: 52,
-        zIndex: 9999,
+        zIndex: 40,
         width: expanded ? 'min(calc(100vw - 1.75rem), 17rem)' : 'auto',
         pointerEvents: 'auto',
+        contain: 'layout style',
       }}
     >
-      <audio ref={audioRef} preload="metadata" playsInline />
+      <audio ref={audioRef} preload="metadata" playsInline loop />
 
       {!expanded && (
         <div
-          className="inline-flex items-center gap-0.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] p-1 shadow-lg backdrop-blur-md"
+          className="inline-flex items-center gap-0.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] p-1 shadow-lg"
           style={{ boxShadow: '0 8px 22px var(--shadow)' }}
           title={unavailable ? 'Audio unavailable' : `${track.title} — open player`}
         >
@@ -167,7 +214,7 @@ export default function AmbientMusicPlayer() {
             type="button"
             onClick={() => setExpanded(true)}
             className={`flex h-7 w-7 items-center justify-center rounded-full text-white transition hover:scale-105 ${
-              playing ? 'bg-[var(--accent-deep)] animate-pulse' : 'bg-[var(--accent)]'
+              playing ? 'bg-[var(--accent-deep)]' : 'bg-[var(--accent)]'
             }`}
             title={unavailable ? 'Audio unavailable' : `${track.title} — open player`}
           >
@@ -186,7 +233,7 @@ export default function AmbientMusicPlayer() {
 
       {expanded && (
         <div
-          className="rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] backdrop-blur-md"
+          className="rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)]"
           style={{ boxShadow: '0 12px 32px var(--shadow)' }}
         >
           <div className="flex items-center gap-1 px-2 py-1.5">
@@ -201,7 +248,7 @@ export default function AmbientMusicPlayer() {
               <p className="text-[9px] font-semibold text-[var(--ink-soft)]">
                 {unavailable
                   ? 'Try another track or check the file URL'
-                  : `Track ${index + 1}/${AMBIENT_TRACKS.length}`}
+                  : `Track ${index + 1}/${TRACK_COUNT} · loops`}
               </p>
             </div>
 
@@ -275,10 +322,12 @@ export default function AmbientMusicPlayer() {
               type="range"
               min={0}
               max={1}
-              step={0.01}
+              step={0.05}
               value={muted ? 0 : volume}
               onChange={(e) => {
                 const nextVol = Number(e.target.value)
+                volumeRef.current = nextVol
+                applyVolume(nextVol, false)
                 setVolume(nextVol)
                 if (nextVol > 0 && muted) setMuted(false)
               }}
