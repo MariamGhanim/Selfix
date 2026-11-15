@@ -39,10 +39,10 @@ export function SelectChip({ active, onClick, emoji, label, compact = false }) {
       onClick={onClick}
       aria-pressed={active}
       aria-label={label}
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.96 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 26 }}
-      className={`relative z-10 inline-flex max-w-full cursor-pointer items-center rounded-full text-left font-medium leading-tight transition-colors duration-200 ${
+      whileHover={{ scale: 1.045, y: -0.5 }}
+      whileTap={{ scale: 0.94 }}
+      transition={{ type: 'spring', stiffness: 420, damping: 24 }}
+      className={`relative z-10 inline-flex max-w-full cursor-pointer items-center overflow-visible rounded-full text-left font-medium leading-tight transition-colors duration-200 ${
         compact ? 'gap-1 px-2.5 py-1 text-[10px] sm:text-[11px]' : 'gap-1.5 px-3 py-1.5 text-[11px] sm:text-xs'
       } ${
         active
@@ -53,10 +53,21 @@ export function SelectChip({ active, onClick, emoji, label, compact = false }) {
       <AnimatePresence initial={false}>
         {active && (
           <motion.span
+            key="spark"
+            className="chip-spark"
+            initial={{ opacity: 0.85, scale: 0.35 }}
+            animate={{ opacity: 0, scale: 1.85 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.42, ease: 'easeOut' }}
+          />
+        )}
+        {active && (
+          <motion.span
             key="check"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            initial={{ scale: 0, opacity: 0, rotate: -40 }}
+            animate={{ scale: 1, opacity: 1, rotate: 0 }}
             exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 480, damping: 18 }}
             className="shrink-0 text-[10px] leading-none opacity-90"
           >
             ✓
@@ -64,9 +75,12 @@ export function SelectChip({ active, onClick, emoji, label, compact = false }) {
         )}
       </AnimatePresence>
       {emoji && (
-        <span className={`shrink-0 leading-none ${compact ? 'text-[12px]' : 'text-[13px]'}`}>
+        <motion.span
+          layout
+          className={`shrink-0 leading-none ${compact ? 'text-[12px]' : 'text-[13px]'}`}
+        >
           {emoji}
-        </span>
+        </motion.span>
       )}
       <span className="truncate">{label}</span>
     </motion.button>
@@ -204,7 +218,7 @@ export function SoftInput(props) {
     <input
       {...props}
       data-no-flip
-      className={`relative z-20 w-full rounded-2xl border-0 bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 ${props.className || ''}`}
+      className={`soft-field relative z-20 w-full rounded-2xl border-0 bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 ${props.className || ''}`}
     />
   )
 }
@@ -214,7 +228,7 @@ export function SoftTextarea(props) {
     <textarea
       {...props}
       data-no-flip
-      className={`relative z-20 min-h-[7.5rem] w-full resize-y rounded-2xl border-0 bg-[var(--surface)] px-3 py-2.5 text-[11px] leading-relaxed text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 ${props.className || ''}`}
+      className={`soft-field relative z-20 min-h-[7.5rem] w-full resize-y rounded-2xl border-0 bg-[var(--surface)] px-3 py-2.5 text-[11px] leading-relaxed text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 ${props.className || ''}`}
     />
   )
 }
@@ -237,10 +251,10 @@ export function PanelShell({
 
   return (
     <motion.div
-      initial={{ opacity: 0.9, y: 4 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.22, ease: 'easeOut' }}
-      className="flex h-full min-h-0 flex-col overflow-hidden rounded-[1.5rem] bg-[var(--accent-glow)]/70 p-3.5 sm:p-4"
+      initial={{ opacity: 0.88, y: 8, scale: 0.985 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+      className="panel-glass flex h-full min-h-0 flex-col overflow-hidden rounded-[1.55rem] p-3.5 ring-1 ring-[var(--page-edge)]/40 sm:p-4"
     >
       <div className="mb-3.5 flex shrink-0 items-start justify-between gap-3">
         <div className="min-w-0">
@@ -253,8 +267,8 @@ export function PanelShell({
         </div>
         <motion.button
           type="button"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.96 }}
+          whileHover={{ scale: 1.04, rotate: -8 }}
+          whileTap={{ scale: 0.94, rotate: -16 }}
           onClick={clearToday}
           aria-label="Clear today"
           className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--surface)] px-2.5 py-1.5 text-[10px] font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)]"
@@ -265,7 +279,7 @@ export function PanelShell({
       </div>
       <div
         data-no-flip
-        className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch]"
+        className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch]"
       >
         {children}
         {!hideNotes && (

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   Apple,
   Bike,
@@ -35,6 +36,8 @@ import ThemeToggle from '../ThemeToggle'
 import FocusTimer, { FocusTimerProvider } from '../FocusTimer'
 import SettingsModal from '../Settings/SettingsModal'
 import LegalFooter from '../Legal/LegalFooter'
+import AmbientGlow from '../AmbientGlow'
+import DailyWhisper from '../DailyWhisper'
 import PageFlipStage, { flipToPage } from './PageFlipStage'
 import { useJournal } from '../../context/JournalContext'
 
@@ -127,33 +130,39 @@ export default function Book() {
 
   return (
     <FocusTimerProvider>
-      <div className="flex h-screen w-screen flex-col overflow-hidden px-3 py-2 sm:px-5 sm:py-3">
-        <header className="mb-1.5 flex shrink-0 flex-wrap items-center justify-between gap-2">
+      <div className="relative flex h-screen w-screen flex-col overflow-hidden px-3 py-2 sm:px-5 sm:py-3">
+        <AmbientGlow />
+        <header className="relative z-10 mb-1 flex shrink-0 flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="rounded-full bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className="soft-shimmer rounded-full bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur"
+            >
               <span className="font-display text-[var(--accent-deep)]">Selfix</span>
               {profile.displayName && profile.displayName !== 'Selfix' ? (
                 <span className="text-[var(--ink-soft)]"> · {profile.displayName}</span>
               ) : null}
-            </div>
-            <div className="inline-flex items-center rounded-full bg-[var(--surface)] px-1.5 py-0.5 shadow-md">
-              <button
+            </motion.div>
+            <div className="inline-flex items-center rounded-full bg-[var(--surface)] px-1.5 py-0.5 shadow-md backdrop-blur">
+              <motion.button
                 type="button"
+                whileTap={{ scale: 0.9 }}
                 onClick={() => setYear(year - 1)}
                 className="rounded-full p-1 hover:bg-[var(--accent-glow)]"
               >
                 <ChevronLeft size={14} />
-              </button>
+              </motion.button>
               <span className="min-w-[3.5rem] text-center font-display text-sm font-semibold">
                 {year}
               </span>
-              <button
+              <motion.button
                 type="button"
+                whileTap={{ scale: 0.9 }}
                 onClick={() => setYear(year + 1)}
                 className="rounded-full p-1 hover:bg-[var(--accent-glow)]"
               >
                 <ChevronRight size={14} />
-              </button>
+              </motion.button>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -164,22 +173,28 @@ export default function Book() {
               }}
             />
             <ThemeToggle />
-            <button
+            <motion.button
               type="button"
+              whileHover={{ scale: 1.06, rotate: 18 }}
+              whileTap={{ scale: 0.92, rotate: 40 }}
               onClick={() => setSettingsOpen(true)}
               className="rounded-full bg-[var(--surface)] p-2 text-[var(--ink-soft)] shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]"
               title="Settings"
               aria-label="Settings"
             >
               <Settings size={16} />
-            </button>
+            </motion.button>
           </div>
         </header>
+
+        <div className="relative z-10 shrink-0">
+          <DailyWhisper />
+        </div>
 
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
         <div
-          className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col overflow-visible"
+          className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col overflow-visible"
           style={{ maxHeight: '88vh', width: '95vw' }}
         >
           <div className="relative z-20 flex shrink-0 justify-center gap-0.5 px-4 sm:gap-1 sm:px-8">
@@ -187,29 +202,46 @@ export default function Book() {
               const TabIcon = ICONS[t.icon] || Star
               const active = i === pageIndex
               return (
-                <button
+                <motion.button
                   key={t.id}
                   type="button"
+                  layout
+                  whileHover={active ? undefined : { y: -4, scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
                   onClick={() => go(i)}
                   title={t.title}
-                  className={`relative flex items-center gap-1 rounded-t-xl px-1.5 pb-1.5 pt-1 text-[9px] font-bold transition-all duration-200 sm:px-2 sm:text-[10px] ${
+                  className={`relative flex items-center gap-1 rounded-t-xl px-1.5 pb-1.5 pt-1 text-[9px] font-bold sm:px-2 sm:text-[10px] ${
                     active
                       ? 'translate-y-0 text-white shadow-md'
-                      : '-translate-y-0.5 text-[var(--ink)] opacity-90 hover:-translate-y-1 hover:opacity-100'
+                      : '-translate-y-0.5 text-[var(--ink)] opacity-90'
                   }`}
                   style={{
                     background: active ? t.tabColor : `${t.tabColor}99`,
                     marginBottom: active ? 0 : 2,
                   }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 28 }}
                 >
-                  <TabIcon size={11} className="hidden sm:block" />
-                  <span className="max-w-[3rem] truncate sm:max-w-none">{t.tab}</span>
-                </button>
+                  {active && (
+                    <motion.span
+                      layoutId="tab-glow"
+                      className="pointer-events-none absolute inset-0 rounded-t-xl"
+                      style={{
+                        boxShadow: `0 -4px 18px ${t.tabColor}66, inset 0 1px 0 rgba(255,255,255,0.35)`,
+                      }}
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <TabIcon size={11} className="relative z-10 hidden sm:block" />
+                  <span className="relative z-10 max-w-[3rem] truncate sm:max-w-none">{t.tab}</span>
+                </motion.button>
               )
             })}
           </div>
 
-          <div className="book-shadow relative flex min-h-0 flex-1 overflow-hidden rounded-b-[28px] rounded-t-[18px] border border-[var(--page-edge)]">
+          <motion.div
+            layout
+            className="book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-b-[28px] rounded-t-[18px] border border-[var(--page-edge)]"
+          >
             <div className="pointer-events-none absolute -left-1 top-3 bottom-3 z-40 w-2 rounded-l-md bg-[var(--page-edge)] opacity-80" />
             <div className="pointer-events-none absolute -left-2 top-5 bottom-5 z-40 w-2 rounded-l-md bg-[var(--accent-soft)] opacity-50" />
             <div className="pointer-events-none absolute -right-1 top-3 bottom-3 z-40 w-2 rounded-r-md bg-[var(--page-edge)] opacity-80" />
@@ -236,25 +268,32 @@ export default function Book() {
                 trackers={trackers}
               />
             </div>
-          </div>
+          </motion.div>
 
           <div className="mt-1.5 flex shrink-0 items-center justify-between px-1">
-            <button
+            <motion.button
               type="button"
               disabled={pageIndex === 0}
+              whileHover={pageIndex === 0 ? undefined : { x: -2, scale: 1.02 }}
+              whileTap={pageIndex === 0 ? undefined : { scale: 0.96 }}
               onClick={() => go(pageIndex - 1)}
-              className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md disabled:opacity-35"
+              className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35"
             >
               <ChevronLeft size={14} /> Previous
-            </button>
-            <button
+            </motion.button>
+            <p className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:block">
+              {pageIndex + 1} / {trackers.length}
+            </p>
+            <motion.button
               type="button"
               disabled={pageIndex === trackers.length - 1}
+              whileHover={pageIndex === trackers.length - 1 ? undefined : { x: 2, scale: 1.02 }}
+              whileTap={pageIndex === trackers.length - 1 ? undefined : { scale: 0.96 }}
               onClick={() => go(pageIndex + 1)}
-              className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md disabled:opacity-35"
+              className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35"
             >
               Next <ChevronRight size={14} />
-            </button>
+            </motion.button>
           </div>
 
           <LegalFooter />

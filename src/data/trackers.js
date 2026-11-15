@@ -39,10 +39,10 @@ export const TRACKERS = [
     tabColor: '#9fa8da',
     panel: 'sleep',
     levels: [
-      { value: 1, label: 'Bad / Insomnia (<5 hrs)', color: '#ef5350' },
-      { value: 2, label: 'Fair (5-6 hrs / tired)', color: '#ffca28' },
-      { value: 3, label: 'Good (7-8 hrs / solid)', color: '#66bb6a' },
-      { value: 4, label: 'Excellent (>8 hrs)', color: '#7e57c2' },
+      { value: 1, label: 'Bad (<5h)', color: '#ef5350' },
+      { value: 2, label: 'Fair (5–6h)', color: '#ffca28' },
+      { value: 3, label: 'Good (7–8h)', color: '#66bb6a' },
+      { value: 4, label: 'Excellent (8h+)', color: '#7e57c2' },
     ],
   },
   {
@@ -54,13 +54,13 @@ export const TRACKERS = [
     tabColor: '#5db9a4',
     panel: 'salah',
     levels: [
-      { value: 0, label: 'Missed / Delayed', color: '#ef9a9a' },
+      { value: 0, label: 'Missed', color: '#ef9a9a' },
       { value: 1, label: '1 on time', color: '#ffe082' },
       { value: 2, label: '2 on time', color: '#ffd54f' },
       { value: 3, label: '3 on time', color: '#c5e1a5' },
       { value: 4, label: '4 on time', color: '#aed581' },
-      { value: 5, label: 'All 5 on time', color: '#66bb6a' },
-      { value: 6, label: 'All 5 + Sunnah', color: '#26a69a' },
+      { value: 5, label: 'All 5', color: '#66bb6a' },
+      { value: 6, label: '5 + Sunnah', color: '#26a69a' },
     ],
   },
   {
@@ -93,8 +93,8 @@ export const TRACKERS = [
     panel: 'teeth',
     levels: [
       { value: 0, label: 'Missed', color: '#ef9a9a' },
-      { value: 1, label: 'Once a day', color: '#ffe082' },
-      { value: 2, label: 'Twice or more', color: '#81c784' },
+      { value: 1, label: 'Once', color: '#ffe082' },
+      { value: 2, label: 'Twice+', color: '#81c784' },
     ],
   },
   {
@@ -167,9 +167,9 @@ export const TRACKERS = [
     panel: 'focus',
     levels: [
       { value: 0, label: 'None / Rest', color: '#eceff1' },
-      { value: 1, label: 'Light Focus (<1h)', color: '#ffca28' },
-      { value: 2, label: 'Deep Focus (2-4h)', color: '#66bb6a' },
-      { value: 3, label: 'Elite Deep Work (4h+)', color: '#7e57c2' },
+      { value: 1, label: 'Light (<1h)', color: '#ffca28' },
+      { value: 2, label: 'Deep (2–4h)', color: '#66bb6a' },
+      { value: 3, label: 'Elite (4h+)', color: '#7e57c2' },
     ],
   },
   {
@@ -197,11 +197,11 @@ export const TRACKERS = [
     tabColor: '#81c784',
     panel: 'workout',
     levels: [
-      { value: 0, label: 'None / Rest', color: '#eceff1' },
-      { value: 1, label: 'Light Stretch / Mobility', color: '#b2dfdb' },
-      { value: 2, label: 'Cardio / Walking', color: '#80cbc4' },
-      { value: 3, label: 'Gym Workout', color: '#4db6ac' },
-      { value: 4, label: 'Intense Training', color: '#00897b' },
+      { value: 0, label: 'Rest', color: '#eceff1' },
+      { value: 1, label: 'Stretch', color: '#b2dfdb' },
+      { value: 2, label: 'Cardio / Walk', color: '#80cbc4' },
+      { value: 3, label: 'Gym', color: '#4db6ac' },
+      { value: 4, label: 'Intense', color: '#00897b' },
     ],
   },
   {
@@ -229,9 +229,9 @@ export const TRACKERS = [
     tabColor: '#ffb74d',
     panel: 'outings',
     levels: [
-      { value: 0, label: 'Stayed home', color: '#eceff1' },
-      { value: 1, label: 'Casual errand / short trip', color: '#ffcc80' },
-      { value: 2, label: 'Real Fun Outing / Hangout', color: '#ff9800' },
+      { value: 0, label: 'Home', color: '#eceff1' },
+      { value: 1, label: 'Errand', color: '#ffcc80' },
+      { value: 2, label: 'Outing', color: '#ff9800' },
     ],
   },
   {

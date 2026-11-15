@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion'
 import { useJournal } from '../../context/JournalContext'
 
 export default function Legend({ trackerId, levels }) {
@@ -5,27 +6,31 @@ export default function Legend({ trackerId, levels }) {
   const selected = state.selectedLevel?.[trackerId]
 
   return (
-    <div className="flex flex-wrap items-center gap-1">
-      <button
+    <div className="flex flex-wrap items-center gap-1.5">
+      <motion.button
         type="button"
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setSelectedLevel(trackerId, null)}
-        className={`rounded-full px-2 py-0.5 text-[10px] font-bold transition ${
+        className={`whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
           selected == null
-            ? 'bg-[var(--accent)] text-white'
+            ? 'bg-[var(--accent)] text-white shadow-sm'
             : 'bg-[var(--accent-glow)] text-[var(--ink-soft)]'
         }`}
       >
         Cycle
-      </button>
+      </motion.button>
       {levels.map((level) => (
-        <button
+        <motion.button
           key={String(level.value)}
           type="button"
+          whileHover={{ scale: 1.04, y: -1 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() =>
             setSelectedLevel(trackerId, selected === level.value ? null : level.value)
           }
-          className={`inline-flex max-w-[5.5rem] items-center gap-1 truncate rounded-full px-1.5 py-0.5 text-[10px] font-bold transition ${
-            selected === level.value ? 'ring-1 ring-[var(--accent-deep)]' : ''
+          className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
+            selected === level.value ? 'ring-1 ring-[var(--accent-deep)] shadow-sm' : ''
           }`}
           style={{ background: level.color, color: '#2a2030' }}
           title={level.label}
@@ -34,8 +39,8 @@ export default function Legend({ trackerId, levels }) {
             className="h-2 w-2 shrink-0 rounded-full border border-black/10"
             style={{ background: level.color }}
           />
-          <span className="truncate">{level.label}</span>
-        </button>
+          <span>{level.label}</span>
+        </motion.button>
       ))}
     </div>
   )

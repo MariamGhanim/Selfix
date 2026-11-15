@@ -27,6 +27,7 @@ import {
   Wallet,
   Zap,
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import PixelGrid from '../Trackers/PixelGrid'
 import Legend from '../Trackers/Legend'
 import RightPage from './RightPage'
@@ -82,32 +83,45 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
 
   return (
     <div className="grid h-full min-h-0 w-full grid-cols-1 overflow-y-auto md:grid-cols-2 md:overflow-hidden">
-      <section className="flex min-h-[52vh] flex-col overflow-hidden border-b border-[var(--page-edge)]/60 p-3 md:min-h-0 md:border-b-0 md:pr-5 md:pl-4">
-        <div className="mb-1.5 flex shrink-0 items-center gap-2">
-          <div
-            className="rounded-xl p-1.5 text-white shadow"
-            style={{ background: tracker.tabColor }}
+      <section className="flex min-h-[52vh] flex-col overflow-hidden border-b border-[var(--page-edge)]/60 p-3.5 md:min-h-0 md:border-b-0 md:pr-5 md:pl-4">
+        <div className="mb-2 flex shrink-0 items-center gap-2.5">
+          <motion.div
+            key={tracker.id}
+            initial={{ scale: 0.88, opacity: 0.7 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+            className="rounded-xl p-1.5 text-white shadow-md"
+            style={{
+              background: tracker.tabColor,
+              boxShadow: `0 6px 16px ${tracker.tabColor}55`,
+            }}
           >
             <Icon size={16} />
-          </div>
+          </motion.div>
           <div className="min-w-0">
-            <h2 className="truncate font-display text-base leading-tight text-[var(--ink)] sm:text-lg">
+            <h2 className="truncate font-display text-base font-semibold leading-tight tracking-tight text-[var(--ink)] sm:text-lg">
               {tracker.title}
             </h2>
-            <p className="truncate text-[10px] text-[var(--ink-soft)]">{tracker.subtitle}</p>
+            <p className="truncate text-[10px] leading-snug text-[var(--ink-soft)]">{tracker.subtitle}</p>
           </div>
         </div>
 
-        <div className="mb-1.5 shrink-0">
+        <div className="mb-2 shrink-0">
           <Legend trackerId={tracker.id} levels={tracker.levels} />
         </div>
 
         {selectedLabel && (
-          <div className="date-anchor mb-2.5 shrink-0 rounded-2xl px-4 py-2.5 text-center ring-1 ring-[var(--accent-soft)]/60">
+          <motion.div
+            key={selectedLabel}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className="date-anchor mb-2.5 shrink-0 rounded-2xl px-4 py-2.5 text-center ring-1 ring-[var(--accent-soft)]/60"
+          >
             <p className="font-display text-base font-semibold tracking-tight text-[var(--ink)] sm:text-lg">
               {selectedLabel}
             </p>
-          </div>
+          </motion.div>
         )}
 
         <div className="min-h-0 flex-1">
