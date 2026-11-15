@@ -102,8 +102,13 @@ export default function AuthPage() {
       footer={
         mode === 'login' ? (
           <>
-            New here?{' '}
-            <AuthLinkButton onClick={() => switchMode('signup')}>Create an account</AuthLinkButton>
+            <p>
+              New here?{' '}
+              <AuthLinkButton onClick={() => switchMode('signup')}>Create an account</AuthLinkButton>
+            </p>
+            <p className="mt-2 font-display text-[11px] font-medium tracking-wide text-[var(--ink-soft)]/85">
+              Free to use · Your journal stays private.
+            </p>
           </>
         ) : mode === 'signup' ? (
           <>

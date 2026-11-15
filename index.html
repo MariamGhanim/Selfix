@@ -268,14 +268,16 @@
 
     <noscript>
       <p style="max-width: 36rem; margin: 1.5rem auto; padding: 0 1.25rem; font-family: system-ui, sans-serif; color: #8a707a; font-size: 0.95rem; line-height: 1.6">
-        Selfix Life needs JavaScript to open the journal. The overview above stays available without it —
-        or visit <a href="/about">About</a> and <a href="/privacy">Privacy</a>.
+        Selfix Life needs JavaScript to open the journal. Please enable JavaScript, or read
+        <a href="/about">About</a> and <a href="/privacy">Privacy</a> meanwhile.
       </p>
     </noscript>
 
     <script>
-      // Mark JS as available and hide the SEO overview before the app paints.
+      // Hide + remove SEO overview as soon as JS runs so live users never see it.
       document.documentElement.classList.add('js')
+      var seo = document.getElementById('seo-static')
+      if (seo) seo.remove()
     </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
