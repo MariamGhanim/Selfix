@@ -38,6 +38,7 @@ import SettingsModal from '../Settings/SettingsModal'
 import LegalFooter from '../Legal/LegalFooter'
 import AmbientGlow from '../AmbientGlow'
 import DailyWhisper from '../DailyWhisper'
+import InsightsDashboard from '../Insights/InsightsDashboard'
 import PageFlipStage, { flipToPage } from './PageFlipStage'
 import { useJournal } from '../../context/JournalContext'
 
@@ -75,6 +76,7 @@ export default function Book() {
   const { year, setYear, profile, activeTrackers } = useJournal()
   const trackers = activeTrackers?.length ? activeTrackers : []
   const [pageIndex, setPageIndex] = useState(0)
+  const [showInsights, setShowInsights] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   const today = useMemo(() => {
@@ -89,13 +91,22 @@ export default function Book() {
   }, [trackers, pageIndex])
 
   const go = (next) => {
-    if (next < 0 || next >= trackers.length || next === pageIndex) return
+    if (next < 0 || next >= trackers.length) return
+    setShowInsights(false)
+    if (next === pageIndex && !showInsights) return
+    if (showInsights) {
+      setPageIndex(next)
+      return
+    }
     flipToPage(next, next > pageIndex ? 1 : -1)
   }
+
+  const toggleInsights = () => setShowInsights((v) => !v)
 
   useEffect(() => {
     const onKey = (e) => {
       if (e.target.matches?.('input, textarea')) return
+      if (showInsights) return
       if (e.key === 'ArrowRight' && pageIndex < trackers.length - 1) {
         flipToPage(pageIndex + 1, 1)
       }
@@ -105,7 +116,7 @@ export default function Book() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [pageIndex, trackers.length])
+  }, [pageIndex, trackers.length, showInsights])
 
   if (!trackers.length) {
     return (
@@ -172,6 +183,23 @@ export default function Book() {
                 if (focusIndex >= 0) go(focusIndex)
               }}
             />
+            <motion.button
+              type="button"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.94 }}
+              onClick={toggleInsights}
+              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-semibold shadow-md backdrop-blur transition sm:px-3 ${
+                showInsights
+                  ? 'bg-[var(--accent-deep)] text-white'
+                  : 'bg-[var(--surface)] text-[var(--ink-soft)] hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]'
+              }`}
+              title="Insights Logbook"
+              aria-label="Insights Logbook"
+              aria-pressed={showInsights}
+            >
+              <Sparkles size={14} />
+              <span className="hidden sm:inline">Logbook</span>
+            </motion.button>
             <ThemeToggle />
             <motion.button
               type="button"
@@ -200,7 +228,7 @@ export default function Book() {
           <div className="relative z-20 flex shrink-0 justify-center gap-0.5 px-4 sm:gap-1 sm:px-8">
             {trackers.map((t, i) => {
               const TabIcon = ICONS[t.icon] || Star
-              const active = i === pageIndex
+              const active = !showInsights && i === pageIndex
               return (
                 <motion.button
                   key={t.id}
@@ -248,52 +276,79 @@ export default function Book() {
             <div className="pointer-events-none absolute -right-2 top-5 bottom-5 z-40 w-2 rounded-r-md bg-[var(--accent-soft)] opacity-50" />
 
             <div className="relative flex min-h-0 w-full flex-1">
-              <div
-                className="pointer-events-none absolute inset-y-0 left-1/2 z-30 w-6 -translate-x-1/2"
-                style={{
-                  background:
-                    'linear-gradient(90deg, rgba(0,0,0,0.07), rgba(0,0,0,0.14) 45%, rgba(255,255,255,0.25) 50%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0.05))',
-                }}
-              />
-              <div
-                className="pointer-events-none absolute inset-y-0 left-1/2 z-30 w-[2px] -translate-x-1/2"
-                style={{ background: 'var(--spine)', opacity: 0.55 }}
-              />
+              {!showInsights && (
+                <>
+                  <div
+                    className="pointer-events-none absolute inset-y-0 left-1/2 z-30 w-6 -translate-x-1/2"
+                    style={{
+                      background:
+                        'linear-gradient(90deg, rgba(0,0,0,0.07), rgba(0,0,0,0.14) 45%, rgba(255,255,255,0.25) 50%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0.05))',
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute inset-y-0 left-1/2 z-30 w-[2px] -translate-x-1/2"
+                    style={{ background: 'var(--spine)', opacity: 0.55 }}
+                  />
+                </>
+              )}
 
-              <PageFlipStage
-                pageIndex={pageIndex}
-                onPageChange={setPageIndex}
-                selectedDay={selectedDay}
-                onSelectDay={setSelectedDay}
-                trackers={trackers}
-              />
+              {showInsights ? (
+                <div className="relative z-10 min-h-0 w-full flex-1 overflow-hidden">
+                  <InsightsDashboard />
+                </div>
+              ) : (
+                <PageFlipStage
+                  pageIndex={pageIndex}
+                  onPageChange={setPageIndex}
+                  selectedDay={selectedDay}
+                  onSelectDay={setSelectedDay}
+                  trackers={trackers}
+                />
+              )}
             </div>
           </motion.div>
 
           <div className="mt-1.5 flex shrink-0 items-center justify-between px-1">
-            <motion.button
-              type="button"
-              disabled={pageIndex === 0}
-              whileHover={pageIndex === 0 ? undefined : { x: -2, scale: 1.02 }}
-              whileTap={pageIndex === 0 ? undefined : { scale: 0.96 }}
-              onClick={() => go(pageIndex - 1)}
-              className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35"
-            >
-              <ChevronLeft size={14} /> Previous
-            </motion.button>
-            <p className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:block">
-              {pageIndex + 1} / {trackers.length}
-            </p>
-            <motion.button
-              type="button"
-              disabled={pageIndex === trackers.length - 1}
-              whileHover={pageIndex === trackers.length - 1 ? undefined : { x: 2, scale: 1.02 }}
-              whileTap={pageIndex === trackers.length - 1 ? undefined : { scale: 0.96 }}
-              onClick={() => go(pageIndex + 1)}
-              className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35"
-            >
-              Next <ChevronRight size={14} />
-            </motion.button>
+            {showInsights ? (
+              <>
+                <span className="text-[10px] font-medium text-[var(--ink-soft)]">Insights view</span>
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => setShowInsights(false)}
+                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur"
+                >
+                  Back to journal
+                </motion.button>
+              </>
+            ) : (
+              <>
+                <motion.button
+                  type="button"
+                  disabled={pageIndex === 0}
+                  whileHover={pageIndex === 0 ? undefined : { x: -2, scale: 1.02 }}
+                  whileTap={pageIndex === 0 ? undefined : { scale: 0.96 }}
+                  onClick={() => go(pageIndex - 1)}
+                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35"
+                >
+                  <ChevronLeft size={14} /> Previous
+                </motion.button>
+                <p className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:block">
+                  {pageIndex + 1} / {trackers.length}
+                </p>
+                <motion.button
+                  type="button"
+                  disabled={pageIndex === trackers.length - 1}
+                  whileHover={pageIndex === trackers.length - 1 ? undefined : { x: 2, scale: 1.02 }}
+                  whileTap={pageIndex === trackers.length - 1 ? undefined : { scale: 0.96 }}
+                  onClick={() => go(pageIndex + 1)}
+                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35"
+                >
+                  Next <ChevronRight size={14} />
+                </motion.button>
+              </>
+            )}
           </div>
 
           <LegalFooter />
