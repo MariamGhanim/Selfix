@@ -1,4 +1,40 @@
+import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
+
+const AUTH_NAV = [
+  { to: '/about', label: 'About' },
+  { to: '/contact', label: 'Contact' },
+]
+
+function AuthTopNav() {
+  const { pathname } = useLocation()
+
+  return (
+    <nav
+      aria-label="Explore Selfix"
+      className="absolute left-0 right-0 top-0 z-30 flex items-center justify-end gap-1 px-3 py-2.5 sm:px-5 sm:py-3 lg:px-7"
+    >
+      <div className="inline-flex items-center gap-0.5 rounded-full bg-[var(--surface)]/85 p-1 shadow-md ring-1 ring-[var(--page-edge)]/55 backdrop-blur-md">
+        {AUTH_NAV.map((item) => {
+          const active = pathname === item.to
+          return (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`rounded-full px-3 py-1.5 font-display text-[11px] font-semibold transition sm:px-3.5 sm:text-xs ${
+                active
+                  ? 'bg-[var(--accent-deep)] text-white shadow-sm'
+                  : 'text-[var(--ink-soft)] hover:bg-[var(--accent-glow)] hover:text-[var(--ink)]'
+              }`}
+            >
+              {item.label}
+            </Link>
+          )
+        })}
+      </div>
+    </nav>
+  )
+}
 
 function CozyJournalArt() {
   return (
@@ -158,8 +194,9 @@ function AuthBrandPanel() {
 
 export default function AuthShell({ title, subtitle, children, footer }) {
   return (
-    <div className="auth-split-shell flex h-[100dvh] w-screen items-stretch justify-center overflow-hidden p-0 sm:items-center sm:p-5 lg:p-7">
-      <div className="auth-split-frame book-shadow paper-texture relative grid h-full max-h-none w-full max-w-6xl overflow-y-auto rounded-none border-0 border-[var(--page-edge)] sm:max-h-[920px] sm:overflow-hidden sm:rounded-[28px] sm:border lg:grid-cols-12 lg:rounded-[32px]">
+    <div className="auth-split-shell relative flex h-[100dvh] w-screen items-stretch justify-center overflow-hidden p-0 sm:items-center sm:p-5 lg:p-7">
+      <AuthTopNav />
+      <div className="auth-split-frame book-shadow paper-texture relative mt-11 grid h-[calc(100%-2.75rem)] max-h-none w-full max-w-6xl overflow-y-auto rounded-none border-0 border-[var(--page-edge)] sm:mt-0 sm:h-full sm:max-h-[920px] sm:overflow-hidden sm:rounded-[28px] sm:border lg:grid-cols-12 lg:rounded-[32px]">
         <div className="min-h-0 lg:col-span-5">
           <AuthBrandPanel />
         </div>

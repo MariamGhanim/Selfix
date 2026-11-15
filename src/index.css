@@ -763,3 +763,109 @@ h3,
       );
   }
 }
+
+/* ——— About page: cozy storytelling atmosphere ——— */
+.about-page {
+  background:
+    radial-gradient(ellipse 80% 50% at 12% 8%, var(--orb-a), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 88% 18%, var(--orb-b), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 70% 78%, var(--orb-c), transparent 55%),
+    linear-gradient(165deg, var(--bg-2), var(--bg-1) 42%, var(--bg-3));
+  -webkit-overflow-scrolling: touch;
+}
+
+.about-atmosphere {
+  background:
+    radial-gradient(circle at 20% 30%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 42%),
+    radial-gradient(circle at 80% 60%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 46%);
+}
+
+.about-breath {
+  background:
+    radial-gradient(ellipse 50% 35% at 50% 40%, color-mix(in srgb, var(--accent-soft) 35%, transparent), transparent 70%);
+  animation: about-breathe 9s ease-in-out infinite;
+  opacity: 0.85;
+}
+
+@keyframes about-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.9;
+  }
+}
+
+.about-hero-mosaic {
+  background: color-mix(in srgb, var(--surface) 55%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 12px 36px var(--shadow);
+  backdrop-filter: blur(6px);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.about-quote {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent-glow) 95%, white),
+      color-mix(in srgb, var(--accent-soft) 40%, var(--surface)),
+      color-mix(in srgb, var(--gold-soft) 55%, var(--surface))
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 16px 40px color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.about-pixel-stage {
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--surface) 92%, white),
+      color-mix(in srgb, var(--accent-glow) 80%, var(--paper))
+    );
+  box-shadow:
+    0 20px 48px var(--shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  border: 1px solid color-mix(in srgb, var(--page-edge) 70%, transparent);
+}
+
+.about-moment {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: var(--panel-shadow);
+  border: 1px solid color-mix(in srgb, var(--page-edge) 55%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.about-moment-glow {
+  background: radial-gradient(
+    circle at 20% 20%,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    transparent 60%
+  );
+}
+
+.about-closing {
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--accent-glow) 90%, white),
+      color-mix(in srgb, var(--surface) 85%, var(--paper)),
+      color-mix(in srgb, var(--gold-soft) 45%, var(--paper))
+    );
+  box-shadow:
+    0 24px 56px var(--shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  border: 1px solid color-mix(in srgb, var(--page-edge) 65%, transparent);
+}
+
+.about-how-stage {
+  box-shadow:
+    0 18px 42px color-mix(in srgb, var(--accent) 12%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border: 1px solid color-mix(in srgb, var(--page-edge) 50%, transparent);
+}
