@@ -2,12 +2,12 @@ import { CloudOff, RefreshCw } from 'lucide-react'
 
 export default function SyncErrorScreen({ message, onRetry, busy }) {
   return (
-    <div className="flex h-screen w-screen items-center justify-center overflow-hidden px-4 py-6">
+    <div className="flex min-h-[100dvh] w-full items-center justify-center overflow-auto px-4 py-6">
       <div className="book-shadow paper-texture w-full max-w-lg rounded-[28px] border border-[var(--page-edge)] px-6 py-8 text-center sm:px-8">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent-glow)] text-[var(--accent-deep)]">
           <CloudOff size={28} />
         </div>
-        <p className="font-display text-2xl font-semibold text-[var(--accent-deep)]">Selfix</p>
+        <p className="font-display text-2xl font-semibold text-[var(--accent-deep)]">Selfix Life</p>
         <h1 className="mt-2 font-display text-xl font-semibold text-[var(--ink)]">
           Cloud sync needed
         </h1>

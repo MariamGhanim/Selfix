@@ -144,9 +144,9 @@ export default function AboutPage() {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'pinky')
-    const title = 'About Selfix · Year in Pixels Journal — Soft Pastel Habit & Mood Tracking'
+    const title = 'About Selfix Life · Year in Pixels Journal — Soft Pastel Habit & Mood Tracking'
     const description =
-      'Selfix is a soft pastel space for your days, thoughts, and memories. Learn how Year in Pixels helps you track sleep, mood, habits, and daily notes with calm visual clarity.'
+      'Selfix Life is a soft pastel space for your days, thoughts, and memories. Learn how Year in Pixels helps you track sleep, mood, habits, and daily notes with calm visual clarity.'
     document.title = title
 
     const ensureMeta = (attr, key, content) => {
@@ -177,14 +177,14 @@ export default function AboutPage() {
 
     return () => {
       document.title =
-        'Selfix · Year in Pixels Journal — Track Sleep, Mood, Habits & Daily Notes'
+        'Selfix Life · Year in Pixels Journal — Track Sleep, Mood, Habits & Daily Notes'
     }
   }, [])
 
   return (
     <div
       ref={scrollRef}
-      className="about-page relative h-[100dvh] w-screen overflow-x-hidden overflow-y-auto"
+      className="about-page relative h-[100dvh] min-h-[100dvh] w-full max-w-full overflow-x-hidden overflow-y-auto"
     >
       <div className="about-atmosphere pointer-events-none absolute inset-0 min-h-full" aria-hidden />
       <div className="about-breath pointer-events-none fixed inset-0" aria-hidden />
@@ -194,7 +194,7 @@ export default function AboutPage() {
           to="/"
           className="rounded-full bg-[var(--surface)]/90 px-3.5 py-1.5 text-xs font-bold shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)]"
         >
-          <span className="font-display text-[var(--accent-deep)]">Selfix</span>
+          <span className="font-display text-[var(--accent-deep)]">Selfix Life</span>
         </Link>
         <Link
           to="/"
@@ -219,9 +219,9 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-5xl font-semibold tracking-tight text-[var(--accent-deep)] sm:text-6xl md:text-7xl"
+              className="font-display text-[2.35rem] font-semibold tracking-tight text-[var(--accent-deep)] sm:text-6xl md:text-7xl"
             >
-              Selfix
+              Selfix Life
             </motion.p>
             <motion.h1
               initial={{ opacity: 0, y: 18 }}
@@ -308,7 +308,7 @@ export default function AboutPage() {
               variants={fadeUp}
               className="font-display text-lg leading-relaxed text-[var(--ink)] sm:text-xl"
             >
-              Selfix began as a quiet wish: that journaling could feel like opening a favorite notebook —
+              Selfix Life began as a quiet wish: that journaling could feel like opening a favorite notebook —
               warm paper, gentle colors, room to breathe — never like staring at a cold dashboard.
             </motion.p>
             <motion.p variants={fadeUp} className="text-[15px] leading-relaxed text-[var(--ink-soft)] sm:text-base">

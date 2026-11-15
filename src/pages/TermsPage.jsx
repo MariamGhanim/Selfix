@@ -5,19 +5,19 @@ export default function TermsPage() {
   return (
     <SiteLayout
       title="Terms of Service"
-      subtitle="Last updated: November 13, 2026. Please read these Terms carefully before using Selfix."
+      subtitle="Last updated: November 13, 2026. Please read these Terms carefully before using Selfix Life."
     >
       <Section title="1. Agreement to terms">
         <p>
-          These Terms of Service (“Terms”) govern your access to and use of the Selfix web
-          application and related content. By creating an account or using Selfix, you agree to
+          These Terms of Service (“Terms”) govern your access to and use of the Selfix Life web
+          application and related content. By creating an account or using Selfix Life, you agree to
           these Terms and our Privacy Policy. If you do not agree, please do not use the service.
         </p>
       </Section>
 
-      <Section title="2. Personal use of Selfix">
+      <Section title="2. Personal use of Selfix Life">
         <p>
-          Selfix is provided for personal journaling, habit reflection, and private self-tracking.
+          Selfix Life is provided for personal journaling, habit reflection, and private self-tracking.
           You may use the app for your own non-commercial purposes in accordance with these Terms.
         </p>
         <ul className="list-disc space-y-1 pl-5">
@@ -41,13 +41,13 @@ export default function TermsPage() {
       <Section title="4. Intellectual property">
         <SoftCard>
           <p>
-            Selfix, including its name, logo, visual design, book interface, copy, layouts, and
-            original software, are owned by Selfix / its creators and are protected by intellectual
+            Selfix Life, including its name, logo, visual design, book interface, copy, layouts, and
+            original software, are owned by Selfix Life / its creators and are protected by intellectual
             property laws. You may not copy, modify, distribute, sell, or create derivative works
-            from Selfix’s branding or interface without prior written permission.
+            from Selfix Life’s branding or interface without prior written permission.
           </p>
           <p className="mt-3">
-            You retain ownership of the personal journal content you create. By using Selfix, you
+            You retain ownership of the personal journal content you create. By using Selfix Life, you
             grant us a limited license to host and process that content solely to operate the
             service for you (for example, saving and syncing your journal).
           </p>
@@ -58,7 +58,7 @@ export default function TermsPage() {
         <SoftCard className="border-[var(--accent-soft)] bg-[var(--accent-glow)]/70">
           <p className="font-bold text-[var(--ink)]">Important disclaimer</p>
           <p className="mt-2">
-            Selfix is a wellness-oriented journaling and mood/habit tracking tool for personal
+            Selfix Life is a wellness-oriented journaling and mood/habit tracking tool for personal
             reflection only. It is <strong>not</strong> a medical device, therapy platform, crisis
             service, or substitute for professional medical, psychiatric, or psychological advice,
             diagnosis, or treatment.
@@ -74,7 +74,7 @@ export default function TermsPage() {
 
       <Section title="6. Service availability">
         <p>
-          We aim to keep Selfix available and reliable, but we do not guarantee uninterrupted
+          We aim to keep Selfix Life available and reliable, but we do not guarantee uninterrupted
           access. Features may change, and temporary outages may occur due to maintenance, hosting
           providers, or factors beyond our control.
         </p>
@@ -82,25 +82,25 @@ export default function TermsPage() {
 
       <Section title="7. Limitation of liability">
         <p>
-          To the fullest extent permitted by law, Selfix and its creators are not liable for any
+          To the fullest extent permitted by law, Selfix Life and its creators are not liable for any
           indirect, incidental, special, consequential, or punitive damages, or any loss of data,
           profits, or goodwill, arising from your use of (or inability to use) the service.
         </p>
         <p>
-          Selfix is provided “as is” and “as available,” without warranties of any kind, express or
+          Selfix Life is provided “as is” and “as available,” without warranties of any kind, express or
           implied, including merchantability, fitness for a particular purpose, and
           non-infringement, except where such disclaimers are not allowed by law.
         </p>
         <p>
-          Where liability cannot be excluded, our total liability for claims relating to Selfix
+          Where liability cannot be excluded, our total liability for claims relating to Selfix Life
           shall not exceed the greater of (a) the amount you paid us for the service in the prior
-          12 months (if any), or (b) zero if Selfix is provided free of charge.
+          12 months (if any), or (b) zero if Selfix Life is provided free of charge.
         </p>
       </Section>
 
       <Section title="8. Indemnification">
         <p>
-          You agree to defend and hold harmless Selfix and its creators from claims arising out of
+          You agree to defend and hold harmless Selfix Life and its creators from claims arising out of
           your misuse of the service, your content, or your violation of these Terms.
         </p>
       </Section>

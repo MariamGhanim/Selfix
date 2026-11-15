@@ -19,7 +19,7 @@ export function openPrintableReport(data, categoryLabel) {
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Selfix Insights Report — ${data.bounds.label}</title>
+  <title>Selfix Life Insights Report — ${data.bounds.label}</title>
   <style>
     body { font-family: Georgia, 'Times New Roman', serif; color: #5a4550; background: #fff9f6; margin: 0; padding: 32px; }
     h1 { font-size: 22px; margin: 0 0 4px; }
@@ -32,7 +32,7 @@ export function openPrintableReport(data, categoryLabel) {
 </head>
 <body>
   <div class="actions"><button onclick="window.print()">Save / Print as PDF</button></div>
-  <h1>Selfix Analytics Report</h1>
+  <h1>Selfix Life Analytics Report</h1>
   <p class="meta">${data.bounds.label} · ${categoryLabel}</p>
   <pre>${text.replace(/</g, '&lt;')}</pre>
 </body>

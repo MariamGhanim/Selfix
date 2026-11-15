@@ -1,4 +1,4 @@
-# Selfix — https://www.myselfix.me
+# Selfix Life — https://www.myselfix.me
 User-agent: *
 Allow: /
 

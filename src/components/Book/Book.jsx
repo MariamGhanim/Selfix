@@ -120,7 +120,7 @@ export default function Book() {
 
   if (!trackers.length) {
     return (
-      <div className="flex h-screen w-screen items-center justify-center px-4">
+      <div className="flex min-h-[100dvh] w-full items-center justify-center overflow-auto px-4">
         <div className="quote-banner max-w-md rounded-[1.5rem] px-5 py-6 text-center ring-1 ring-[var(--accent-soft)]/50">
           <p className="font-display text-lg font-semibold text-[var(--ink)]">No pages visible</p>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
@@ -141,7 +141,7 @@ export default function Book() {
 
   return (
     <FocusTimerProvider>
-      <div className="relative flex h-[100dvh] w-screen flex-col overflow-hidden px-2.5 py-2 sm:px-5 sm:py-3">
+      <div className="relative flex min-h-[100dvh] h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-auto px-2.5 py-2 sm:px-5 sm:py-3">
         <AmbientGlow />
         <header className="relative z-10 mb-1 flex shrink-0 items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
@@ -149,8 +149,8 @@ export default function Book() {
               whileHover={{ scale: 1.02 }}
               className="soft-shimmer shrink-0 rounded-full bg-[var(--surface)] px-2.5 py-1 text-[11px] font-bold shadow-md backdrop-blur sm:px-3 sm:py-1.5 sm:text-xs"
             >
-              <span className="font-display text-[var(--accent-deep)]">Selfix</span>
-              {profile.displayName && profile.displayName !== 'Selfix' ? (
+              <span className="font-display text-[var(--accent-deep)]">Selfix Life</span>
+              {profile.displayName && profile.displayName !== 'Selfix Life' ? (
                 <span className="hidden text-[var(--ink-soft)] sm:inline"> · {profile.displayName}</span>
               ) : null}
             </motion.div>
@@ -221,7 +221,7 @@ export default function Book() {
 
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-7xl min-h-0 flex-1 flex-col overflow-hidden sm:max-h-[88vh] sm:w-[95vw]">
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl min-h-0 flex-1 flex-col overflow-x-hidden sm:max-h-[min(88vh,100%)] sm:w-[min(95%,72rem)]">
           <div className="book-tabs-scroll relative z-20 flex shrink-0 justify-start gap-0.5 overflow-x-auto px-1 pb-0 sm:justify-center sm:gap-1 sm:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {trackers.map((t, i) => {
               const TabIcon = ICONS[t.icon] || Star

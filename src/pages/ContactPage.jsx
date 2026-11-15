@@ -5,15 +5,15 @@ import SiteLayout, { Section, SoftCard } from '../components/Legal/SiteLayout'
 const FAQ = [
   {
     q: 'How is my journal data saved?',
-    a: 'After you sign in and verify your email, Selfix syncs your pixels, panels, notes, and settings to Firebase (Cloud Firestore) under your user account. Your browser may also use LocalStorage for temporary client-side state. Sign in on another device with the same account to continue your book.',
+    a: 'After you sign in and verify your email, Selfix Life syncs your pixels, panels, notes, and settings to Firebase (Cloud Firestore) under your user account. Your browser may also use LocalStorage for temporary client-side state. Sign in on another device with the same account to continue your book.',
   },
   {
     q: 'How do I switch themes?',
     a: 'Open your journal and use the theme dots in the top header. Choose Soft Rose or Midnight Soft — the open-book layout stays the same while colors gently shift.',
   },
   {
-    q: 'Is Selfix free?',
-    a: 'Yes. Selfix is currently free to use for personal journaling. Features may evolve over time; if pricing ever changes, we will communicate clearly beforehand.',
+    q: 'Is Selfix Life free?',
+    a: 'Yes. Selfix Life is currently free to use for personal journaling. Features may evolve over time; if pricing ever changes, we will communicate clearly beforehand.',
   },
   {
     q: 'Why do I need to verify my email?',
@@ -63,7 +63,7 @@ export default function ContactPage() {
   return (
     <SiteLayout
       title="Contact"
-      subtitle="Say hello, report a soft bug, or share an idea for Selfix. We read every note with care."
+      subtitle="Say hello, report a soft bug, or share an idea for Selfix Life. We read every note with care."
     >
       <Section title="Send a message">
         {submitted ? (

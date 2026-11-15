@@ -646,7 +646,7 @@ export function filterHabitsByCategory(habitStats, categoryId) {
 
 export function buildExportReport(data, categoryLabel = 'All Trackers') {
   const lines = [
-    'Selfix Analytics Report',
+    'Selfix Life Analytics Report',
     `Period: ${data.bounds.label}`,
     `Category: ${categoryLabel}`,
     '',

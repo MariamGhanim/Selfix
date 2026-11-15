@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌸 Selfix
+# 🌸 Selfix Life
 
 ### *A soft space for your day*
 
@@ -24,17 +24,17 @@
 **Paint your year in gentle pixels.**  
 Track habits, sleep, prayer, focus, and little life moments inside a cozy open-book journal.
 
-[🌐 Open Selfix](https://selfix-omega.vercel.app) · [📜 Terms](https://selfix-omega.vercel.app/terms) · [🔒 Privacy](https://selfix-omega.vercel.app/privacy)
+[🌐 Open Selfix Life](https://selfix-omega.vercel.app) · [📜 Terms](https://selfix-omega.vercel.app/terms) · [🔒 Privacy](https://selfix-omega.vercel.app/privacy)
 
 </div>
 
 ---
 
-## 💗 About Selfix
+## 💗 About Selfix Life
 
-**Selfix** is a warm, private year-in-pixels journal — designed to feel like a keepsake book, not a cold productivity dashboard.
+**Selfix Life** is a warm, private year-in-pixels journal — designed to feel like a keepsake book, not a cold productivity dashboard.
 
-Each habit is a soft page in your diary. You paint days on a pastel grid, leave quiet notes beside them, flip between trackers, and watch your year bloom into a colorful mosaic. Whether you’re logging sleep, Salah, water, focus sessions, workouts, or the small wins of an ordinary day, Selfix stays gentle, personal, and beautiful.
+Each habit is a soft page in your diary. You paint days on a pastel grid, leave quiet notes beside them, flip between trackers, and watch your year bloom into a colorful mosaic. Whether you’re logging sleep, Salah, water, focus sessions, workouts, or the small wins of an ordinary day, Selfix Life stays gentle, personal, and beautiful.
 
 > ✨ *A soft space for your day, thoughts, and habits.*
 
@@ -62,13 +62,13 @@ Built for people who want reflection without pressure — soft rose mornings, mi
 
 ## 🌐 Deployment & Live Link
 
-Selfix is **live** and deployed on **Vercel**:
+Selfix Life is **live** and deployed on **Vercel**:
 
 ### 👉 [https://selfix-omega.vercel.app](https://selfix-omega.vercel.app)
 
 <div align="center">
 
-[![Visit Selfix](https://img.shields.io/badge/🌸_Visit_Selfix_Live-e8a0b0?style=for-the-badge&labelColor=1a1a1a)](https://selfix-omega.vercel.app)
+[![Visit Selfix Life](https://img.shields.io/badge/🌸_Visit_Selfix Life_Live-e8a0b0?style=for-the-badge&labelColor=1a1a1a)](https://selfix-omega.vercel.app)
 
 </div>
 
@@ -141,7 +141,7 @@ Open the URL Vite prints (usually `http://localhost:5173`).
 ### Scripts
 
 ```bash
-npm run dev       # start Selfix locally
+npm run dev       # start Selfix Life locally
 npm run build     # production build
 npm run preview   # preview the production build
 npm run lint      # lint with oxlint
@@ -164,7 +164,7 @@ src/
 
 ## 🖤 Soft Rose · Midnight Soft
 
-Selfix ships with two carefully tuned looks:
+Selfix Life ships with two carefully tuned looks:
 
 - **Soft Rose** — warm blush paper, rose accents, daylight journaling  
 - **Midnight Soft** — deep ink nights, lavender accents, late-hour calm  
@@ -190,14 +190,14 @@ By continuing in the product, users agree to the Terms & Privacy linked on the s
 
 ## ⚖️ License & Copyright
 
-> **Proprietary License & Copyright © 2026 Selfix.**  
+> **Proprietary License & Copyright © 2026 Selfix Life.**  
 > All rights reserved.
 
 This software, its design system, visual identity, UX patterns, documentation, and source code are **strictly proprietary**.
 
 **Unauthorized copying, modification, distribution, reverse engineering, republication, sublicensing, or commercial use of this project — in whole or in part, via any medium — is strictly prohibited** without prior written permission from the copyright holder.
 
-Selfix is provided for authorized use only. Access to the live demo at [selfix-omega.vercel.app](https://selfix-omega.vercel.app) does **not** grant any license to reuse, fork, or commercialize the codebase, brand, or design.
+Selfix Life is provided for authorized use only. Access to the live demo at [selfix-omega.vercel.app](https://selfix-omega.vercel.app) does **not** grant any license to reuse, fork, or commercialize the codebase, brand, or design.
 
 For licensing inquiries, use the [Contact](https://selfix-omega.vercel.app/contact) page.
 
@@ -207,11 +207,11 @@ For licensing inquiries, use the [Contact](https://selfix-omega.vercel.app/conta
 
 <br/>
 
-**🌸 Selfix**
+**🌸 Selfix Life**
 
 *A soft space for your day, thoughts, and habits*
 
-[Live app](https://selfix-omega.vercel.app) · Copyright © 2026 Selfix · All rights reserved
+[Live app](https://selfix-omega.vercel.app) · Copyright © 2026 Selfix Life · All rights reserved
 
 <br/>
 

@@ -12,9 +12,9 @@ import PrivacyPage from './pages/PrivacyPage'
 import TermsPage from './pages/TermsPage'
 import ContactPage from './pages/ContactPage'
 
-function LoadingScreen({ label = 'Opening Selfix…' }) {
+function LoadingScreen({ label = 'Opening Selfix Life…' }) {
   return (
-    <div className="flex h-screen w-screen items-center justify-center">
+    <div className="flex min-h-[100dvh] w-full items-center justify-center overflow-auto px-4">
       <div className="rounded-full bg-[var(--surface)] px-5 py-2.5 text-sm font-bold text-[var(--ink-soft)] shadow-md">
         {label}
       </div>
@@ -58,7 +58,7 @@ function ThemedApp() {
   }
 
   return (
-    <main className="h-screen w-screen overflow-hidden">
+    <main className="h-[100dvh] min-h-[100dvh] w-full max-w-full overflow-x-hidden overflow-y-auto">
       {syncError && (
         <div className="absolute left-1/2 top-2 z-[60] max-w-[90vw] -translate-x-1/2 truncate rounded-full bg-[#fde8ee] px-3 py-1 text-[10px] font-bold text-[#b8385c] shadow">
           Firebase save issue — {syncError}

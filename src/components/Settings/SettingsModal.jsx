@@ -261,7 +261,7 @@ export default function SettingsModal({ open, onClose }) {
           <div>
             <p className="font-display text-lg font-semibold text-[var(--ink)]">Settings</p>
             <p className="text-[11px] text-[var(--ink-soft)]">
-              Customize pages & keep your Selfix cozy
+              Customize pages & keep your Selfix Life cozy
             </p>
           </div>
           <button

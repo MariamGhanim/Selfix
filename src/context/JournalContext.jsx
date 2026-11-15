@@ -26,7 +26,7 @@ import { loadJournalFromCloud, saveJournalToCloud } from '../lib/journalCloud'
 const JournalContext = createContext(null)
 
 const DEFAULT_PROFILE = {
-  displayName: 'Selfix',
+  displayName: 'Selfix Life',
   year: new Date().getFullYear(),
 }
 

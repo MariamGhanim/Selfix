@@ -2,22 +2,22 @@
 import path from 'node:path'
 
 const SITE = 'https://www.myselfix.me'
-const ABOUT_TITLE = 'About Selfix · Year in Pixels Journal — Soft Pastel Habit & Mood Tracking'
+const ABOUT_TITLE = 'About Selfix Life · Year in Pixels Journal — Soft Pastel Habit & Mood Tracking'
 const ABOUT_DESCRIPTION =
-  'Selfix is a soft pastel space for your days, thoughts, and memories. Learn how Year in Pixels helps you track sleep, mood, habits, and daily notes with calm visual clarity.'
+  'Selfix Life is a soft pastel space for your days, thoughts, and memories. Learn how Year in Pixels helps you track sleep, mood, habits, and daily notes with calm visual clarity.'
 
 const ABOUT_BODY = `
 <article class="seo-prerender" style="max-width:42rem;margin:2rem auto;padding:0 1.25rem;font-family:system-ui,sans-serif;line-height:1.65;color:#5a4550">
-  <p><a href="/">Selfix</a> · About</p>
-  <h1>Selfix — a soft space for your days, thoughts, and memories</h1>
+  <p><a href="/">Selfix Life</a> · About</p>
+  <h1>Selfix Life — a soft space for your days, thoughts, and memories</h1>
   <p>
-    Selfix is not a spreadsheet. It is a cozy Year in Pixels journal for painting your year in gentle
+    Selfix Life is not a spreadsheet. It is a cozy Year in Pixels journal for painting your year in gentle
     pastel pixels — sleep, mood, habits, and daily notes gathered into a mosaic you can read at a glance.
   </p>
   <h2>Our story</h2>
   <p>
     Journaling should feel like opening a favorite notebook, not staring at a cold dashboard. Inspired by
-    the classic Year in Pixels method, Selfix wraps that idea in an open-book experience with soft colors,
+    the classic Year in Pixels method, Selfix Life wraps that idea in an open-book experience with soft colors,
     binder tabs, and room to breathe on low-energy days.
   </p>
   <h2>How it works</h2>
@@ -35,7 +35,7 @@ const ABOUT_BODY = `
     <li>Daily journal notes</li>
     <li>Soft Rose and Midnight Soft themes</li>
   </ul>
-  <p><a href="${SITE}/">Open Selfix</a> · <a href="${SITE}/contact">Contact</a></p>
+  <p><a href="${SITE}/">Open Selfix Life</a> · <a href="${SITE}/contact">Contact</a></p>
 </article>
 `.trim()
 
