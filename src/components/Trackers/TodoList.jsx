@@ -69,14 +69,14 @@ export default function TodoList({ month, day, embedded = false }) {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && add()}
           placeholder="Add a gentle task..."
-          className="min-w-0 flex-1 rounded-xl border border-[var(--page-edge)] bg-[var(--surface)] px-2.5 py-1.5 text-xs outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
+          className="soft-field min-h-11 min-w-0 flex-1 rounded-xl border border-[var(--page-edge)] bg-[var(--surface)] px-3 py-2.5 text-base outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30 sm:min-h-0 sm:py-1.5 sm:text-xs"
         />
         <motion.button
           type="button"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.92 }}
           onClick={add}
-          className="rounded-xl bg-[var(--accent-deep)] px-2.5 text-white shadow"
+          className="inline-flex min-h-11 items-center rounded-xl bg-[var(--accent-deep)] px-3.5 text-white shadow sm:min-h-0 sm:px-2.5"
         >
           <Plus size={14} />
         </motion.button>
@@ -96,22 +96,22 @@ export default function TodoList({ month, day, embedded = false }) {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, x: -12 }}
-              className="flex items-center gap-2 rounded-xl bg-[var(--surface)] px-2.5 py-1.5 shadow-sm"
+              className="flex min-h-11 items-center gap-2 rounded-xl bg-[var(--surface)] px-2.5 py-2 shadow-sm sm:min-h-0 sm:py-1.5"
             >
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.85 }}
                 onClick={() => toggle(todo.id)}
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition ${
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition sm:h-5 sm:w-5 ${
                   todo.done
                     ? 'bg-[var(--accent)] text-white shadow-sm'
                     : 'bg-[var(--paper-deep)] text-[var(--ink-soft)]'
                 }`}
               >
-                <Check size={11} />
+                <Check size={14} className="sm:h-[11px] sm:w-[11px]" />
               </motion.button>
               <span
-                className={`min-w-0 flex-1 text-xs transition ${
+                className={`min-w-0 flex-1 text-sm transition sm:text-xs ${
                   todo.done ? 'text-[var(--ink-soft)] line-through' : 'text-[var(--ink)]'
                 }`}
               >
@@ -120,9 +120,10 @@ export default function TodoList({ month, day, embedded = false }) {
               <button
                 type="button"
                 onClick={() => remove(todo.id)}
-                className="rounded-full p-0.5 text-[var(--ink-soft)] transition hover:bg-[var(--paper-deep)]"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[var(--ink-soft)] transition hover:bg-[var(--paper-deep)] sm:h-auto sm:w-auto sm:p-0.5"
+                aria-label="Remove todo"
               >
-                <Trash2 size={12} />
+                <Trash2 size={14} />
               </button>
             </motion.li>
           ))}

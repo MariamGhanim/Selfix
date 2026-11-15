@@ -188,7 +188,7 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
                 type="button"
                 whileTap={{ scale: 0.96 }}
                 onClick={openLog}
-                className="shrink-0 rounded-full bg-[var(--accent-deep)] px-3.5 py-2 text-[12px] font-bold text-white shadow-md"
+                className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-[var(--accent-deep)] px-4 py-2.5 text-sm font-bold text-white shadow-md"
               >
                 Open log
               </motion.button>
@@ -204,7 +204,7 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
       )}
 
       <div className="min-h-0 flex-1 overflow-auto px-1 pb-2 md:px-0">
-        <div className="h-full min-h-[26rem] rounded-[1.25rem] bg-[var(--surface)]/45 p-2 ring-1 ring-[var(--page-edge)]/40 md:min-h-0 md:rounded-none md:bg-transparent md:p-0 md:ring-0">
+        <div className="h-auto min-h-0 rounded-[1.25rem] bg-[var(--surface)]/45 p-2 ring-1 ring-[var(--page-edge)]/40 md:h-full md:rounded-none md:bg-transparent md:p-0 md:ring-0">
           <PixelGrid
             trackerId={tracker.id}
             levels={tracker.levels}

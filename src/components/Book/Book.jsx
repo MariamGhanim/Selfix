@@ -141,38 +141,40 @@ export default function Book() {
 
   return (
     <FocusTimerProvider>
-      <div className="relative flex min-h-[100dvh] h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-auto px-2.5 py-2 sm:px-5 sm:py-3">
+      <div className="safe-pt safe-px relative flex min-h-[100dvh] h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-auto px-2.5 py-2 sm:px-5 sm:py-3">
         <AmbientGlow />
         <header className="relative z-10 mb-1 flex shrink-0 items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="soft-shimmer shrink-0 rounded-full bg-[var(--surface)] px-2.5 py-1 text-[11px] font-bold shadow-md backdrop-blur sm:px-3 sm:py-1.5 sm:text-xs"
+              className="soft-shimmer flex min-h-11 shrink-0 items-center rounded-full bg-[var(--surface)] px-3 py-2 text-xs font-bold shadow-md backdrop-blur sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
             >
               <span className="font-display text-[var(--accent-deep)]">Selfix Life</span>
               {profile.displayName && profile.displayName !== 'Selfix Life' ? (
                 <span className="hidden text-[var(--ink-soft)] sm:inline"> · {profile.displayName}</span>
               ) : null}
             </motion.div>
-            <div className="inline-flex shrink-0 items-center rounded-full bg-[var(--surface)] px-1 py-0.5 shadow-md backdrop-blur sm:px-1.5">
+            <div className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-[var(--surface)] px-1 shadow-md backdrop-blur sm:min-h-0 sm:px-1.5 sm:py-0.5">
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setYear(year - 1)}
-                className="rounded-full p-1 hover:bg-[var(--accent-glow)]"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-[var(--accent-glow)] sm:h-8 sm:w-8"
+                aria-label="Previous year"
               >
-                <ChevronLeft size={14} />
+                <ChevronLeft size={18} />
               </motion.button>
-              <span className="min-w-[2.75rem] text-center font-display text-xs font-semibold sm:min-w-[3.5rem] sm:text-sm">
+              <span className="min-w-[2.75rem] text-center font-display text-sm font-semibold sm:min-w-[3.5rem] sm:text-sm">
                 {year}
               </span>
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setYear(year + 1)}
-                className="rounded-full p-1 hover:bg-[var(--accent-glow)]"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-[var(--accent-glow)] sm:h-8 sm:w-8"
+                aria-label="Next year"
               >
-                <ChevronRight size={14} />
+                <ChevronRight size={18} />
               </motion.button>
             </div>
           </div>
@@ -188,7 +190,7 @@ export default function Book() {
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.94 }}
               onClick={toggleInsights}
-              className={`inline-flex items-center gap-1 rounded-full px-2 py-1.5 text-[11px] font-semibold shadow-md backdrop-blur transition sm:gap-1.5 sm:px-3 ${
+              className={`inline-flex min-h-11 items-center gap-1 rounded-full px-3 py-2 text-xs font-semibold shadow-md backdrop-blur transition sm:min-h-0 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-[11px] ${
                 showInsights
                   ? 'bg-[var(--accent-deep)] text-white'
                   : 'bg-[var(--surface)] text-[var(--ink-soft)] hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]'
@@ -197,7 +199,7 @@ export default function Book() {
               aria-label="Insights Logbook"
               aria-pressed={showInsights}
             >
-              <Sparkles size={14} />
+              <Sparkles size={16} />
               <span className="hidden sm:inline">Logbook</span>
             </motion.button>
             <ThemeToggle />
@@ -206,11 +208,11 @@ export default function Book() {
               whileHover={{ scale: 1.06, rotate: 18 }}
               whileTap={{ scale: 0.92, rotate: 40 }}
               onClick={() => setSettingsOpen(true)}
-              className="rounded-full bg-[var(--surface)] p-2 text-[var(--ink-soft)] shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--ink-soft)] shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)] sm:h-9 sm:w-9"
               title="Settings"
               aria-label="Settings"
             >
-              <Settings size={16} />
+              <Settings size={18} />
             </motion.button>
           </div>
         </header>
@@ -222,7 +224,7 @@ export default function Book() {
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
         <div className="relative z-10 mx-auto flex w-full max-w-7xl min-h-0 flex-1 flex-col overflow-x-hidden sm:max-h-[min(88vh,100%)] sm:w-[min(95%,72rem)]">
-          <div className="book-tabs-scroll relative z-20 flex shrink-0 justify-start gap-0.5 overflow-x-auto px-1 pb-0 sm:justify-center sm:gap-1 sm:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="book-tabs-scroll relative z-20 flex shrink-0 justify-start gap-1 overflow-x-auto px-1 pb-0 sm:justify-center sm:gap-1 sm:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {trackers.map((t, i) => {
               const TabIcon = ICONS[t.icon] || Star
               const active = !showInsights && i === pageIndex
@@ -235,7 +237,7 @@ export default function Book() {
                   whileTap={{ scale: 0.97 }}
                   onClick={() => go(i)}
                   title={t.title}
-                  className={`relative flex shrink-0 items-center gap-1 rounded-t-xl px-2 pb-1.5 pt-1 text-[9px] font-bold sm:px-2 sm:text-[10px] ${
+                  className={`relative flex min-h-11 shrink-0 items-center gap-1.5 rounded-t-xl px-3 pb-2 pt-2 text-[11px] font-bold sm:min-h-0 sm:gap-1 sm:px-2 sm:pb-1.5 sm:pt-1 sm:text-[10px] ${
                     active
                       ? 'translate-y-0 text-white shadow-md'
                       : '-translate-y-0.5 text-[var(--ink)] opacity-90'
@@ -256,7 +258,7 @@ export default function Book() {
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
-                  <TabIcon size={11} className="relative z-10 hidden sm:block" />
+                  <TabIcon size={14} className="relative z-10 sm:h-[11px] sm:w-[11px]" />
                   <span className="relative z-10 whitespace-nowrap">{t.tab}</span>
                 </motion.button>
               )
@@ -305,7 +307,7 @@ export default function Book() {
             </div>
           </motion.div>
 
-          <div className="mt-1 flex shrink-0 items-center justify-between gap-2 px-1 sm:mt-1.5">
+          <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 pb-[4.75rem] sm:mt-1.5 sm:pb-0">
             {showInsights ? (
               <>
                 <span className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:inline">
@@ -316,7 +318,7 @@ export default function Book() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => setShowInsights(false)}
-                  className="ml-auto inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur"
+                  className="ml-auto inline-flex min-h-11 items-center gap-1 rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm font-bold shadow-md backdrop-blur sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
                 >
                   Back to journal
                 </motion.button>
@@ -329,12 +331,12 @@ export default function Book() {
                   whileHover={pageIndex === 0 ? undefined : { x: -2, scale: 1.02 }}
                   whileTap={pageIndex === 0 ? undefined : { scale: 0.96 }}
                   onClick={() => go(pageIndex - 1)}
-                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-2.5 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35 sm:px-3"
+                  className="inline-flex min-h-11 items-center gap-1 rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm font-bold shadow-md backdrop-blur disabled:opacity-35 sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
                 >
-                  <ChevronLeft size={14} />
+                  <ChevronLeft size={18} />
                   <span className="hidden sm:inline">Previous</span>
                 </motion.button>
-                <p className="text-[10px] font-medium text-[var(--ink-soft)]">
+                <p className="text-xs font-medium text-[var(--ink-soft)] sm:text-[10px]">
                   {pageIndex + 1} / {trackers.length}
                 </p>
                 <motion.button
@@ -343,10 +345,10 @@ export default function Book() {
                   whileHover={pageIndex === trackers.length - 1 ? undefined : { x: 2, scale: 1.02 }}
                   whileTap={pageIndex === trackers.length - 1 ? undefined : { scale: 0.96 }}
                   onClick={() => go(pageIndex + 1)}
-                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-2.5 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35 sm:px-3"
+                  className="inline-flex min-h-11 items-center gap-1 rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm font-bold shadow-md backdrop-blur disabled:opacity-35 sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
                 >
                   <span className="hidden sm:inline">Next</span>
-                  <ChevronRight size={14} />
+                  <ChevronRight size={18} />
                 </motion.button>
               </>
             )}

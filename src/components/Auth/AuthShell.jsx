@@ -12,7 +12,7 @@ function AuthTopNav() {
   return (
     <nav
       aria-label="Explore Selfix Life"
-      className="absolute left-0 right-0 top-0 z-30 flex items-center justify-end gap-1 px-3 py-2.5 sm:px-5 sm:py-3 lg:px-7"
+      className="absolute left-0 right-0 top-0 z-30 flex items-center justify-end gap-1 px-3 py-2.5 pt-[max(0.625rem,env(safe-area-inset-top))] sm:px-5 sm:py-3 lg:px-7"
     >
       <div className="inline-flex items-center gap-0.5 rounded-full bg-[var(--surface)]/85 p-1 shadow-md ring-1 ring-[var(--page-edge)]/55 backdrop-blur-md">
         {AUTH_NAV.map((item) => {
@@ -21,7 +21,7 @@ function AuthTopNav() {
             <Link
               key={item.to}
               to={item.to}
-              className={`rounded-full px-3 py-1.5 font-display text-[11px] font-semibold transition sm:px-3.5 sm:text-xs ${
+              className={`inline-flex min-h-11 items-center rounded-full px-4 py-2 font-display text-xs font-semibold transition sm:min-h-0 sm:px-3.5 sm:py-1.5 sm:text-xs ${
                 active
                   ? 'bg-[var(--accent-deep)] text-white shadow-sm'
                   : 'text-[var(--ink-soft)] hover:bg-[var(--accent-glow)] hover:text-[var(--ink)]'
@@ -207,14 +207,14 @@ function AuthBrandPanel() {
 
 export default function AuthShell({ title, subtitle, children, footer }) {
   return (
-    <div className="auth-split-shell relative flex min-h-[100dvh] h-[100dvh] w-full max-w-full items-stretch justify-center overflow-x-hidden overflow-y-auto p-0 sm:items-center sm:p-5 lg:p-7">
+    <div className="auth-split-shell relative flex min-h-[100dvh] h-[100dvh] w-full max-w-full items-stretch justify-center overflow-x-hidden overflow-y-auto p-0 pb-[env(safe-area-inset-bottom)] sm:items-center sm:p-5 lg:p-7">
       <AuthTopNav />
-      <div className="auth-split-frame book-shadow paper-texture relative mt-11 grid min-h-0 h-auto max-h-none w-full max-w-6xl overflow-y-auto rounded-none border-0 border-[var(--page-edge)] sm:mt-0 sm:h-full sm:max-h-[min(920px,100%)] sm:overflow-y-auto sm:rounded-[28px] sm:border lg:grid-cols-12 lg:rounded-[32px]">
+      <div className="auth-split-frame book-shadow paper-texture relative mt-[max(2.75rem,calc(env(safe-area-inset-top)+2.25rem))] grid min-h-0 h-auto max-h-none w-full max-w-6xl overflow-y-auto rounded-none border-0 border-[var(--page-edge)] sm:mt-0 sm:h-full sm:max-h-[min(920px,100%)] sm:overflow-y-auto sm:rounded-[28px] sm:border lg:grid-cols-12 lg:rounded-[32px]">
         <div className="min-h-0 lg:col-span-5">
           <AuthBrandPanel />
         </div>
 
-        <div className="relative flex min-h-0 flex-1 items-start justify-center overflow-y-auto border-t border-[var(--page-edge)]/60 bg-[var(--surface)]/55 px-3 py-5 backdrop-blur-md sm:items-center sm:px-8 sm:py-8 lg:col-span-7 lg:border-l lg:border-t-0">
+        <div className="relative flex min-h-0 flex-1 items-start justify-center overflow-y-auto border-t border-[var(--page-edge)]/60 bg-[var(--surface)]/55 px-4 py-5 backdrop-blur-md sm:items-center sm:px-8 sm:py-8 lg:col-span-7 lg:border-l lg:border-t-0">
           <div
             className="pointer-events-none absolute inset-0 opacity-60"
             style={{
@@ -226,7 +226,7 @@ export default function AuthShell({ title, subtitle, children, footer }) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="auth-form-card relative w-full max-w-md rounded-[1.6rem] border border-[var(--page-edge)]/70 bg-[var(--surface)] px-5 py-6 shadow-[var(--panel-shadow)] sm:px-7 sm:py-7"
+            className="auth-form-card relative w-full max-w-md rounded-[1.6rem] border border-[var(--page-edge)]/70 bg-[var(--surface)] px-4 py-5 shadow-[var(--panel-shadow)] sm:px-7 sm:py-7"
           >
             <div className="mb-6 text-center">
               <p className="font-display text-2xl font-semibold tracking-tight text-[var(--accent-deep)] sm:text-3xl">
@@ -256,7 +256,7 @@ export function AuthInput({ label, error, className = '', ...props }) {
       </span>
       <input
         {...props}
-        className={`w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-2.5 text-sm text-[var(--ink)] outline-none transition placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)] ${className}`}
+        className={`min-h-11 w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-3 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)] ${className}`}
       />
       {error && <span className="mt-1 block text-xs font-semibold text-[#b8385c]">{error}</span>}
     </label>
@@ -280,7 +280,7 @@ export function AuthButton({
     <button
       type={type}
       disabled={loading || props.disabled}
-      className={`inline-flex w-full items-center justify-center rounded-2xl px-4 py-2.5 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-60 ${styles} ${className}`}
+      className={`inline-flex min-h-11 w-full items-center justify-center rounded-2xl px-4 py-3 text-base font-bold transition disabled:cursor-not-allowed disabled:opacity-60 ${styles} ${className}`}
       {...props}
     >
       {loading ? 'Please wait…' : children}

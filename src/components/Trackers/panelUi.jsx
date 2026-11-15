@@ -29,7 +29,7 @@ export function Chip({ active, onClick, emoji, label, colorIndex = 0 }) {
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.96 }}
       transition={{ type: 'spring', stiffness: 400, damping: 26 }}
-      className={`inline-flex max-w-full items-center gap-1 rounded-full px-2.5 py-1 text-left text-[10px] font-medium leading-tight sm:text-[11px] ${
+      className={`inline-flex min-h-11 max-w-full items-center gap-1.5 rounded-full px-3.5 py-2.5 text-left text-xs font-medium leading-tight sm:min-h-0 sm:gap-1 sm:px-2.5 sm:py-1 sm:text-[11px] ${
         active ? 'shadow-sm ring-2 ring-white/50' : 'opacity-90 hover:opacity-100'
       }`}
       style={{
@@ -54,8 +54,10 @@ export function SelectChip({ active, onClick, emoji, label, compact = false }) {
       whileHover={{ scale: 1.045, y: -0.5 }}
       whileTap={{ scale: 0.94 }}
       transition={{ type: 'spring', stiffness: 420, damping: 24 }}
-      className={`relative z-10 inline-flex max-w-full cursor-pointer items-center overflow-visible rounded-full text-left font-medium leading-tight transition-colors duration-200 ${
-        compact ? 'gap-1 px-2.5 py-1 text-[10px] sm:text-[11px]' : 'gap-1.5 px-3 py-1.5 text-[11px] sm:text-xs'
+      className={`relative z-10 inline-flex min-h-11 max-w-full cursor-pointer items-center overflow-visible rounded-full text-left font-medium leading-tight transition-colors duration-200 sm:min-h-0 ${
+        compact
+          ? 'gap-1.5 px-3.5 py-2.5 text-xs sm:gap-1 sm:px-2.5 sm:py-1 sm:text-[11px]'
+          : 'gap-1.5 px-3.5 py-2.5 text-xs sm:px-3 sm:py-1.5 sm:text-xs'
       } ${
         active
           ? 'bg-[var(--accent-deep)] text-white shadow-md ring-2 ring-[var(--accent-soft)]'
@@ -175,7 +177,7 @@ export function MiniQuiz({ questions, answers, onAnswer, title = 'Daily Mini-Qui
         {questions.map((q) => (
           <div key={q.key} className="space-y-1.5">
             <ReviewHeading asQuestion>{q.question}</ReviewHeading>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-2 sm:gap-1.5">
               {q.options.map((opt) => (
                 <SelectChip
                   key={opt.id}
@@ -223,7 +225,7 @@ export function ChipGroup({ label, children }) {
   return (
     <div className="mb-3 shrink-0">
       {label && <ReviewHeading className="mb-2">{label}</ReviewHeading>}
-      <div className="flex flex-wrap gap-1.5">{children}</div>
+      <div className="flex flex-wrap gap-2 sm:gap-1.5">{children}</div>
     </div>
   )
 }
@@ -237,7 +239,7 @@ export function SoftInput(props) {
     <input
       {...props}
       data-no-flip
-      className={`soft-field relative z-20 w-full rounded-2xl border-0 bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 ${props.className || ''}`}
+      className={`soft-field relative z-20 min-h-11 w-full rounded-2xl border-0 bg-[var(--surface)] px-3.5 py-2.5 text-base text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 sm:min-h-0 sm:py-2 sm:text-sm ${props.className || ''}`}
     />
   )
 }
@@ -247,7 +249,7 @@ export function SoftTextarea(props) {
     <textarea
       {...props}
       data-no-flip
-      className={`soft-field relative z-20 min-h-[7.5rem] w-full resize-y rounded-2xl border-0 bg-[var(--surface)] px-3 py-2.5 text-[11px] leading-relaxed text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 ${props.className || ''}`}
+      className={`soft-field relative z-20 min-h-[7.5rem] w-full resize-y rounded-2xl border-0 bg-[var(--surface)] px-3.5 py-3 text-base leading-relaxed text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 sm:px-3 sm:py-2.5 sm:text-sm ${props.className || ''}`}
     />
   )
 }
@@ -306,9 +308,9 @@ export function PanelShell({
           whileTap={{ scale: 0.94, rotate: -16 }}
           onClick={clearToday}
           aria-label="Clear today"
-          className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--surface)] px-2.5 py-1.5 text-[10px] font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)]"
+          className="mt-0.5 inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-[var(--surface)] px-3.5 py-2 text-xs font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)] sm:min-h-0 sm:px-2.5 sm:py-1.5 sm:text-[10px]"
         >
-          <RotateCcw size={11} />
+          <RotateCcw size={12} />
           Clear
         </motion.button>
       </div>

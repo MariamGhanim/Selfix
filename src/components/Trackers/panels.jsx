@@ -655,7 +655,7 @@ export function VitaminsPanel({ month, day }) {
               onChange={(e) => setCustomText(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && addCustom()}
               placeholder="+ Add custom supplement"
-              className="!py-1.5 !text-[11px]"
+              className="!py-2.5 !text-base sm:!py-1.5 sm:!text-sm"
             />
             <button
               type="button"
@@ -765,7 +765,7 @@ export function ReadingPanel({ month, day }) {
             onChange={(e) => setBook(e.target.value)}
             onBlur={() => patch({ book: book.trim() })}
             placeholder="Current book title & author"
-            className="mb-1.5 !py-1.5 !text-[11px]"
+            className="mb-1.5 !py-2.5 !text-base sm:!py-1.5 sm:!text-sm"
           />
           <ReviewHeading className="mb-1">Genre & session</ReviewHeading>
           <div className="mb-1.5 flex flex-wrap gap-1">
@@ -1045,7 +1045,7 @@ export function SleepPanel({ month, day }) {
                 value={sleepTime}
                 onChange={(e) => setSleepTime(e.target.value)}
                 onBlur={() => patch({ sleepTime })}
-                className="!py-1 !text-[11px]"
+                className="!py-2.5 !text-base sm:!py-1 sm:!text-sm"
               />
             </div>
             <div>
@@ -1055,7 +1055,7 @@ export function SleepPanel({ month, day }) {
                 value={wakeTime}
                 onChange={(e) => setWakeTime(e.target.value)}
                 onBlur={() => patch({ wakeTime })}
-                className="!py-1 !text-[11px]"
+                className="!py-2.5 !text-base sm:!py-1 sm:!text-sm"
               />
             </div>
           </div>
@@ -1120,7 +1120,7 @@ export function OutingsPanel({ month, day }) {
             onBlur={() => saveWithWho(withWho)}
             onKeyDown={(e) => e.key === 'Enter' && saveWithWho(withWho)}
             placeholder="Who I was with"
-            className="mb-1.5 !py-1.5 !text-[11px]"
+            className="mb-1.5 !py-2.5 !text-base sm:!py-1.5 sm:!text-sm"
           />
           <ReviewHeading className="mb-1">Outing vibe</ReviewHeading>
           <div className="flex flex-wrap gap-1">

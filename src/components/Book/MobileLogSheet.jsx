@@ -126,10 +126,10 @@ export default function MobileLogSheet({ open, onClose, tracker, selectedDay }) 
             onPointerDown={(e) => e.stopPropagation()}
           >
             <div className="flex shrink-0 flex-col items-center px-4 pt-2.5 pb-3">
-              <div className="mb-3 h-1 w-10 rounded-full bg-[var(--page-edge)]" />
+              <div className="mb-3 h-1.5 w-12 rounded-full bg-[var(--page-edge)]" />
               <div className="flex w-full items-start gap-3">
                 <div
-                  className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white shadow-md"
+                  className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white shadow-md"
                   style={{
                     background: tracker.tabColor,
                     boxShadow: `0 8px 18px ${tracker.tabColor}44`,
@@ -144,7 +144,7 @@ export default function MobileLogSheet({ open, onClose, tracker, selectedDay }) 
                   <p className="mt-0.5 font-display text-[13px] font-semibold text-[var(--accent-deep)]">
                     {dateLabel}
                   </p>
-                  <p className="mt-1 text-[11px] font-medium text-[var(--ink-soft)]">
+                  <p className="mt-1 text-xs font-medium text-[var(--ink-soft)]">
                     Changes save as you go
                   </p>
                 </div>
@@ -152,16 +152,16 @@ export default function MobileLogSheet({ open, onClose, tracker, selectedDay }) 
                   type="button"
                   whileTap={{ scale: 0.92 }}
                   onClick={onClose}
-                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--ink)] shadow-md ring-1 ring-[var(--page-edge)]/60"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--ink)] shadow-md ring-1 ring-[var(--page-edge)]/60"
                   aria-label="Close and save"
                   title="Close"
                 >
-                  <X size={18} strokeWidth={2.25} />
+                  <X size={20} strokeWidth={2.25} />
                 </motion.button>
               </div>
             </div>
 
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-[max(1rem,env(safe-area-inset-bottom))] [-webkit-overflow-scrolling:touch]">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-[max(1.25rem,env(safe-area-inset-bottom))] [-webkit-overflow-scrolling:touch]">
               <PanelLayoutProvider mode="sheet">
                 <RightPage tracker={tracker} selectedDay={selectedDay} />
               </PanelLayoutProvider>

@@ -241,7 +241,7 @@ export default function SettingsModal({ open, onClose }) {
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[80] flex items-center justify-center px-4 py-6">
+    <div className="fixed inset-0 z-[80] flex items-end justify-center px-3 py-4 sm:items-center sm:px-4 sm:py-6 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
       <button
         type="button"
         aria-label="Close settings backdrop"
@@ -255,7 +255,7 @@ export default function SettingsModal({ open, onClose }) {
         initial={{ opacity: 0, scale: 0.96, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.2 }}
-        className="book-shadow paper-texture relative z-10 flex max-h-[88vh] w-full max-w-lg flex-col overflow-hidden rounded-[28px] border border-[var(--page-edge)]"
+        className="book-shadow paper-texture relative z-10 flex max-h-[min(88vh,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1.5rem))] w-full max-w-lg flex-col overflow-hidden rounded-[28px] border border-[var(--page-edge)]"
       >
         <div className="flex shrink-0 items-center justify-between border-b border-[var(--page-edge)]/70 px-5 py-4">
           <div>
@@ -267,9 +267,10 @@ export default function SettingsModal({ open, onClose }) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 text-[var(--ink-soft)] hover:bg-[var(--accent-glow)]"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[var(--ink-soft)] hover:bg-[var(--accent-glow)]"
+            aria-label="Close settings"
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
 
@@ -285,7 +286,7 @@ export default function SettingsModal({ open, onClose }) {
                 key={item.id}
                 type="button"
                 onClick={() => setTab(item.id)}
-                className={`inline-flex flex-1 items-center justify-center gap-1.5 rounded-t-2xl px-3 py-2 text-[12px] font-semibold transition ${
+                className={`inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-t-2xl px-3 py-2.5 text-sm font-semibold transition sm:min-h-0 sm:py-2 sm:text-[12px] ${
                   active
                     ? 'bg-[var(--accent-glow)] text-[var(--accent-deep)]'
                     : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
@@ -405,7 +406,7 @@ export default function SettingsModal({ open, onClose }) {
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         placeholder="e.g. Skincare, Skateboarding…"
-                        className="w-full rounded-2xl border-0 bg-[var(--surface)] px-3 py-2 text-sm outline-none ring-1 ring-[var(--page-edge)]/60 focus:ring-2 focus:ring-[var(--accent)]/35"
+                        className="min-h-11 w-full rounded-2xl border-0 bg-[var(--surface)] px-3 py-3 text-base outline-none ring-1 ring-[var(--page-edge)]/60 focus:ring-2 focus:ring-[var(--accent)]/35"
                       />
                     </div>
 
@@ -419,7 +420,7 @@ export default function SettingsModal({ open, onClose }) {
                             key={icon}
                             type="button"
                             onClick={() => setNewIcon(icon)}
-                            className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
+                            className={`flex h-11 w-11 items-center justify-center rounded-full transition sm:h-8 sm:w-8 ${
                               newIcon === icon
                                 ? 'bg-[var(--accent-deep)] text-white shadow-sm'
                                 : 'bg-[var(--surface)] text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/50'
@@ -533,7 +534,7 @@ export default function SettingsModal({ open, onClose }) {
                                     value={level.label}
                                     onChange={(e) => updateLevel(index, { label: e.target.value })}
                                     placeholder={`Level ${index + 1} label`}
-                                    className="min-w-0 flex-1 rounded-xl border-0 bg-[var(--surface)] px-2.5 py-1.5 text-[12px] font-semibold text-[var(--ink)] outline-none ring-1 ring-[var(--page-edge)]/50 focus:ring-2 focus:ring-[var(--accent)]/35"
+                                    className="min-h-11 min-w-0 flex-1 rounded-xl border-0 bg-[var(--surface)] px-2.5 py-2.5 text-base font-semibold text-[var(--ink)] outline-none ring-1 ring-[var(--page-edge)]/50 focus:ring-2 focus:ring-[var(--accent)]/35 sm:min-h-0 sm:py-1.5 sm:text-[12px]"
                                   />
                                   <button
                                     type="button"

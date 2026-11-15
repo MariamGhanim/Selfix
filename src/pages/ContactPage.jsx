@@ -98,7 +98,7 @@ export default function ContactPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
-                className="w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="min-h-11 w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-3 text-base outline-none focus:ring-2 focus:ring-[var(--accent)]"
               />
               {errors.name && (
                 <span className="mt-1 block text-xs font-semibold text-[#b8385c]">{errors.name}</span>
@@ -114,7 +114,7 @@ export default function ContactPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@email.com"
-                className="w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="min-h-11 w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-3 text-base outline-none focus:ring-2 focus:ring-[var(--accent)]"
               />
               {errors.email && (
                 <span className="mt-1 block text-xs font-semibold text-[#b8385c]">{errors.email}</span>
@@ -130,7 +130,7 @@ export default function ContactPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="How can we help?"
                 rows={5}
-                className="w-full resize-y rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                className="w-full resize-y rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-3 text-base outline-none focus:ring-2 focus:ring-[var(--accent)]"
               />
               {errors.message && (
                 <span className="mt-1 block text-xs font-semibold text-[#b8385c]">
@@ -141,7 +141,7 @@ export default function ContactPage() {
 
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[var(--accent-deep)] px-4 py-2.5 text-sm font-bold text-white shadow-md"
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-[var(--accent-deep)] px-4 py-3 text-base font-bold text-white shadow-md"
             >
               <Send size={14} />
               Send message

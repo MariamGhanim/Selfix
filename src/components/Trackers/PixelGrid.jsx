@@ -17,14 +17,8 @@ export default function PixelGrid({
   }
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col">
-      <div
-        className="grid h-full min-h-[28rem] w-full gap-[2px] sm:min-h-0"
-        style={{
-          gridTemplateColumns: `16px repeat(12, minmax(0, 1fr))`,
-          gridTemplateRows: `12px repeat(31, minmax(10px, 1fr))`,
-        }}
-      >
+    <div className="flex h-full min-h-0 w-full max-w-full flex-col overflow-x-hidden">
+      <div className="pixel-year-grid">
         <div />
         {MONTHS.map((m) => (
           <div
@@ -38,7 +32,7 @@ export default function PixelGrid({
 
         {DAYS.map((day) => (
           <Fragment key={day}>
-            <div className="flex items-center justify-center text-[8px] font-semibold leading-none text-[var(--ink-soft)]">
+            <div className="flex items-center justify-center text-[9px] font-semibold leading-none text-[var(--ink-soft)] md:text-[8px]">
               {day}
             </div>
             {MONTHS.map((m) => {
@@ -68,7 +62,7 @@ export default function PixelGrid({
                       onSelectDay?.({ month: m.id, day })
                     }
                   }}
-                  className={`pixel-btn h-full min-h-0 w-full rounded-[3px] ${
+                  className={`pixel-btn h-full min-h-[24px] w-full rounded-[4px] md:min-h-0 md:rounded-[3px] ${
                     !valid ? 'cursor-not-allowed opacity-35' : 'cursor-pointer'
                   } ${
                     isSelected
