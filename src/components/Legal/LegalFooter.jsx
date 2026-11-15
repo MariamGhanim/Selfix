@@ -12,7 +12,7 @@ export default function LegalFooter() {
   const { pathname } = useLocation()
 
   return (
-    <footer className="mt-1.5 flex shrink-0 flex-wrap items-center justify-center gap-x-2.5 gap-y-1 px-2 pb-0.5 text-[10px] text-[var(--ink-soft)]">
+    <footer className="mt-1 hidden shrink-0 flex-wrap items-center justify-center gap-x-2.5 gap-y-1 px-2 pb-0.5 text-[10px] text-[var(--ink-soft)] sm:mt-1.5 sm:flex">
       {LINKS.map((link, i) => {
         const active = pathname === link.to
         return (

@@ -55,6 +55,7 @@ Built for people who want reflection without pressure — soft rose mornings, mi
 | **🧩 Custom pages** | Show/hide, reorder, and create custom grid trackers in Settings |
 | **🎵 Ambient music** | A tiny cozy player while you journal |
 | **☁️ Cloud sync** | Firebase Authentication + Cloud Firestore — your journal follows you |
+| **🔐 Encrypted notes** | Private notes & narrative fields are AES-encrypted on-device before Firestore |
 | **🔐 Secure account** | Email verification, password reset, logout, and legal links on sign-in |
 
 ---
@@ -116,7 +117,10 @@ VITE_FIREBASE_STORAGE_BUCKET=
 VITE_FIREBASE_MESSAGING_SENDER_ID=
 VITE_FIREBASE_APP_ID=
 VITE_FIREBASE_MEASUREMENT_ID=
+VITE_NOTE_ENCRYPTION_SECRET=
 ```
+
+Use a long random value for `VITE_NOTE_ENCRYPTION_SECRET` in production. Notes are encrypted client-side with AES before sync; changing this secret later will prevent decrypting previously stored ciphertext.
 
 ### 3. Firebase project setup
 

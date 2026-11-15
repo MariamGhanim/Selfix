@@ -11,12 +11,12 @@ export default function PixelGrid({ trackerId, levels, onSelectDay, selectedDay 
   }
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex h-full min-h-0 w-full flex-col">
       <div
-        className="grid h-full w-full gap-[2px]"
+        className="grid h-full min-h-[28rem] w-full gap-[2px] sm:min-h-0"
         style={{
-          gridTemplateColumns: `18px repeat(12, minmax(0, 1fr))`,
-          gridTemplateRows: `14px repeat(31, minmax(0, 1fr))`,
+          gridTemplateColumns: `16px repeat(12, minmax(0, 1fr))`,
+          gridTemplateRows: `12px repeat(31, minmax(10px, 1fr))`,
         }}
       >
         <div />

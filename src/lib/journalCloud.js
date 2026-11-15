@@ -1,5 +1,6 @@
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from './firebase'
+import { decryptJournalFromCloud, encryptJournalForCloud } from './noteCrypto'
 
 const SYNC_TIMEOUT_MS = 10000
 
@@ -53,17 +54,19 @@ export async function loadJournalFromCloud(uid, defaults) {
     if (snap.exists()) {
       const data = snap.data()
       const { updatedAt: _u, createdAt: _c, ...journal } = data
-      return {
+      const merged = {
         ...defaults,
         ...journal,
         profile: { ...defaults.profile, ...(journal.profile || {}) },
       }
+      return decryptJournalFromCloud(merged, uid)
     }
 
     const seed = sanitizeForFirestore(defaults)
+    const encryptedSeed = sanitizeForFirestore(encryptJournalForCloud(seed, uid))
     await withTimeout(
       setDoc(journalDocRef(uid), {
-        ...seed,
+        ...encryptedSeed,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       }),
@@ -78,7 +81,8 @@ export async function loadJournalFromCloud(uid, defaults) {
 
 export async function saveJournalToCloud(uid, state) {
   try {
-    const clean = sanitizeForFirestore(state)
+    const encrypted = encryptJournalForCloud(state, uid)
+    const clean = sanitizeForFirestore(encrypted)
     await withTimeout(
       setDoc(journalDocRef(uid), {
         ...clean,

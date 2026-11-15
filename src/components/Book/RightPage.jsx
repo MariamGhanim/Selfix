@@ -51,7 +51,7 @@ export default function RightPage({ tracker, selectedDay }) {
         <div
           data-right-page
           data-no-flip
-          className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-3 sm:p-4"
+          className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-1.5 sm:p-4"
         >
           <CustomChecklistPanel
             trackerId={tracker.id}
@@ -67,7 +67,7 @@ export default function RightPage({ tracker, selectedDay }) {
         <div
           data-right-page
           data-no-flip
-          className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-3 sm:p-4"
+          className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-1.5 sm:p-4"
         >
           <CustomNotesPanel trackerId={tracker.id} month={month} day={day} title={tracker.title} />
         </div>
@@ -77,7 +77,7 @@ export default function RightPage({ tracker, selectedDay }) {
       <div
         data-right-page
         data-no-flip
-        className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-3 sm:p-4"
+        className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-1.5 sm:p-4"
       >
         <CustomGridPanel trackerId={tracker.id} month={month} day={day} title={tracker.title} />
       </div>
@@ -88,7 +88,7 @@ export default function RightPage({ tracker, selectedDay }) {
     <div
       data-right-page
       data-no-flip
-      className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-3 sm:p-4"
+      className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-1.5 sm:p-4"
     >
       <Panel month={month} day={day} />
     </div>

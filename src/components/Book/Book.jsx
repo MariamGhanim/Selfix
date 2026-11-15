@@ -141,20 +141,20 @@ export default function Book() {
 
   return (
     <FocusTimerProvider>
-      <div className="relative flex h-screen w-screen flex-col overflow-hidden px-3 py-2 sm:px-5 sm:py-3">
+      <div className="relative flex h-[100dvh] w-screen flex-col overflow-hidden px-2 py-1.5 sm:px-5 sm:py-3">
         <AmbientGlow />
-        <header className="relative z-10 mb-1 flex shrink-0 flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
+        <header className="relative z-10 mb-1 flex shrink-0 items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="soft-shimmer rounded-full bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur"
+              className="soft-shimmer shrink-0 rounded-full bg-[var(--surface)] px-2.5 py-1 text-[11px] font-bold shadow-md backdrop-blur sm:px-3 sm:py-1.5 sm:text-xs"
             >
               <span className="font-display text-[var(--accent-deep)]">Selfix</span>
               {profile.displayName && profile.displayName !== 'Selfix' ? (
-                <span className="text-[var(--ink-soft)]"> · {profile.displayName}</span>
+                <span className="hidden text-[var(--ink-soft)] sm:inline"> · {profile.displayName}</span>
               ) : null}
             </motion.div>
-            <div className="inline-flex items-center rounded-full bg-[var(--surface)] px-1.5 py-0.5 shadow-md backdrop-blur">
+            <div className="inline-flex shrink-0 items-center rounded-full bg-[var(--surface)] px-1 py-0.5 shadow-md backdrop-blur sm:px-1.5">
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.9 }}
@@ -163,7 +163,7 @@ export default function Book() {
               >
                 <ChevronLeft size={14} />
               </motion.button>
-              <span className="min-w-[3.5rem] text-center font-display text-sm font-semibold">
+              <span className="min-w-[2.75rem] text-center font-display text-xs font-semibold sm:min-w-[3.5rem] sm:text-sm">
                 {year}
               </span>
               <motion.button
@@ -176,7 +176,7 @@ export default function Book() {
               </motion.button>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             <FocusTimer
               onOpen={() => {
                 const focusIndex = trackers.findIndex((t) => t.id === 'focus')
@@ -188,7 +188,7 @@ export default function Book() {
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.94 }}
               onClick={toggleInsights}
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-[11px] font-semibold shadow-md backdrop-blur transition sm:px-3 ${
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-1.5 text-[11px] font-semibold shadow-md backdrop-blur transition sm:gap-1.5 sm:px-3 ${
                 showInsights
                   ? 'bg-[var(--accent-deep)] text-white'
                   : 'bg-[var(--surface)] text-[var(--ink-soft)] hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]'
@@ -215,17 +215,14 @@ export default function Book() {
           </div>
         </header>
 
-        <div className="relative z-10 shrink-0">
+        <div className="relative z-10 hidden shrink-0 sm:block">
           <DailyWhisper />
         </div>
 
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
-        <div
-          className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col overflow-visible"
-          style={{ maxHeight: '88vh', width: '95vw' }}
-        >
-          <div className="relative z-20 flex shrink-0 justify-center gap-0.5 px-4 sm:gap-1 sm:px-8">
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl min-h-0 flex-1 flex-col overflow-hidden sm:max-h-[88vh] sm:w-[95vw]">
+          <div className="book-tabs-scroll relative z-20 flex shrink-0 justify-start gap-0.5 overflow-x-auto px-1 pb-0 sm:justify-center sm:gap-1 sm:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {trackers.map((t, i) => {
               const TabIcon = ICONS[t.icon] || Star
               const active = !showInsights && i === pageIndex
@@ -238,7 +235,7 @@ export default function Book() {
                   whileTap={{ scale: 0.97 }}
                   onClick={() => go(i)}
                   title={t.title}
-                  className={`relative flex items-center gap-1 rounded-t-xl px-1.5 pb-1.5 pt-1 text-[9px] font-bold sm:px-2 sm:text-[10px] ${
+                  className={`relative flex shrink-0 items-center gap-1 rounded-t-xl px-2 pb-1.5 pt-1 text-[9px] font-bold sm:px-2 sm:text-[10px] ${
                     active
                       ? 'translate-y-0 text-white shadow-md'
                       : '-translate-y-0.5 text-[var(--ink)] opacity-90'
@@ -260,7 +257,7 @@ export default function Book() {
                     />
                   )}
                   <TabIcon size={11} className="relative z-10 hidden sm:block" />
-                  <span className="relative z-10 max-w-[3rem] truncate sm:max-w-none">{t.tab}</span>
+                  <span className="relative z-10 whitespace-nowrap">{t.tab}</span>
                 </motion.button>
               )
             })}
@@ -268,25 +265,25 @@ export default function Book() {
 
           <motion.div
             layout
-            className="book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-b-[28px] rounded-t-[18px] border border-[var(--page-edge)]"
+            className="book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-b-[22px] rounded-t-[14px] border border-[var(--page-edge)] sm:rounded-b-[28px] sm:rounded-t-[18px]"
           >
-            <div className="pointer-events-none absolute -left-1 top-3 bottom-3 z-40 w-2 rounded-l-md bg-[var(--page-edge)] opacity-80" />
-            <div className="pointer-events-none absolute -left-2 top-5 bottom-5 z-40 w-2 rounded-l-md bg-[var(--accent-soft)] opacity-50" />
-            <div className="pointer-events-none absolute -right-1 top-3 bottom-3 z-40 w-2 rounded-r-md bg-[var(--page-edge)] opacity-80" />
-            <div className="pointer-events-none absolute -right-2 top-5 bottom-5 z-40 w-2 rounded-r-md bg-[var(--accent-soft)] opacity-50" />
+            <div className="pointer-events-none absolute -left-1 top-3 bottom-3 z-40 hidden w-2 rounded-l-md bg-[var(--page-edge)] opacity-80 sm:block" />
+            <div className="pointer-events-none absolute -left-2 top-5 bottom-5 z-40 hidden w-2 rounded-l-md bg-[var(--accent-soft)] opacity-50 sm:block" />
+            <div className="pointer-events-none absolute -right-1 top-3 bottom-3 z-40 hidden w-2 rounded-r-md bg-[var(--page-edge)] opacity-80 sm:block" />
+            <div className="pointer-events-none absolute -right-2 top-5 bottom-5 z-40 hidden w-2 rounded-r-md bg-[var(--accent-soft)] opacity-50 sm:block" />
 
             <div className="relative flex min-h-0 w-full flex-1">
               {!showInsights && (
                 <>
                   <div
-                    className="pointer-events-none absolute inset-y-0 left-1/2 z-30 w-6 -translate-x-1/2"
+                    className="pointer-events-none absolute inset-y-0 left-1/2 z-30 hidden w-6 -translate-x-1/2 md:block"
                     style={{
                       background:
                         'linear-gradient(90deg, rgba(0,0,0,0.07), rgba(0,0,0,0.14) 45%, rgba(255,255,255,0.25) 50%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0.05))',
                     }}
                   />
                   <div
-                    className="pointer-events-none absolute inset-y-0 left-1/2 z-30 w-[2px] -translate-x-1/2"
+                    className="pointer-events-none absolute inset-y-0 left-1/2 z-30 hidden w-[2px] -translate-x-1/2 md:block"
                     style={{ background: 'var(--spine)', opacity: 0.55 }}
                   />
                 </>
@@ -308,16 +305,18 @@ export default function Book() {
             </div>
           </motion.div>
 
-          <div className="mt-1.5 flex shrink-0 items-center justify-between px-1">
+          <div className="mt-1 flex shrink-0 items-center justify-between gap-2 px-1 sm:mt-1.5">
             {showInsights ? (
               <>
-                <span className="text-[10px] font-medium text-[var(--ink-soft)]">Insights view</span>
+                <span className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:inline">
+                  Insights view
+                </span>
                 <motion.button
                   type="button"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => setShowInsights(false)}
-                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur"
+                  className="ml-auto inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur"
                 >
                   Back to journal
                 </motion.button>
@@ -330,11 +329,12 @@ export default function Book() {
                   whileHover={pageIndex === 0 ? undefined : { x: -2, scale: 1.02 }}
                   whileTap={pageIndex === 0 ? undefined : { scale: 0.96 }}
                   onClick={() => go(pageIndex - 1)}
-                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35"
+                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-2.5 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35 sm:px-3"
                 >
-                  <ChevronLeft size={14} /> Previous
+                  <ChevronLeft size={14} />
+                  <span className="hidden sm:inline">Previous</span>
                 </motion.button>
-                <p className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:block">
+                <p className="text-[10px] font-medium text-[var(--ink-soft)]">
                   {pageIndex + 1} / {trackers.length}
                 </p>
                 <motion.button
@@ -343,9 +343,10 @@ export default function Book() {
                   whileHover={pageIndex === trackers.length - 1 ? undefined : { x: 2, scale: 1.02 }}
                   whileTap={pageIndex === trackers.length - 1 ? undefined : { scale: 0.96 }}
                   onClick={() => go(pageIndex + 1)}
-                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-3 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35"
+                  className="inline-flex items-center gap-1 rounded-2xl bg-[var(--surface)] px-2.5 py-1.5 text-xs font-bold shadow-md backdrop-blur disabled:opacity-35 sm:px-3"
                 >
-                  Next <ChevronRight size={14} />
+                  <span className="hidden sm:inline">Next</span>
+                  <ChevronRight size={14} />
                 </motion.button>
               </>
             )}

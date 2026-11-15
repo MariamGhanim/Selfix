@@ -95,7 +95,7 @@ function CozyJournalArt() {
 
 function AuthBrandPanel() {
   return (
-    <section className="auth-brand-panel relative flex min-h-[220px] flex-col justify-between overflow-hidden px-7 py-8 sm:px-10 sm:py-10 lg:min-h-0 lg:px-12 lg:py-14">
+    <section className="auth-brand-panel relative flex min-h-0 flex-col justify-between overflow-hidden px-5 py-6 sm:min-h-[200px] sm:px-10 sm:py-10 lg:min-h-0 lg:px-12 lg:py-14">
       <div className="auth-brand-glow pointer-events-none absolute inset-0" aria-hidden />
       <div className="auth-brand-orb auth-brand-orb-a pointer-events-none absolute -left-10 top-8 h-40 w-40 rounded-full" />
       <div className="auth-brand-orb auth-brand-orb-b pointer-events-none absolute -right-8 bottom-16 h-48 w-48 rounded-full" />
@@ -113,7 +113,7 @@ function AuthBrandPanel() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-3 max-w-md font-display text-[1.85rem] font-semibold leading-tight tracking-tight text-[var(--ink)] sm:text-[2.15rem]"
+          className="mt-2 max-w-md font-display text-[1.45rem] font-semibold leading-tight tracking-tight text-[var(--ink)] sm:mt-3 sm:text-[2.15rem]"
         >
           A soft space for your day, thoughts, and habits
         </motion.h2>
@@ -121,7 +121,7 @@ function AuthBrandPanel() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-4 max-w-sm font-display text-[14px] leading-relaxed text-[var(--ink-soft)]"
+          className="mt-3 max-w-sm font-display text-[13px] leading-relaxed text-[var(--ink-soft)] sm:mt-4 sm:text-[14px]"
         >
           Paint your year in gentle pixels. Keep little notes beside each habit. Return to a journal
           that feels calm, private, and yours.
@@ -132,7 +132,7 @@ function AuthBrandPanel() {
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 mt-6 hidden sm:block lg:mt-0"
+        className="relative z-10 mt-4 hidden max-h-[200px] sm:mt-6 sm:block lg:mt-0 lg:max-h-none"
       >
         <CozyJournalArt />
       </motion.div>
@@ -141,7 +141,7 @@ function AuthBrandPanel() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.35 }}
-        className="relative z-10 mt-6 flex flex-wrap gap-2 lg:mt-8"
+        className="relative z-10 mt-4 flex flex-wrap gap-2 sm:mt-6 lg:mt-8"
       >
         {['Year in pixels', 'Private notes', 'Soft insights'].map((item) => (
           <li
@@ -158,13 +158,13 @@ function AuthBrandPanel() {
 
 export default function AuthShell({ title, subtitle, children, footer }) {
   return (
-    <div className="auth-split-shell flex h-screen w-screen items-center justify-center overflow-hidden p-3 sm:p-5 lg:p-7">
-      <div className="auth-split-frame book-shadow paper-texture relative grid h-full max-h-[920px] w-full max-w-6xl overflow-hidden rounded-[28px] border border-[var(--page-edge)] lg:grid-cols-12 lg:rounded-[32px]">
+    <div className="auth-split-shell flex h-[100dvh] w-screen items-stretch justify-center overflow-hidden p-0 sm:items-center sm:p-5 lg:p-7">
+      <div className="auth-split-frame book-shadow paper-texture relative grid h-full max-h-none w-full max-w-6xl overflow-y-auto rounded-none border-0 border-[var(--page-edge)] sm:max-h-[920px] sm:overflow-hidden sm:rounded-[28px] sm:border lg:grid-cols-12 lg:rounded-[32px]">
         <div className="min-h-0 lg:col-span-5">
           <AuthBrandPanel />
         </div>
 
-        <div className="relative flex min-h-0 items-center justify-center overflow-y-auto border-t border-[var(--page-edge)]/60 bg-[var(--surface)]/55 px-4 py-6 backdrop-blur-md sm:px-8 sm:py-8 lg:col-span-7 lg:border-l lg:border-t-0">
+        <div className="relative flex min-h-0 flex-1 items-start justify-center overflow-y-auto border-t border-[var(--page-edge)]/60 bg-[var(--surface)]/55 px-3 py-5 backdrop-blur-md sm:items-center sm:px-8 sm:py-8 lg:col-span-7 lg:border-l lg:border-t-0">
           <div
             className="pointer-events-none absolute inset-0 opacity-60"
             style={{

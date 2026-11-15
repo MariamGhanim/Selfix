@@ -5,7 +5,7 @@ export default function PrivacyPage() {
   return (
     <SiteLayout
       title="Privacy Policy"
-      subtitle="Last updated: November 13, 2026. This policy explains how Selfix handles information in a way intended to support transparency and Google AdSense compliance."
+      subtitle="Last updated: November 15, 2026. This policy explains how Selfix handles information in a way intended to support transparency, user privacy, and Google AdSense compliance."
     >
       <Section title="1. Introduction">
         <p>
@@ -16,7 +16,24 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="2. Information we collect">
+      <Section title="2. Client-side encryption of private notes">
+        <SoftCard>
+          <p className="font-bold text-[var(--ink)]">Your words stay yours</p>
+          <p className="mt-1">
+            Journal notes and other private text entries (including daily notes, reflections,
+            highlights, free-text panel fields, and todo item text) are <strong>encrypted on your
+            device</strong> before they are written to Cloud Firestore. Selfix uses AES encryption
+            so that private narrative content is not stored as readable plaintext in the database.
+          </p>
+          <p className="mt-2">
+            When you reopen your book, those fields are decrypted locally in your browser for
+            display. Grid values, theme preferences, and non-narrative structure needed to render
+            your pixel year may still sync in structured form associated with your user ID.
+          </p>
+        </SoftCard>
+      </Section>
+
+      <Section title="3. Information we collect">
         <SoftCard>
           <p className="font-bold text-[var(--ink)]">Account information</p>
           <p className="mt-1">
@@ -28,9 +45,10 @@ export default function PrivacyPage() {
         <SoftCard>
           <p className="font-bold text-[var(--ink)]">Journal content</p>
           <p className="mt-1">
-            Pixel colors, panel selections, notes, todos, theme preference, and related journal
-            entries you create are stored so you can reopen your book later. Cloud journal data is
-            associated with your authenticated user ID in Cloud Firestore.
+            Pixel colors, panel selections, encrypted notes, todos, theme preference, and related
+            journal entries you create are stored so you can reopen your book later. Cloud journal
+            data is associated with your authenticated user ID in Cloud Firestore. Private note
+            text is encrypted client-side as described above.
           </p>
         </SoftCard>
         <SoftCard>
@@ -45,7 +63,7 @@ export default function PrivacyPage() {
         </SoftCard>
       </Section>
 
-      <Section title="3. Cookies and similar technologies">
+      <Section title="4. Cookies and similar technologies">
         <p>
           Cookies are small text files stored on your device. Selfix and third-party partners may
           use cookies or similar technologies to remember preferences, maintain secure sessions,
@@ -57,7 +75,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="4. Third-party advertising (Google AdSense)">
+      <Section title="5. Third-party advertising (Google AdSense)">
         <p>
           Selfix may display advertisements served by Google AdSense or similar networks. Google,
           as a third-party vendor, uses cookies to serve ads based on a user’s prior visits to this
@@ -101,7 +119,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="5. How we use information">
+      <Section title="6. How we use information">
         <ul className="list-disc space-y-1 pl-5">
           <li>Provide, maintain, and improve the Selfix journaling experience</li>
           <li>Authenticate users and protect accounts</li>
@@ -112,17 +130,18 @@ export default function PrivacyPage() {
         </ul>
       </Section>
 
-      <Section title="6. Data sharing">
+      <Section title="7. Data sharing">
         <p>
-          We do not sell your personal journal content. We may share limited information with
-          service providers necessary to operate Selfix (such as Firebase/Google Cloud for
-          authentication and database hosting) under their respective privacy terms. We may also
-          disclose information if required by law or to protect the rights, safety, and integrity
-          of Selfix and its users.
+          We do not sell your personal journal content. Private notes are encrypted before sync so
+          service operators do not receive them as readable plaintext in Firestore. We may share
+          limited account/operational information with service providers necessary to run Selfix
+          (such as Firebase/Google Cloud for authentication and database hosting) under their
+          respective privacy terms. We may also disclose information if required by law or to
+          protect the rights, safety, and integrity of Selfix and its users.
         </p>
       </Section>
 
-      <Section title="7. Your privacy rights & choices">
+      <Section title="8. Your privacy rights & choices">
         <p>Depending on your location, you may have rights to:</p>
         <ul className="list-disc space-y-1 pl-5">
           <li>Access or request a copy of personal data we hold about you</li>
@@ -138,7 +157,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="8. Children’s privacy">
+      <Section title="9. Children’s privacy">
         <p>
           Selfix is not directed to children under 13 (or the minimum digital consent age in your
           region). We do not knowingly collect personal information from children. If you believe a
@@ -146,16 +165,16 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="9. Security">
+      <Section title="10. Security">
         <p>
-          We use industry-standard providers and security practices (including authenticated access
-          and Firestore security rules that restrict each user to their own data). No method of
-          transmission or storage is 100% secure; please use a strong unique password and keep your
-          login private.
+          We use industry-standard providers and security practices (including authenticated access,
+          Firestore security rules that restrict each user to their own data, and client-side AES
+          encryption for private notes and narrative entries). No method of transmission or storage
+          is 100% secure; please use a strong unique password and keep your login private.
         </p>
       </Section>
 
-      <Section title="10. Changes to this policy">
+      <Section title="11. Changes to this policy">
         <p>
           We may update this Privacy Policy from time to time. The “Last updated” date at the top
           will change when we do. Continued use of Selfix after updates means you acknowledge the
@@ -163,7 +182,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="11. Contact">
+      <Section title="12. Contact">
         <p>
           Questions about privacy can be sent through the{' '}
           <Link to="/contact" className="font-bold text-[var(--accent-deep)] underline-offset-2 hover:underline">

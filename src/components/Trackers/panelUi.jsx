@@ -261,14 +261,14 @@ export function PanelShell({
       initial={{ opacity: 0.88, y: 8, scale: 0.985 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-      className="panel-glass flex h-full min-h-0 flex-col overflow-hidden rounded-[1.55rem] p-3.5 ring-1 ring-[var(--page-edge)]/40 sm:p-4"
+      className="panel-glass flex h-full min-h-0 flex-col overflow-hidden rounded-[1.25rem] p-2.5 ring-1 ring-[var(--page-edge)]/40 sm:rounded-[1.55rem] sm:p-4"
     >
-      <div className="mb-3.5 flex shrink-0 items-start justify-between gap-3">
+      <div className="mb-2.5 flex shrink-0 items-start justify-between gap-2 sm:mb-3.5 sm:gap-3">
         <div className="min-w-0">
-          <h4 className="truncate font-display text-xl font-semibold tracking-tight text-[var(--ink)] sm:text-[1.35rem]">
+          <h4 className="truncate font-display text-lg font-semibold tracking-tight text-[var(--ink)] sm:text-[1.35rem]">
             {title}
           </h4>
-          <p className="mt-1 font-display text-sm font-semibold tracking-tight text-[var(--accent-deep)] sm:text-[15px]">
+          <p className="mt-0.5 font-display text-xs font-semibold tracking-tight text-[var(--accent-deep)] sm:mt-1 sm:text-[15px]">
             {MONTHS_FULL[month]} {day}
           </p>
         </div>
@@ -278,10 +278,10 @@ export function PanelShell({
           whileTap={{ scale: 0.94, rotate: -16 }}
           onClick={clearToday}
           aria-label="Clear today"
-          className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--surface)] px-2.5 py-1.5 text-[10px] font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)]"
+          className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--surface)] px-2 py-1.5 text-[10px] font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)] sm:px-2.5"
         >
           <RotateCcw size={11} />
-          Clear
+          <span className="hidden sm:inline">Clear</span>
         </motion.button>
       </div>
       <div

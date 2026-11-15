@@ -265,13 +265,13 @@ function TrackerChart({ diary }) {
   const gridColor = 'color-mix(in srgb, var(--accent-soft) 55%, transparent)'
 
   return (
-    <StoryCard className="insights-chart-card flex h-full min-h-[22rem] flex-col px-4 py-4 sm:px-5">
+    <StoryCard className="insights-chart-card flex h-full min-h-[18rem] flex-col px-3 py-3 sm:min-h-[22rem] sm:px-5 sm:py-4">
       <div className="mb-3">
-        <p className="font-display text-[15px] font-semibold text-[var(--ink)]">{model.title}</p>
+        <p className="font-display text-[14px] font-semibold text-[var(--ink)] sm:text-[15px]">{model.title}</p>
         <p className="mt-0.5 text-[11px] text-[var(--ink-soft)]">{diary.bounds.label}</p>
       </div>
 
-      <div className="relative min-h-[16rem] w-full flex-1">
+      <div className="relative min-h-[14rem] w-full flex-1 sm:min-h-[16rem]">
         <div className="absolute inset-0">
           <ResponsiveContainer width="100%" height="100%">
             {model.kind === 'area' ? (
@@ -384,9 +384,9 @@ export default function InsightsDashboard() {
 
   return (
     <div data-no-flip className="insights-shell flex h-full min-h-0 flex-col overflow-hidden">
-      <header className="insights-header shrink-0 px-4 py-3 sm:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-display text-[1.35rem] font-semibold tracking-tight text-[var(--ink)]">
+      <header className="insights-header shrink-0 px-3 py-2.5 sm:px-6 sm:py-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
+          <h2 className="font-display text-[1.15rem] font-semibold tracking-tight text-[var(--ink)] sm:text-[1.35rem]">
             Insights Logbook
           </h2>
           <PeriodSwitcher
@@ -439,7 +439,7 @@ export default function InsightsDashboard() {
         </div>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-5 lg:px-6">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 py-3 sm:px-5 sm:py-4 lg:px-6">
         <div className="mx-auto w-full max-w-6xl pb-8">
           <AnimatePresence mode="wait" initial={false}>
             {diary ? (
@@ -465,7 +465,7 @@ export default function InsightsDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-12">
                   <div className="flex min-w-0 flex-col gap-5 lg:col-span-7">
                     {diary.notes?.length ? (
                       <section className="space-y-2.5">

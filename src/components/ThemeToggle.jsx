@@ -38,7 +38,7 @@ export default function ThemeToggle() {
               style={{ background: t.swatch }}
             />
             <span
-              className={`relative z-10 ml-1 text-[9px] font-bold sm:text-[10px] ${
+              className={`relative z-10 ml-1 hidden text-[9px] font-bold sm:inline sm:text-[10px] ${
                 active ? 'text-white' : 'text-[var(--ink-soft)]'
               }`}
             >

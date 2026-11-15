@@ -6,13 +6,13 @@ export default function Legend({ trackerId, levels }) {
   const selected = state.selectedLevel?.[trackerId]
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
+    <div className="flex w-max min-w-full flex-nowrap items-center gap-1.5">
       <motion.button
         type="button"
         whileHover={{ scale: 1.04 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setSelectedLevel(trackerId, null)}
-        className={`whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
+        className={`shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
           selected == null
             ? 'bg-[var(--accent)] text-white shadow-sm'
             : 'bg-[var(--accent-glow)] text-[var(--ink-soft)]'
@@ -29,7 +29,7 @@ export default function Legend({ trackerId, levels }) {
           onClick={() =>
             setSelectedLevel(trackerId, selected === level.value ? null : level.value)
           }
-          className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
+          className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
             selected === level.value ? 'ring-1 ring-[var(--accent-deep)] shadow-sm' : ''
           }`}
           style={{ background: level.color, color: '#2a2030' }}
