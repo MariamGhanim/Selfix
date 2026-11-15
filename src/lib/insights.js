@@ -378,7 +378,10 @@ function buildWindowSnapshot(state, days, from, to) {
 
   const archive = []
   for (const d of days) {
-    const note = (notes[d.key] || '').trim()
+    const dayNotes = Object.entries(notes)
+      .filter(([k, v]) => v?.trim() && (k === d.key || k.endsWith(`:${d.key}`)))
+      .map(([, v]) => v.trim())
+    const note = [...new Set(dayNotes)].join('\n')
     const highlight = (panelIndex.rating?.[d.key]?.highlight || '').trim()
     const reflection = (panelIndex.salah?.[d.key]?.reflection || '').trim()
     const taskList = todos[d.key] || []

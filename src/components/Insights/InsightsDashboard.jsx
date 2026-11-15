@@ -1,8 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Leaf } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import * as LucideIcons from 'lucide-react'
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import { useJournal } from '../../context/JournalContext'
+import { TRACKERS } from '../../data/trackers'
 import {
   buildTrackerDiary,
   DIARY_RANGES,
@@ -10,16 +22,68 @@ import {
   shiftDiaryAnchor,
 } from '../../lib/trackerDiary'
 
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+const SLEEP_HOURS = { 1: 4.5, 2: 5.5, 3: 7.5, 4: 8.5 }
+
+/** Trackers where a lower level value means a better outcome (Taken=1, Skipped=3). */
+const INVERTED_LEVEL_TRACKERS = new Set(['vitamins', 'shower'])
+
+function levelChartScale(tracker) {
+  const levels = tracker.levels || []
+  if (!levels.length) {
+    return {
+      levels,
+      domain: [0, 1],
+      ticks: [0, 1],
+      toDisplay: (v) => (v == null ? 0 : v),
+      labelByDisplay: {},
+      tipForDisplay: () => '—',
+    }
+  }
+
+  const values = levels.map((l) => l.value)
+  const minV = Math.min(...values)
+  const maxV = Math.max(...values)
+  const inverted = INVERTED_LEVEL_TRACKERS.has(tracker.id)
+  const labelByValue = Object.fromEntries(levels.map((l) => [l.value, l.label]))
+
+  const toDisplay = (raw) => {
+    if (raw == null) return 0
+    return inverted ? maxV + minV - raw : raw
+  }
+
+  const fromDisplay = (display) => {
+    if (display == null || display === 0) return null
+    return inverted ? maxV + minV - display : display
+  }
+
+  const ticks = inverted
+    ? [...values].sort((a, b) => toDisplay(a) - toDisplay(b))
+    : [...values].sort((a, b) => a - b)
+
+  const displayTicks = ticks.map(toDisplay)
+  const labelByDisplay = Object.fromEntries(
+    levels.map((l) => [toDisplay(l.value), l.label]),
+  )
+
+  return {
+    levels,
+    domain: [Math.min(0, ...displayTicks), Math.max(...displayTicks)],
+    ticks: displayTicks,
+    toDisplay,
+    labelByDisplay,
+    tipForDisplay: (display) => {
+      if (!display) return '—'
+      const raw = fromDisplay(display)
+      return labelByValue[raw] || String(raw)
+    },
+  }
+}
+
 function IconByName({ name, size = 14 }) {
   const Icon = LucideIcons[name] || LucideIcons.Sparkles
   return <Icon size={size} strokeWidth={2} />
-}
-
-function tintStyle(color, alpha = 0.18) {
-  if (!color) return undefined
-  return {
-    background: `color-mix(in srgb, ${color} ${Math.round(alpha * 100)}%, var(--log-card-base))`,
-  }
 }
 
 function PeriodSwitcher({ value, onChange }) {
@@ -70,9 +134,11 @@ function DayRow({ entry, tracker }) {
           <p className="font-display text-[12px] font-semibold text-[var(--accent-deep)]">
             {entry.label}
           </p>
-          <p className="mt-1 text-[13px] leading-relaxed text-[var(--ink)]">{entry.headline}</p>
+          {entry.headline ? (
+            <p className="mt-1 text-[13px] leading-relaxed text-[var(--ink)]">{entry.headline}</p>
+          ) : null}
           {entry.details?.length ? (
-            <ul className="mt-1.5 space-y-0.5">
+            <ul className="mt-1 space-y-0.5">
               {entry.details.map((detail) => (
                 <li key={detail} className="text-[12px] leading-relaxed text-[var(--ink-soft)]">
                   {detail}
@@ -86,9 +152,208 @@ function DayRow({ entry, tracker }) {
   )
 }
 
+function chartModel(diary) {
+  const tracker = diary.tracker
+  const chronological = [...diary.entries].reverse()
+  const isWeek = diary.bounds.periodWord === 'week'
+  const color = tracker.tabColor || '#d4a0ae'
+  const shortDay = (entry) => (isWeek ? WEEKDAYS[entry.weekday] : String(entry.day))
+
+  if (tracker.id === 'sleep') {
+    return {
+      kind: 'area',
+      title: 'Hours of rest',
+      color,
+      domain: [0, 10],
+      ticks: [0, 4.5, 5.5, 7.5, 8.5],
+      tickFormat: (v) => {
+        if (v === 4.5) return '<5h'
+        if (v === 5.5) return '5–6h'
+        if (v === 7.5) return '7–8h'
+        if (v === 8.5) return '8h+'
+        return v === 0 ? '0' : ''
+      },
+      tipFormat: (v) => (v ? `About ${v} hours` : '—'),
+      data: chronological.map((e) => ({
+        day: shortDay(e),
+        value: e.empty || e.value == null ? 0 : SLEEP_HOURS[e.value] ?? 0,
+        full: e.label,
+      })),
+    }
+  }
+
+  if (tracker.id === 'focus') {
+    const maxMins = Math.max(60, ...chronological.map((e) => e.minutes || 0))
+    return {
+      kind: 'area',
+      title: 'Focus minutes',
+      color,
+      domain: [0, Math.ceil(maxMins / 30) * 30 || 60],
+      ticks: undefined,
+      tickFormat: (v) => `${v}m`,
+      tipFormat: (v) => (v ? `${v} minutes` : '—'),
+      data: chronological.map((e) => ({
+        day: shortDay(e),
+        value: e.minutes || 0,
+        full: e.label,
+      })),
+    }
+  }
+
+  if (tracker.id === 'water') {
+    return {
+      kind: 'bar',
+      title: 'Cups of water',
+      color,
+      domain: [0, 8],
+      ticks: [0, 2, 4, 6, 8],
+      tickFormat: (v) => (v === 8 ? '8+' : String(v)),
+      tipFormat: (v) => (v ? `${v === 8 ? '8+' : v} cups` : '—'),
+      data: chronological.map((e) => ({
+        day: shortDay(e),
+        value: e.empty || e.value == null ? 0 : e.value,
+        full: e.label,
+      })),
+    }
+  }
+
+  const scale = levelChartScale(tracker)
+
+  let title = 'Daily level'
+  if (tracker.id === 'salah') title = 'Prayers on time'
+  if (tracker.id === 'teeth') title = 'Brushing'
+  if (tracker.id === 'tasks') title = 'Tasks'
+  if (tracker.id === 'workout') title = 'Movement'
+  if (tracker.id === 'vitamins') title = 'Vitamins'
+  if (tracker.id === 'shower') title = 'Shower'
+
+  return {
+    kind: 'bar',
+    title,
+    color,
+    domain: scale.domain,
+    ticks: scale.ticks,
+    tickFormat: (v) => {
+      const label = scale.labelByDisplay[v]
+      if (!label) return v === 0 ? '' : String(v)
+      return label.length > 10 ? label.slice(0, 9) + '…' : label
+    },
+    tipFormat: scale.tipForDisplay,
+    data: chronological.map((e) => ({
+      day: shortDay(e),
+      value: e.empty || e.value == null ? 0 : scale.toDisplay(e.value),
+      full: e.label,
+    })),
+  }
+}
+
+function SoftTooltip({ active, payload, tipFormat }) {
+  if (!active || !payload?.length) return null
+  const row = payload[0]?.payload
+  const value = payload[0]?.value
+  return (
+    <div className="rounded-2xl border border-[var(--page-edge)]/60 bg-[var(--surface-strong)] px-3 py-2 shadow-lg">
+      <p className="font-display text-[11px] font-semibold text-[var(--accent-deep)]">{row?.full}</p>
+      <p className="mt-0.5 text-[12px] text-[var(--ink)]">{tipFormat(value)}</p>
+    </div>
+  )
+}
+
+function TrackerChart({ diary }) {
+  const model = useMemo(() => chartModel(diary), [diary])
+  const axisColor = 'var(--ink-soft)'
+  const gridColor = 'color-mix(in srgb, var(--accent-soft) 55%, transparent)'
+
+  return (
+    <StoryCard className="insights-chart-card flex h-full min-h-[22rem] flex-col px-4 py-4 sm:px-5">
+      <div className="mb-3">
+        <p className="font-display text-[15px] font-semibold text-[var(--ink)]">{model.title}</p>
+        <p className="mt-0.5 text-[11px] text-[var(--ink-soft)]">{diary.bounds.label}</p>
+      </div>
+
+      <div className="relative min-h-[16rem] w-full flex-1">
+        <div className="absolute inset-0">
+          <ResponsiveContainer width="100%" height="100%">
+            {model.kind === 'area' ? (
+              <AreaChart data={model.data} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
+                <defs>
+                  <linearGradient id="insightsFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={model.color} stopOpacity={0.45} />
+                    <stop offset="100%" stopColor={model.color} stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid stroke={gridColor} strokeDasharray="3 6" vertical={false} />
+                <XAxis
+                  dataKey="day"
+                  tick={{ fill: axisColor, fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval={model.data.length > 10 ? 'preserveStartEnd' : 0}
+                />
+                <YAxis
+                  domain={model.domain}
+                  ticks={model.ticks}
+                  tickFormatter={model.tickFormat}
+                  tick={{ fill: axisColor, fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={44}
+                />
+                <Tooltip content={<SoftTooltip tipFormat={model.tipFormat} />} />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke={model.color}
+                  strokeWidth={2.5}
+                  fill="url(#insightsFill)"
+                  dot={{ r: 3.5, fill: model.color, strokeWidth: 0 }}
+                  activeDot={{ r: 5 }}
+                />
+              </AreaChart>
+            ) : (
+              <BarChart data={model.data} margin={{ top: 8, right: 8, left: 0, bottom: 4 }}>
+                <CartesianGrid stroke={gridColor} strokeDasharray="3 6" vertical={false} />
+                <XAxis
+                  dataKey="day"
+                  tick={{ fill: axisColor, fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                  interval={model.data.length > 10 ? 'preserveStartEnd' : 0}
+                />
+                <YAxis
+                  domain={model.domain}
+                  ticks={model.ticks}
+                  tickFormatter={model.tickFormat}
+                  tick={{ fill: axisColor, fontSize: 10 }}
+                  axisLine={false}
+                  tickLine={false}
+                  width={48}
+                />
+                <Tooltip content={<SoftTooltip tipFormat={model.tipFormat} />} />
+                <Bar dataKey="value" fill={model.color} radius={[10, 10, 6, 6]} maxBarSize={36} />
+              </BarChart>
+            )}
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </StoryCard>
+  )
+}
+
 export default function InsightsDashboard() {
   const { state, year, activeTrackers } = useJournal()
-  const trackers = activeTrackers?.length ? activeTrackers : []
+  const trackers = useMemo(() => {
+    const list = [...(activeTrackers?.length ? activeTrackers : TRACKERS)]
+    if (!list.some((t) => t.id === 'salah')) {
+      const salah = TRACKERS.find((t) => t.id === 'salah')
+      if (salah) {
+        const afterSleep = list.findIndex((t) => t.id === 'sleep')
+        list.splice(afterSleep >= 0 ? afterSleep + 1 : 0, 0, salah)
+      }
+    }
+    return list
+  }, [activeTrackers])
+
   const [selectedId, setSelectedId] = useState(null)
   const [rangeId, setRangeId] = useState('weekly')
   const [anchor, setAnchor] = useState(() => new Date())
@@ -119,7 +384,7 @@ export default function InsightsDashboard() {
 
   return (
     <div data-no-flip className="insights-shell flex h-full min-h-0 flex-col overflow-hidden">
-      <header className="insights-header shrink-0 px-4 py-3.5 sm:px-5">
+      <header className="insights-header shrink-0 px-4 py-3 sm:px-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-display text-[1.35rem] font-semibold tracking-tight text-[var(--ink)]">
             Insights Logbook
@@ -133,7 +398,7 @@ export default function InsightsDashboard() {
           />
         </div>
 
-        <div className="mt-3.5 flex items-center justify-between gap-2">
+        <div className="mt-3 flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={() => shift(-1)}
@@ -153,7 +418,7 @@ export default function InsightsDashboard() {
           </button>
         </div>
 
-        <div className="mt-3.5 flex gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mt-3 flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {trackers.map((t) => {
             const active = selectedTracker?.id === t.id
             return (
@@ -174,8 +439,8 @@ export default function InsightsDashboard() {
         </div>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-5">
-        <div className="mx-auto w-full max-w-2xl pb-8">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-5 lg:px-6">
+        <div className="mx-auto w-full max-w-6xl pb-8">
           <AnimatePresence mode="wait" initial={false}>
             {diary ? (
               <motion.div
@@ -184,73 +449,79 @@ export default function InsightsDashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                className="space-y-4"
               >
-                <StoryCard className="px-5 py-4" style={tintStyle(diary.tracker.tabColor, 0.16)}>
-                  <div className="flex items-start gap-3">
-                    <span
-                      className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white shadow-md"
-                      style={{ background: diary.tracker.tabColor }}
-                    >
-                      <IconByName name={diary.tracker.icon} size={18} />
-                    </span>
-                    <div className="min-w-0">
-                      <h3 className="font-display text-[17px] font-semibold tracking-tight text-[var(--ink)]">
-                        {diary.tracker.title}
-                      </h3>
-                      <p className="mt-0.5 text-[11px] text-[var(--ink-soft)]">{diary.bounds.label}</p>
+                <div className="mb-4 flex items-center gap-3">
+                  <span
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white shadow-md"
+                    style={{ background: diary.tracker.tabColor }}
+                  >
+                    <IconByName name={diary.tracker.icon} size={17} />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-[16px] font-semibold tracking-tight text-[var(--ink)]">
+                      {diary.tracker.title}
+                    </h3>
+                    <p className="text-[11px] text-[var(--ink-soft)]">{diary.bounds.label}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                  <div className="flex min-w-0 flex-col gap-5 lg:col-span-7">
+                    {diary.notes?.length ? (
+                      <section className="space-y-2.5">
+                        <h4 className="px-1 font-display text-[13px] font-semibold text-[var(--ink)]">
+                          Your notes
+                        </h4>
+                        <ul className="space-y-2.5">
+                          {diary.notes.map((item) => (
+                            <li key={item.key}>
+                              <StoryCard className="px-4 py-3.5">
+                                <p className="font-display text-[11px] font-semibold text-[var(--accent-deep)]">
+                                  {item.label}
+                                </p>
+                                {item.notes.map((note) => (
+                                  <p
+                                    key={note}
+                                    className="mt-1.5 font-display text-[13px] leading-relaxed text-[var(--ink)]"
+                                  >
+                                    {note}
+                                  </p>
+                                ))}
+                              </StoryCard>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    ) : null}
+
+                    <section className="space-y-2.5">
+                      <h4 className="px-1 font-display text-[13px] font-semibold text-[var(--ink)]">
+                        Entries
+                      </h4>
+                      {diary.moments?.length ? (
+                        <ul className="space-y-2.5">
+                          {diary.moments.map((entry) => (
+                            <DayRow key={entry.key} entry={entry} tracker={diary.tracker} />
+                          ))}
+                        </ul>
+                      ) : (
+                        <StoryCard className="px-5 py-6">
+                          <p className="text-[13px] text-[var(--ink-soft)]">No entries yet.</p>
+                        </StoryCard>
+                      )}
+                    </section>
+                  </div>
+
+                  <div className="min-w-0 lg:col-span-5">
+                    <div className="lg:sticky lg:top-2">
+                      <TrackerChart diary={diary} />
                     </div>
                   </div>
-                </StoryCard>
-
-                <StoryCard className="insights-story-panel px-5 py-5">
-                  <p className="font-display text-[15px] font-semibold text-[var(--accent-deep)]">
-                    {diary.summary.title}
-                  </p>
-                  <p className="mt-2 font-display text-[14px] leading-relaxed text-[var(--ink)]">
-                    {diary.summary.body}
-                  </p>
-                </StoryCard>
-
-                <section className="space-y-2.5">
-                  <h4 className="px-1 font-display text-[13px] font-semibold text-[var(--ink)]">
-                    Moments
-                  </h4>
-                  {diary.moments?.length ? (
-                    <ul className="space-y-2.5">
-                      {diary.moments.map((entry) => (
-                        <DayRow key={entry.key} entry={entry} tracker={diary.tracker} />
-                      ))}
-                    </ul>
-                  ) : (
-                    <StoryCard className="px-5 py-6">
-                      <p className="font-display text-[13px] leading-relaxed text-[var(--ink-soft)]">
-                        No moments written here yet for this stretch. When you paint a day, it will
-                        appear softly on this page.
-                      </p>
-                    </StoryCard>
-                  )}
-                </section>
-
-                {diary.reflection ? (
-                  <StoryCard className="insights-reflection px-5 py-5">
-                    <div className="mb-3 flex items-center gap-2.5">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[var(--accent-glow)] text-[var(--accent-deep)]">
-                        <Leaf size={15} />
-                      </span>
-                      <h4 className="font-display text-[15px] font-semibold text-[var(--ink)]">
-                        {diary.reflection.title}
-                      </h4>
-                    </div>
-                    <p className="font-display text-[14px] leading-relaxed text-[var(--ink)]">
-                      {diary.reflection.body}
-                    </p>
-                  </StoryCard>
-                ) : null}
+                </div>
               </motion.div>
             ) : (
               <StoryCard className="px-5 py-8 text-center">
-                <p className="font-display text-[14px] text-[var(--ink-soft)]">
+                <p className="text-[14px] text-[var(--ink-soft)]">
                   Enable a tracker in Settings to begin.
                 </p>
               </StoryCard>

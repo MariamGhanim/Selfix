@@ -236,11 +236,16 @@ export function JournalProvider({ children }) {
         selectedLevel: { ...s.selectedLevel, [trackerId]: value },
       }))
 
-    const getDailyNote = (month, day) =>
-      state.dailyNotes?.[cellKey(year, month, day)] ?? ''
+    const noteKey = (trackerId, month, day) => `${trackerId}:${cellKey(year, month, day)}`
 
-    const setDailyNote = (month, day, text) => {
-      const key = cellKey(year, month, day)
+    const getDailyNote = (trackerId, month, day) => {
+      if (!trackerId) return ''
+      return state.dailyNotes?.[noteKey(trackerId, month, day)] ?? ''
+    }
+
+    const setDailyNote = (trackerId, month, day, text) => {
+      if (!trackerId) return
+      const key = noteKey(trackerId, month, day)
       setState((s) => ({
         ...s,
         dailyNotes: { ...s.dailyNotes, [key]: text },

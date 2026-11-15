@@ -253,6 +253,7 @@ export function RatingPanel({ month, day }) {
 
         <section className="border-t border-[var(--page-edge)]/40 pt-3">
           <CompactDailyNotes
+            trackerId="rating"
             month={month}
             day={day}
             tall
@@ -387,6 +388,7 @@ export function EnergyPanel({ month, day }) {
 
         <section className="border-t border-[var(--page-edge)]/40 pt-3">
           <CompactDailyNotes
+            trackerId="energy"
             month={month}
             day={day}
             tall
@@ -405,7 +407,7 @@ export function ShowerPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Shower & hair care" trackerId="shower" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Shower thoughts, hair notes…">
+      <ReviewPanelFrame trackerId="shower" month={month} day={day} notesPlaceholder="Shower thoughts, hair notes…">
         <section>
           <ReviewHeading className="mb-1.5">What did your routine include?</ReviewHeading>
           <div className="flex flex-wrap gap-1">
@@ -442,7 +444,7 @@ export function FruitsPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Fruits & vegetables" trackerId="fruits" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Fruit & veggie notes…">
+      <ReviewPanelFrame trackerId="fruits" month={month} day={day} notesPlaceholder="Fruit & veggie notes…">
         <section>
           <ReviewHeading className="mb-1">What I ate</ReviewHeading>
           <div className="flex flex-wrap gap-1">
@@ -496,7 +498,7 @@ export function SweetsPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Sweets & sugar" trackerId="sweets" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Sweet tooth notes…">
+      <ReviewPanelFrame trackerId="sweets" month={month} day={day} notesPlaceholder="Sweet tooth notes…">
         <section>
           <ReviewHeading className="mb-1">Treats</ReviewHeading>
           <div className="flex flex-wrap gap-1">
@@ -549,7 +551,7 @@ export function WaterPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Water intake" trackerId="water" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Hydration notes…">
+      <ReviewPanelFrame trackerId="water" month={month} day={day} notesPlaceholder="Hydration notes…">
         <section>
           <div className="mb-1 rounded-full bg-[var(--surface)] px-3 py-1 text-center text-[11px] font-bold text-[var(--ink)]">
             {cups} cups · {ml} ml
@@ -616,7 +618,7 @@ export function VitaminsPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Vitamins & supplements" trackerId="vitamins" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Supplement notes…">
+      <ReviewPanelFrame trackerId="vitamins" month={month} day={day} notesPlaceholder="Supplement notes…">
         <section>
           <ReviewHeading className="mb-1">Today&apos;s stack</ReviewHeading>
           <div className="flex flex-wrap gap-1">
@@ -687,7 +689,7 @@ export function StudyPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Self-development" trackerId="study" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Growth notes & takeaways…">
+      <ReviewPanelFrame trackerId="study" month={month} day={day} notesPlaceholder="Growth notes & takeaways…">
         <section>
           <ReviewHeading className="mb-1">Topics</ReviewHeading>
           <div className="mb-1.5 flex flex-wrap gap-1">
@@ -755,7 +757,7 @@ export function ReadingPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Reading log" trackerId="reading" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Reading reflections…">
+      <ReviewPanelFrame trackerId="reading" month={month} day={day} notesPlaceholder="Reading reflections…">
         <section>
           <ReviewHeading className="mb-1">Current book</ReviewHeading>
           <SoftInput
@@ -819,7 +821,7 @@ export function TeethPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Teeth brushing" trackerId="teeth" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Dental care notes…">
+      <ReviewPanelFrame trackerId="teeth" month={month} day={day} notesPlaceholder="Dental care notes…">
         <section>
           <ReviewHeading className="mb-1">Oral care routine</ReviewHeading>
           <div className="flex flex-wrap gap-1">
@@ -863,7 +865,7 @@ export function WorkoutPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Gym & stretching" trackerId="workout" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Workout notes…">
+      <ReviewPanelFrame trackerId="workout" month={month} day={day} notesPlaceholder="Workout notes…">
         <section>
           <ReviewHeading className="mb-1">Workout</ReviewHeading>
           <div className="mb-1.5 flex flex-wrap gap-1">
@@ -1020,7 +1022,7 @@ export function SleepPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Sleep & rest" trackerId="sleep" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Sleep dreams & notes…">
+      <ReviewPanelFrame trackerId="sleep" month={month} day={day} notesPlaceholder="Sleep dreams & notes…">
         <section>
           <ReviewHeading className="mb-1">Sleep duration</ReviewHeading>
           <div className="mb-1.5 flex flex-wrap gap-1">
@@ -1109,7 +1111,7 @@ export function OutingsPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Outings & hangouts" trackerId="outings" hideNotes>
-      <ReviewPanelFrame month={month} day={day} notesPlaceholder="Outing memories…">
+      <ReviewPanelFrame trackerId="outings" month={month} day={day} notesPlaceholder="Outing memories…">
         <section>
           <ReviewHeading className="mb-1">Who I was with</ReviewHeading>
           <SoftInput

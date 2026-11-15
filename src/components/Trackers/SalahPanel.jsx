@@ -96,6 +96,7 @@ export default function SalahPanel({ month, day }) {
   return (
     <PanelShell month={month} day={day} title="Salah & spiritual" trackerId="salah" hideNotes>
       <ReviewPanelFrame
+        trackerId="salah"
         month={month}
         day={day}
         notesPlaceholder="Quran notes, duas, or a soft reflection…"

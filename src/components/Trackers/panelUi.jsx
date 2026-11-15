@@ -182,17 +182,24 @@ export function MiniQuiz({ questions, answers, onAnswer, title = 'Daily Mini-Qui
   )
 }
 
-export function ReviewPanelFrame({ month, day, notesPlaceholder = 'Quick note for today…', children }) {
+export function ReviewPanelFrame({
+  month,
+  day,
+  trackerId,
+  notesPlaceholder = 'Quick note for today…',
+  children,
+}) {
   return (
     <div data-no-flip className="relative z-10 space-y-3 pb-2">
       <div className="space-y-3">{children}</div>
       <section className="border-t border-[var(--page-edge)]/40 pt-3">
         <CompactDailyNotes
+          trackerId={trackerId}
           month={month}
           day={day}
           tall
           accentLabel
-          label="Daily Notes"
+          label="Notes"
           placeholder={notesPlaceholder}
         />
       </section>
@@ -282,31 +289,32 @@ export function PanelShell({
         className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch]"
       >
         {children}
-        {!hideNotes && (
+        {!hideNotes && trackerId ? (
           <div className="mt-3 border-t border-[var(--page-edge)]/40 pt-3">
-            <CompactDailyNotes month={month} day={day} />
+            <CompactDailyNotes trackerId={trackerId} month={month} day={day} />
           </div>
-        )}
+        ) : null}
       </div>
     </motion.div>
   )
 }
 
 export function CompactDailyNotes({
+  trackerId,
   month,
   day,
-  label = 'Daily Notes',
+  label = 'Notes',
   placeholder,
   tall,
   accentLabel = false,
 }) {
   const { getDailyNote, setDailyNote } = useJournal()
-  const saved = getDailyNote(month, day)
+  const saved = trackerId ? getDailyNote(trackerId, month, day) : ''
   const [text, setText] = useState(saved)
 
   useEffect(() => {
     setText(saved)
-  }, [month, day, saved])
+  }, [trackerId, month, day, saved])
 
   return (
     <div className="flex flex-col">
@@ -314,7 +322,7 @@ export function CompactDailyNotes({
       <SoftTextarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        onBlur={() => setDailyNote(month, day, text)}
+        onBlur={() => trackerId && setDailyNote(trackerId, month, day, text)}
         placeholder={placeholder || 'Quick note for today...'}
         className={tall ? 'min-h-[8rem]' : 'min-h-[6.5rem]'}
       />
