@@ -15,14 +15,14 @@ export const RATING_VIBES = [
 
 export const RATING_DAY_TYPES = [
   { id: 'smooth', emoji: '☀️', label: 'Smooth Sailing' },
-  { id: 'rollercoaster', emoji: '🎢', label: 'Rollercoaster' },
+  { id: 'rollercoaster', emoji: '🎢', label: 'A Bit of Both' },
   { id: 'tough', emoji: '🌧️', label: 'Tough Day' },
 ]
 
 export const RATING_MEANINGFUL = [
-  { id: 'yes', emoji: '✨', label: 'Yes, definitely' },
+  { id: 'yes', emoji: '✨', label: 'Yes, it mattered' },
   { id: 'normal', emoji: '➖', label: 'Just a normal day' },
-  { id: 'reset', emoji: '💭', label: 'Need a reset' },
+  { id: 'reset', emoji: '💭', label: 'Needed a reset' },
 ]
 
 export const ENERGY_DRIVERS = [
@@ -54,7 +54,7 @@ export const ENERGY_PEAK_TIMES = [
 
 export const ENERGY_BATTERY = [
   { id: 'charged', emoji: '🔋', label: 'Fully Charged' },
-  { id: 'steady', emoji: '⚖️', label: 'Steady' },
+  { id: 'steady', emoji: '⚖️', label: 'Holding Steady' },
   { id: 'solo', emoji: '🫂', label: 'Need Solo Recharge' },
 ]
 
@@ -313,6 +313,30 @@ export const OUTING_VIBES = [
   { id: 'fair', emoji: '🎡', label: 'Fun Fair / Amusement Park' },
 ]
 
+export const SALAH_PRAYERS = [
+  { id: 'fajr', label: 'Fajr', emoji: '🌅' },
+  { id: 'dhuhr', label: 'Dhuhr', emoji: '☀️' },
+  { id: 'asr', label: 'Asr', emoji: '🌤️' },
+  { id: 'maghrib', label: 'Maghrib', emoji: '🌇' },
+  { id: 'isha', label: 'Isha', emoji: '🌙' },
+]
+
+export const SALAH_STATUSES = [
+  { id: 'onTime', label: 'On Time', tone: 'good' },
+  { id: 'late', label: 'Late', tone: 'soft' },
+  { id: 'missed', label: 'Missed', tone: 'miss' },
+]
+
+export const SALAH_COUNT_OPTIONS = [
+  { value: 0, label: '0' },
+  { value: 1, label: '1' },
+  { value: 2, label: '2' },
+  { value: 3, label: '3' },
+  { value: 4, label: '4' },
+  { value: 5, label: '5' },
+  { value: 6, label: '5+' },
+]
+
 export const PANEL_DEFAULTS = {
   rating: { choices: [], highlight: '', dayType: null, meaningful: null },
   energy: { drivers: [], drainers: [], peakTime: null, battery: null },
@@ -329,6 +353,20 @@ export const PANEL_DEFAULTS = {
     q1: null,
     q2: null,
     q3: null,
+  },
+  salah: {
+    prayers: {
+      fajr: null,
+      dhuhr: null,
+      asr: null,
+      maghrib: null,
+      isha: null,
+    },
+    paintedPlus: false,
+    q1: null,
+    q2: null,
+    q3: null,
+    reflection: '',
   },
   focus: {
     minutes: 0,

@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
 import Spread from './Spread'
-import { TRACKERS } from '../../data/trackers'
-
 const FLIP_EASE = [0.33, 0.0, 0.2, 1]
 const SETTLE_EASE = [0.22, 1, 0.36, 1]
 const COMMIT_ANGLE = 48
@@ -13,6 +11,7 @@ export default function PageFlipStage({
   onPageChange,
   selectedDay,
   onSelectDay,
+  trackers = [],
 }) {
   const stageRef = useRef(null)
   const [fromIndex, setFromIndex] = useState(pageIndex)
@@ -62,7 +61,7 @@ export default function PageFlipStage({
   const runFlip = useCallback(
     async (nextIndex, direction) => {
       if (busy.current) return
-      if (nextIndex < 0 || nextIndex >= TRACKERS.length) return
+      if (nextIndex < 0 || nextIndex >= trackers.length) return
       if (nextIndex === pageIndex) return
 
       busy.current = true
@@ -83,7 +82,7 @@ export default function PageFlipStage({
       })
       finishFlip(true, nextIndex)
     },
-    [finishFlip, pageIndex, rotateY],
+    [finishFlip, pageIndex, rotateY, trackers.length],
   )
 
   useEffect(() => {
@@ -99,7 +98,7 @@ export default function PageFlipStage({
 
   const beginDrag = (direction, startX) => {
     const next = pageIndex + direction
-    if (next < 0 || next >= TRACKERS.length) return false
+    if (next < 0 || next >= trackers.length) return false
 
     busy.current = true
     setDir(direction)
@@ -172,8 +171,8 @@ export default function PageFlipStage({
     beginDrag(direction, e.clientX)
   }
 
-  const underTracker = TRACKERS[flipping ? toIndex : pageIndex]
-  const sheetTracker = TRACKERS[flipping ? fromIndex : pageIndex]
+  const underTracker = trackers[flipping ? toIndex : pageIndex] || trackers[0]
+  const sheetTracker = trackers[flipping ? fromIndex : pageIndex] || trackers[0]
   const origin = dir > 0 ? 'left center' : 'right center'
 
   return (
@@ -308,7 +307,7 @@ export default function PageFlipStage({
         </motion.div>
       )}
 
-      {pageIndex < TRACKERS.length - 1 && (
+      {pageIndex < trackers.length - 1 && (
         <>
           <div className="page-edge-hint absolute inset-y-10 right-0 z-30 w-3 rounded-l-full" />
           <div className="page-corner-hint absolute bottom-2 right-2 z-30 h-14 w-14" />

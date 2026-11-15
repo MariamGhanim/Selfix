@@ -62,7 +62,7 @@ export default function AboutPage() {
         <ul className="grid list-none gap-2 sm:grid-cols-2">
           {[
             'Mood & energy pixel grids with rich emoji chip logs',
-            'Sleep, focus, water, fruits, vitamins, and self-care pages',
+            'Morning-to-night tab flow: sleep, habits, focus, tasks, evening wrap-up',
             'Gym, outings, reading, teeth, shower, and to-do trackers',
             'Focus timer that can auto-log deep-work sessions',
             'Ambient music capsule for cozy journaling sessions',

@@ -8,7 +8,18 @@ import {
   useState,
 } from 'react'
 import { PANEL_DEFAULTS } from '../data/panelOptions'
-import { cellKey } from '../data/trackers'
+import {
+  cellKey,
+  defaultTrackerPrefs,
+  normalizeTrackerPrefs,
+  resolveActiveTrackers,
+} from '../data/trackers'
+import {
+  DEFAULT_CUSTOM_CHECKLIST_LEVELS,
+  DEFAULT_CUSTOM_GRID_LEVELS,
+  DEFAULT_CUSTOM_NOTES_LEVELS,
+  normalizeCustomLevels,
+} from '../data/trackerIcons'
 import { useAuth } from './AuthContext'
 import { loadJournalFromCloud, saveJournalToCloud } from '../lib/journalCloud'
 
@@ -27,10 +38,19 @@ const defaultState = {
   todos: {},
   panels: {},
   selectedLevel: {},
+  trackerPrefs: defaultTrackerPrefs(),
 }
 
 function panelKey(trackerId, year, month, day) {
   return `${trackerId}:${cellKey(year, month, day)}`
+}
+
+function customPanelDefaults(trackerId, prefs) {
+  const custom = prefs?.custom?.find((t) => t.id === trackerId)
+  if (!custom) return {}
+  if (custom.panel === 'checklist') return { items: [] }
+  if (custom.panel === 'notes') return { note: '' }
+  return { note: '' }
 }
 
 function normalizeState(raw) {
@@ -43,6 +63,7 @@ function normalizeState(raw) {
     todos: raw?.todos || {},
     panels: raw?.panels || {},
     selectedLevel: raw?.selectedLevel || {},
+    trackerPrefs: normalizeTrackerPrefs(raw?.trackerPrefs),
   }
 }
 
@@ -248,7 +269,8 @@ export function JournalProvider({ children }) {
     }
 
     const getPanel = (trackerId, month, day) => {
-      const defaults = PANEL_DEFAULTS[trackerId] || {}
+      const defaults =
+        PANEL_DEFAULTS[trackerId] || customPanelDefaults(trackerId, state.trackerPrefs)
       const raw = state.panels?.[panelKey(trackerId, year, month, day)] || {}
       return { ...defaults, ...raw }
     }
@@ -257,7 +279,9 @@ export function JournalProvider({ children }) {
       const key = panelKey(trackerId, year, month, day)
       const pixelKey = `${trackerId}:${cellKey(year, month, day)}`
       setState((s) => {
-        const prev = { ...(PANEL_DEFAULTS[trackerId] || {}), ...(s.panels?.[key] || {}) }
+        const defaults =
+          PANEL_DEFAULTS[trackerId] || customPanelDefaults(trackerId, s.trackerPrefs)
+        const prev = { ...defaults, ...(s.panels?.[key] || {}) }
         const next = {
           ...s,
           panels: {
@@ -277,10 +301,12 @@ export function JournalProvider({ children }) {
 
     const resetPanel = (trackerId, month, day) => {
       const key = panelKey(trackerId, year, month, day)
-      const fresh = structuredClone
-        ? structuredClone(PANEL_DEFAULTS[trackerId] || {})
-        : JSON.parse(JSON.stringify(PANEL_DEFAULTS[trackerId] || {}))
       setState((s) => {
+        const defaults =
+          PANEL_DEFAULTS[trackerId] || customPanelDefaults(trackerId, s.trackerPrefs)
+        const fresh = structuredClone
+          ? structuredClone(defaults)
+          : JSON.parse(JSON.stringify(defaults))
         const nextPanels = { ...s.panels, [key]: fresh }
         const pixelKey = `${trackerId}:${cellKey(year, month, day)}`
         const nextPixels = { ...s.pixels }
@@ -288,6 +314,90 @@ export function JournalProvider({ children }) {
         return { ...s, panels: nextPanels, pixels: nextPixels }
       })
     }
+
+    const trackerPrefs = normalizeTrackerPrefs(state.trackerPrefs)
+    const activeTrackers = resolveActiveTrackers(trackerPrefs)
+
+    const setTrackerHidden = (trackerId, hidden) =>
+      setState((s) => {
+        const prefs = normalizeTrackerPrefs(s.trackerPrefs)
+        const nextHidden = new Set(prefs.hidden)
+        if (hidden) nextHidden.add(trackerId)
+        else nextHidden.delete(trackerId)
+        const visibleCount = [...prefs.order].filter((id) => !nextHidden.has(id)).length
+        if (visibleCount < 1) return s
+        return {
+          ...s,
+          trackerPrefs: { ...prefs, hidden: [...nextHidden] },
+        }
+      })
+
+    const moveTracker = (trackerId, direction) =>
+      setState((s) => {
+        const prefs = normalizeTrackerPrefs(s.trackerPrefs)
+        const order = [...prefs.order]
+        const idx = order.indexOf(trackerId)
+        if (idx < 0) return s
+        const swapWith = idx + direction
+        if (swapWith < 0 || swapWith >= order.length) return s
+        ;[order[idx], order[swapWith]] = [order[swapWith], order[idx]]
+        return { ...s, trackerPrefs: { ...prefs, order } }
+      })
+
+    const addCustomTracker = ({ title, icon, tabColor, panel, levels: rawLevels }) => {
+      const cleanTitle = String(title || '').trim()
+      if (!cleanTitle) return null
+      const id = `custom_${crypto.randomUUID().replace(/-/g, '').slice(0, 10)}`
+      const type = panel || 'grid'
+      let levels
+      if (type === 'checklist') {
+        levels = DEFAULT_CUSTOM_CHECKLIST_LEVELS
+      } else if (type === 'notes') {
+        levels = DEFAULT_CUSTOM_NOTES_LEVELS
+      } else {
+        levels = normalizeCustomLevels(rawLevels) || DEFAULT_CUSTOM_GRID_LEVELS
+      }
+      const tracker = {
+        id,
+        title: cleanTitle,
+        tab: cleanTitle.slice(0, 10),
+        subtitle: 'Custom page',
+        icon: icon || 'Sparkles',
+        tabColor: tabColor || '#b8a4e8',
+        panel: type,
+        custom: true,
+        levels,
+      }
+      setState((s) => {
+        const prefs = normalizeTrackerPrefs(s.trackerPrefs)
+        return {
+          ...s,
+          trackerPrefs: {
+            ...prefs,
+            custom: [...prefs.custom, tracker],
+            order: [...prefs.order, id],
+          },
+        }
+      })
+      return tracker
+    }
+
+    const removeCustomTracker = (trackerId) =>
+      setState((s) => {
+        const prefs = normalizeTrackerPrefs(s.trackerPrefs)
+        if (!prefs.custom.some((t) => t.id === trackerId)) return s
+        return {
+          ...s,
+          trackerPrefs: {
+            order: prefs.order.filter((id) => id !== trackerId),
+            hidden: prefs.hidden.filter((id) => id !== trackerId),
+            custom: prefs.custom.filter((t) => t.id !== trackerId),
+          },
+        }
+      })
+
+    const resetTrackerPrefs = () =>
+      setState((s) => ({ ...s, trackerPrefs: defaultTrackerPrefs() }))
 
     return {
       state,
@@ -298,6 +408,8 @@ export function JournalProvider({ children }) {
       year,
       theme: state.theme === 'midnight' ? 'midnight' : 'pinky',
       profile,
+      trackerPrefs,
+      activeTrackers,
       setTheme,
       setProfile,
       setYear,
@@ -312,6 +424,11 @@ export function JournalProvider({ children }) {
       getPanel,
       setPanel,
       resetPanel,
+      setTrackerHidden,
+      moveTracker,
+      addCustomTracker,
+      removeCustomTracker,
+      resetTrackerPrefs,
     }
   }, [state, ready, syncing, syncError, retrySync])
 

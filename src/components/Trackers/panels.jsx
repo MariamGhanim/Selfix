@@ -43,9 +43,14 @@ import {
   ReviewPanelFrame,
   SelectChip,
   SoftInput,
+  SupportNote,
+  MotivationCard,
+  VibeAnchor,
   toggleInList,
   toggleSingle,
 } from './panelUi'
+import { AnimatePresence, motion } from 'framer-motion'
+import { MOOD_MOTIVATIONS } from '../../data/motivations'
 import {
   FRUITS_QUIZ,
   OUTINGS_QUIZ,
@@ -60,6 +65,7 @@ import {
   WORKOUT_QUIZ,
 } from '../../data/miniQuizzes'
 import TodoList from './TodoList'
+import { FocusTimerCard } from '../FocusTimer'
 
 function quizAnswers(data) {
   return { q1: data.q1 ?? null, q2: data.q2 ?? null, q3: data.q3 ?? null }
@@ -84,10 +90,12 @@ export function RatingPanel({ month, day }) {
   const { data, patch } = usePanel('rating', month, day)
   const [highlight, setHighlight] = useState(data.highlight || '')
   const [limitHint, setLimitHint] = useState(false)
+  const [motivationKey, setMotivationKey] = useState(null)
   const choices = (data.choices || []).filter((id) => RATING_VIBE_IDS.has(id))
 
   useEffect(() => {
     setHighlight(data.highlight || '')
+    setMotivationKey(null)
   }, [month, day, data.highlight])
 
   useEffect(() => {
@@ -96,9 +104,14 @@ export function RatingPanel({ month, day }) {
     if (cleaned.length !== raw.length) patch({ choices: cleaned })
   }, [month, day, data.choices, patch])
 
+  const showMotivation = (id) => {
+    if (MOOD_MOTIVATIONS[id]) setMotivationKey(id)
+  }
+
   const toggleVibe = (id) => {
     if (choices.includes(id)) {
       setLimitHint(false)
+      setMotivationKey((current) => (current === id ? null : current))
       patch({ choices: choices.filter((x) => x !== id) })
       return
     }
@@ -108,8 +121,11 @@ export function RatingPanel({ month, day }) {
       return
     }
     setLimitHint(false)
+    showMotivation(id)
     patch({ choices: [...choices, id] })
   }
+
+  const motivation = motivationKey ? MOOD_MOTIVATIONS[motivationKey] : null
 
   return (
     <PanelShell
@@ -119,30 +135,41 @@ export function RatingPanel({ month, day }) {
       trackerId="rating"
       hideNotes
     >
-      <div
-        data-no-flip
-        className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 overflow-hidden"
-      >
-        <section className="shrink-0">
-          <div className="mb-0.5 flex items-end justify-between gap-2">
-            <ReviewHeading>How would you sum up today?</ReviewHeading>
-            <span
-              className={`text-[9px] font-bold ${
-                choices.length >= 3 ? 'text-[var(--accent-deep)]' : 'text-[var(--ink-soft)]'
-              }`}
-            >
-              {choices.length}/3 vibes
+      <div data-no-flip className="relative z-10 space-y-3.5 pb-3">
+        <section className="space-y-2.5">
+          <div className="flex items-baseline justify-between gap-2">
+            <ReviewHeading>Today&apos;s vibe</ReviewHeading>
+            <span className="text-[10px] font-medium text-[var(--ink-soft)]">
+              {choices.length}/3
             </span>
           </div>
-          <p className="mb-1 text-[9px] text-[var(--ink-soft)]">
-            Pick up to 3 vibe tags — tap again to remove
-          </p>
-          {limitHint && (
-            <p className="mb-1 rounded-xl bg-[#fde8ee] px-2 py-1 text-[9px] font-semibold text-[#b8385c]">
-              You already picked 3. Deselect one first, then choose another.
-            </p>
-          )}
-          <div className="flex flex-wrap gap-1">
+          <AnimatePresence mode="wait">
+            {motivation && choices.includes(motivationKey) ? (
+              <MotivationCard
+                key={motivationKey}
+                emoji={motivation.emoji}
+                title={motivation.title}
+                message={motivation.message}
+              />
+            ) : (
+              <motion.div
+                key="vibe-anchor"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+              >
+                <VibeAnchor>
+                  “A soft day still counts. Pick a vibe and let it anchor your evening.”
+                </VibeAnchor>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {limitHint && (
+              <SupportNote key="limit">Pick up to 3 — deselect one to choose another.</SupportNote>
+            )}
+          </AnimatePresence>
+          <div className="flex flex-wrap gap-1.5">
             {RATING_VIBES.map((opt) => (
               <SelectChip
                 key={opt.id}
@@ -156,12 +183,12 @@ export function RatingPanel({ month, day }) {
           </div>
         </section>
 
-        <section className="shrink-0 rounded-2xl border border-[var(--page-edge)]/60 bg-[var(--accent-glow)]/70 px-2 py-1.5">
-          <ReviewHeading className="mb-1">Quick Day Check-in</ReviewHeading>
-          <div className="space-y-1.5">
-            <div>
-              <ReviewHeading className="mb-0.5 !text-[10px] sm:!text-[11px]">Day Type:</ReviewHeading>
-              <div className="flex flex-wrap gap-1">
+        <section className="space-y-3">
+          <ReviewHeading>Gentle check-in</ReviewHeading>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <ReviewHeading asQuestion>How did the day feel?</ReviewHeading>
+              <div className="flex flex-wrap gap-1.5">
                 {RATING_DAY_TYPES.map((opt) => (
                   <SelectChip
                     key={opt.id}
@@ -169,16 +196,19 @@ export function RatingPanel({ month, day }) {
                     emoji={opt.emoji}
                     label={opt.label}
                     active={data.dayType === opt.id}
-                    onClick={() => patch({ dayType: toggleSingle(data.dayType, opt.id) })}
+                    onClick={() => {
+                      const next = toggleSingle(data.dayType, opt.id)
+                      patch({ dayType: next })
+                      if (next) showMotivation(next)
+                      else setMotivationKey((current) => (current === opt.id ? null : current))
+                    }}
                   />
                 ))}
               </div>
             </div>
-            <div>
-              <ReviewHeading className="mb-0.5 !text-[10px] sm:!text-[11px]">
-                Did today feel meaningful?
-              </ReviewHeading>
-              <div className="flex flex-wrap gap-1">
+            <div className="space-y-1.5">
+              <ReviewHeading asQuestion>Did today feel meaningful?</ReviewHeading>
+              <div className="flex flex-wrap gap-1.5">
                 {RATING_MEANINGFUL.map((opt) => (
                   <SelectChip
                     key={opt.id}
@@ -186,35 +216,48 @@ export function RatingPanel({ month, day }) {
                     emoji={opt.emoji}
                     label={opt.label}
                     active={data.meaningful === opt.id}
-                    onClick={() =>
-                      patch({ meaningful: toggleSingle(data.meaningful, opt.id) })
-                    }
+                    onClick={() => {
+                      const next = toggleSingle(data.meaningful, opt.id)
+                      patch({ meaningful: next })
+                      if (next) showMotivation(next)
+                      else setMotivationKey((current) => (current === opt.id ? null : current))
+                    }}
                   />
                 ))}
               </div>
             </div>
           </div>
+          <AnimatePresence mode="wait">
+            {motivation &&
+              (data.dayType === motivationKey || data.meaningful === motivationKey) && (
+                <MotivationCard
+                  key={`check-${motivationKey}`}
+                  emoji={motivation.emoji}
+                  title={motivation.title}
+                  message={motivation.message}
+                />
+              )}
+          </AnimatePresence>
         </section>
 
-        <section className="shrink-0">
-          <ReviewHeading className="mb-1">Highlight of the Day</ReviewHeading>
+        <section className="space-y-2">
+          <ReviewHeading>Highlight</ReviewHeading>
           <SoftInput
             value={highlight}
             onChange={(e) => setHighlight(e.target.value)}
             onBlur={() => patch({ highlight: highlight.trim() })}
             onKeyDown={(e) => e.key === 'Enter' && patch({ highlight: highlight.trim() })}
-            placeholder="Best moment or small win today…"
-            className="!py-1.5 !text-[11px]"
+            placeholder="A small win or soft moment…"
           />
         </section>
 
-        <section className="flex min-h-0 flex-1 flex-col border-t border-[var(--page-edge)]/50 pt-1.5">
+        <section className="border-t border-[var(--page-edge)]/40 pt-3">
           <CompactDailyNotes
             month={month}
             day={day}
             tall
             accentLabel
-            label="Daily Journal / Brain Dump"
+            label="Journal"
             placeholder="Brain dump, feelings, unfinished thoughts…"
           />
         </section>
@@ -251,15 +294,32 @@ export function EnergyPanel({ month, day }) {
   const drivers = (data.drivers || []).filter((id) => ENERGY_DRIVER_IDS.has(id))
   const drainers = (data.drainers || []).filter((id) => ENERGY_DRAINER_IDS.has(id))
 
+  const energySupport =
+    data.battery === 'solo'
+      ? 'Protecting your energy is a form of self-love. Solo recharge is allowed.'
+      : drainers.length >= 3
+        ? 'Lots of drain today — rest is not laziness, it is maintenance.'
+        : drainers.includes('sleep-deprived') || drainers.includes('overthinking')
+          ? 'Your nervous system is carrying a lot. Softness counts as recovery.'
+          : null
+
   return (
     <PanelShell month={month} day={day} title="Energy check-in" trackerId="energy" hideNotes>
-      <div
-        data-no-flip
-        className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 overflow-hidden"
-      >
-        <section className="shrink-0">
-          <ReviewHeading className="mb-1">Energy Boosters (Drivers)</ReviewHeading>
-          <div className="flex flex-wrap gap-1">
+      <div data-no-flip className="relative z-10 space-y-3.5 pb-3">
+        <AnimatePresence>
+          {energySupport && (
+            <MotivationCard
+              key={energySupport}
+              emoji="🤍"
+              title="A soft note for you"
+              message={energySupport}
+            />
+          )}
+        </AnimatePresence>
+
+        <section className="space-y-2">
+          <ReviewHeading>Energy boosters</ReviewHeading>
+          <div className="flex flex-wrap gap-1.5">
             {ENERGY_DRIVERS.map((opt) => (
               <SelectChip
                 key={opt.id}
@@ -273,9 +333,9 @@ export function EnergyPanel({ month, day }) {
           </div>
         </section>
 
-        <section className="shrink-0">
-          <ReviewHeading className="mb-1">Energy Drainers</ReviewHeading>
-          <div className="flex flex-wrap gap-1">
+        <section className="space-y-2">
+          <ReviewHeading>Energy drainers</ReviewHeading>
+          <div className="flex flex-wrap gap-1.5">
             {ENERGY_DRAINERS.map((opt) => (
               <SelectChip
                 key={opt.id}
@@ -289,14 +349,12 @@ export function EnergyPanel({ month, day }) {
           </div>
         </section>
 
-        <section className="shrink-0 rounded-2xl border border-[var(--page-edge)]/60 bg-[var(--accent-glow)]/70 px-2 py-1.5">
-          <ReviewHeading className="mb-1">Quick Energy Check</ReviewHeading>
-          <div className="space-y-1.5">
-            <div>
-              <ReviewHeading className="mb-0.5 !text-[10px] sm:!text-[11px]">
-                Peak Energy Time:
-              </ReviewHeading>
-              <div className="flex flex-wrap gap-1">
+        <section className="space-y-3">
+          <ReviewHeading>Energy pulse</ReviewHeading>
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <ReviewHeading asQuestion>Peak energy time?</ReviewHeading>
+              <div className="flex flex-wrap gap-1.5">
                 {ENERGY_PEAK_TIMES.map((opt) => (
                   <SelectChip
                     key={opt.id}
@@ -309,11 +367,9 @@ export function EnergyPanel({ month, day }) {
                 ))}
               </div>
             </div>
-            <div>
-              <ReviewHeading className="mb-0.5 !text-[10px] sm:!text-[11px]">
-                Social & Mental Battery:
-              </ReviewHeading>
-              <div className="flex flex-wrap gap-1">
+            <div className="space-y-1.5">
+              <ReviewHeading asQuestion>Social & mental battery?</ReviewHeading>
+              <div className="flex flex-wrap gap-1.5">
                 {ENERGY_BATTERY.map((opt) => (
                   <SelectChip
                     key={opt.id}
@@ -329,13 +385,13 @@ export function EnergyPanel({ month, day }) {
           </div>
         </section>
 
-        <section className="flex min-h-0 flex-1 flex-col border-t border-[var(--page-edge)]/50 pt-1.5">
+        <section className="border-t border-[var(--page-edge)]/40 pt-3">
           <CompactDailyNotes
             month={month}
             day={day}
             tall
             accentLabel
-            label="Daily Notes"
+            label="Notes"
             placeholder="How did your energy feel today…"
           />
         </section>
@@ -351,7 +407,7 @@ export function ShowerPanel({ month, day }) {
     <PanelShell month={month} day={day} title="Shower & hair care" trackerId="shower" hideNotes>
       <ReviewPanelFrame month={month} day={day} notesPlaceholder="Shower thoughts, hair notes…">
         <section>
-          <ReviewHeading className="mb-1">Routine details</ReviewHeading>
+          <ReviewHeading className="mb-1.5">What did your routine include?</ReviewHeading>
           <div className="flex flex-wrap gap-1">
             {SHOWER_ROUTINE.map((opt) => (
               <SelectChip
@@ -869,8 +925,16 @@ export function FocusPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="Focus & deep work" trackerId="focus">
-      <div className="mb-2 rounded-full bg-[var(--surface)] px-3 py-1.5 text-center text-xs font-bold text-[var(--ink)]">
-        Today: {minutes} min · {hours}h logged
+      <p className="mb-3 text-[11px] font-medium leading-relaxed text-[var(--ink-soft)]">
+        Midday deep work lives here — Tasks sits right next door for your checklist.
+      </p>
+      <FocusTimerCard />
+
+      <div className="mb-3 rounded-2xl bg-[var(--surface)] px-3 py-2.5 text-center shadow-sm ring-1 ring-[var(--page-edge)]/50">
+        <p className="text-[10px] font-medium text-[var(--ink-soft)]">Logged today</p>
+        <p className="font-display text-sm font-semibold text-[var(--ink)]">
+          {minutes} min · {hours}h
+        </p>
       </div>
 
       <ChipGroup label="Quick logger">
@@ -898,7 +962,7 @@ export function FocusPanel({ month, day }) {
       </ChipGroup>
 
       <FieldLabel>Custom focus hours</FieldLabel>
-      <div className="mb-2.5 flex gap-1.5">
+      <div className="mb-3 flex gap-1.5">
         <SoftInput
           type="number"
           min="0"
@@ -911,14 +975,14 @@ export function FocusPanel({ month, day }) {
         <button
           type="button"
           onClick={addCustom}
-          className="rounded-xl bg-[var(--accent-deep)] px-2.5 text-white shadow"
-          title="Add custom hours"
+          className="tap-pop rounded-full bg-[var(--accent-deep)] px-3 text-white shadow-sm"
+          aria-label="Add custom hours"
         >
           <Plus size={14} />
         </button>
       </div>
 
-      <ChipGroup label="Focus quality & vibe">
+      <ChipGroup label="How did focus feel?">
         <ChoiceChips
           options={FOCUS_VIBES}
           selected={data.vibes}
@@ -926,7 +990,7 @@ export function FocusPanel({ month, day }) {
         />
       </ChipGroup>
 
-      <ChipGroup label="Environment & setup">
+      <ChipGroup label="Where did you settle in?">
         <ChoiceChips
           options={FOCUS_ENVIRONMENTS}
           selected={data.environments}
@@ -1093,6 +1157,9 @@ export function TasksPanel({ month, day }) {
 
   return (
     <PanelShell month={month} day={day} title="To-Do Checklist" onClear={clearToday}>
+      <p className="mb-3 text-[11px] font-medium leading-relaxed text-[var(--ink-soft)]">
+        Pair this checklist with Focus next door — plan the work, then start a soft timer.
+      </p>
       <TodoList month={month} day={day} embedded />
     </PanelShell>
   )

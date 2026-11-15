@@ -3,17 +3,17 @@ export const THEMES = {
     id: 'pinky',
     label: 'Soft Rose',
     short: 'Rose',
-    swatch: '#c992a2',
+    swatch: '#d4a0ae',
   },
   midnight: {
     id: 'midnight',
     label: 'Midnight Soft',
     short: 'Night',
-    swatch: '#7a91b8',
+    swatch: '#b8a4e8',
   },
 }
 
 export const THEME_GRADIENTS = {
   pinky: ['#edd5dc', '#dbb0bc', '#c992a2', '#b07588', '#946070'],
-  midnight: ['#ffd6e2', '#f5a8bc', '#e87a9a', '#d45678', '#c04068'],
+  midnight: ['#e8d4ff', '#d4b8f5', '#c4a0f0', '#f0a8c8', '#e878a8'],
 }

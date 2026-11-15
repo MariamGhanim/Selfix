@@ -1,56 +1,75 @@
 import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { RotateCcw } from 'lucide-react'
 import { useJournal } from '../../context/JournalContext'
 import { MONTHS_FULL } from '../../data/trackers'
 import { PASTEL_CHIP_COLORS } from '../../data/panelOptions'
+import { supportNoteForAnswers } from '../../data/miniQuizzes'
 
-export function Chip({ active, onClick, emoji, label, colorIndex = 0, title }) {
+export function Chip({ active, onClick, emoji, label, colorIndex = 0 }) {
   const palette = PASTEL_CHIP_COLORS[colorIndex % PASTEL_CHIP_COLORS.length]
   return (
-    <button
+    <motion.button
       type="button"
-      title={title || (active ? `${label} (click to deselect)` : label)}
       onClick={onClick}
       aria-pressed={active}
-      className={`inline-flex max-w-full items-center gap-1 rounded-full border px-2 py-1 text-left text-[10px] font-bold leading-tight transition sm:text-[11px] ${
-        active ? 'scale-[1.02] shadow-md ring-1 ring-black/10' : 'hover:scale-[1.02] hover:shadow-sm'
+      aria-label={label}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.96 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+      className={`inline-flex max-w-full items-center gap-1 rounded-full px-2.5 py-1 text-left text-[10px] font-medium leading-tight sm:text-[11px] ${
+        active ? 'shadow-sm ring-2 ring-white/50' : 'opacity-90 hover:opacity-100'
       }`}
       style={{
         background: active ? palette.active : palette.bg,
         color: active ? '#fff' : palette.text,
-        borderColor: active ? 'transparent' : `${palette.active}55`,
       }}
     >
       {emoji && <span className="shrink-0 text-[12px] leading-none">{emoji}</span>}
       <span className="truncate">{label}</span>
-    </button>
+    </motion.button>
   )
 }
 
-export function SelectChip({ active, onClick, emoji, label, title, compact = false }) {
+export function SelectChip({ active, onClick, emoji, label, compact = false }) {
   return (
-    <button
+    <motion.button
       type="button"
       data-no-flip
-      title={title || (active ? `${label} (selected — click to deselect)` : label)}
       onClick={onClick}
       aria-pressed={active}
-      className={`relative z-10 inline-flex max-w-full cursor-pointer items-center rounded-full border text-left font-bold leading-tight transition ${
-        compact ? 'gap-0.5 px-2 py-1 text-[9px] sm:text-[10px]' : 'gap-1 px-2.5 py-1.5 text-[10px] sm:text-[11px]'
+      aria-label={label}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.96 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+      className={`relative z-10 inline-flex max-w-full cursor-pointer items-center rounded-full text-left font-medium leading-tight transition-colors duration-200 ${
+        compact ? 'gap-1 px-2.5 py-1 text-[10px] sm:text-[11px]' : 'gap-1.5 px-3 py-1.5 text-[11px] sm:text-xs'
       } ${
         active
-          ? 'scale-[1.02] border-[var(--accent-deep)] bg-[var(--accent-deep)] text-white shadow-md'
-          : 'border-[var(--page-edge)] bg-[var(--surface)] text-[var(--ink-soft)] opacity-80 hover:opacity-100 hover:shadow-sm'
+          ? 'bg-[var(--accent-deep)] text-white shadow-md ring-2 ring-[var(--accent-soft)]'
+          : 'bg-[var(--surface)] text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/70 hover:bg-[var(--surface-strong)] hover:text-[var(--ink)] hover:ring-[var(--accent)]/40'
       }`}
     >
-      {active && <span className="shrink-0 text-[10px] leading-none">✓</span>}
+      <AnimatePresence initial={false}>
+        {active && (
+          <motion.span
+            key="check"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            className="shrink-0 text-[10px] leading-none opacity-90"
+          >
+            ✓
+          </motion.span>
+        )}
+      </AnimatePresence>
       {emoji && (
-        <span className={`shrink-0 leading-none ${compact ? 'text-[11px]' : 'text-[12px]'}`}>
+        <span className={`shrink-0 leading-none ${compact ? 'text-[12px]' : 'text-[13px]'}`}>
           {emoji}
         </span>
       )}
       <span className="truncate">{label}</span>
-    </button>
+    </motion.button>
   )
 }
 
@@ -59,8 +78,8 @@ export function ReviewHeading({ children, className = '', asQuestion = false }) 
     <p
       className={`${
         asQuestion
-          ? 'text-[11px] font-bold leading-snug tracking-normal text-[var(--accent-deep)] sm:text-xs'
-          : 'text-[11px] font-bold uppercase tracking-wide text-[var(--accent-deep)] sm:text-xs'
+          ? 'font-display text-[12px] font-medium leading-snug text-[var(--ink)] sm:text-[13px]'
+          : 'font-display text-[12px] font-medium tracking-tight text-[var(--ink)] sm:text-[13px]'
       } ${className}`}
     >
       {children}
@@ -68,21 +87,69 @@ export function ReviewHeading({ children, className = '', asQuestion = false }) 
   )
 }
 
+export function SupportNote({ children }) {
+  if (!children) return null
+  return (
+    <motion.p
+      initial={{ opacity: 0, y: -3 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -3 }}
+      className="mb-2 rounded-2xl bg-[var(--accent-glow)] px-3 py-1.5 text-[10px] font-medium leading-snug text-[var(--ink-soft)]"
+    >
+      {children}
+    </motion.p>
+  )
+}
+
+export function MotivationCard({ emoji, title, message }) {
+  if (!title || !message) return null
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10, scale: 0.985 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -6, scale: 0.985 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+      className="quote-banner rounded-[1.35rem] px-4 py-3.5 ring-1 ring-[var(--accent-soft)]/55"
+    >
+      <p className="font-display text-[14px] font-semibold leading-snug tracking-tight text-[var(--accent-deep)] sm:text-[15px]">
+        <span className="mr-1.5">{emoji}</span>
+        {title}
+      </p>
+      <p className="mt-2 font-body text-[12px] font-medium leading-relaxed text-[var(--ink)]/85 sm:text-[13px]">
+        {message}
+      </p>
+    </motion.div>
+  )
+}
+
+export function VibeAnchor({ children }) {
+  return (
+    <div className="quote-banner rounded-[1.25rem] px-3.5 py-3 ring-1 ring-[var(--page-edge)]/50">
+      <p className="font-display text-[12px] font-medium italic leading-relaxed text-[var(--accent-deep)] sm:text-[13px]">
+        {children}
+      </p>
+    </div>
+  )
+}
+
 export function toggleSingle(current, id) {
   return current === id ? null : id
 }
 
-export function MiniQuiz({ questions, answers, onAnswer }) {
+export function MiniQuiz({ questions, answers, onAnswer, title = 'Daily Mini-Quiz' }) {
+  const note = supportNoteForAnswers(answers, questions)
+
   return (
-    <section className="shrink-0 rounded-2xl border border-[var(--page-edge)]/60 bg-[var(--accent-glow)]/70 px-2 py-1.5">
-      <ReviewHeading className="mb-1">Daily Mini-Quiz</ReviewHeading>
-      <div className="space-y-1.5">
+    <section className="shrink-0 space-y-3">
+      <ReviewHeading>{title}</ReviewHeading>
+      <AnimatePresence mode="wait">
+        {note ? <SupportNote key={note}>{note}</SupportNote> : null}
+      </AnimatePresence>
+      <div className="space-y-3">
         {questions.map((q) => (
-          <div key={q.key}>
-            <ReviewHeading asQuestion className="mb-0.5">
-              {q.question}
-            </ReviewHeading>
-            <div className="flex flex-wrap gap-1">
+          <div key={q.key} className="space-y-1.5">
+            <ReviewHeading asQuestion>{q.question}</ReviewHeading>
+            <div className="flex flex-wrap gap-1.5">
               {q.options.map((opt) => (
                 <SelectChip
                   key={opt.id}
@@ -103,12 +170,9 @@ export function MiniQuiz({ questions, answers, onAnswer }) {
 
 export function ReviewPanelFrame({ month, day, notesPlaceholder = 'Quick note for today…', children }) {
   return (
-    <div
-      data-no-flip
-      className="relative z-10 flex h-full min-h-0 flex-col gap-1.5 overflow-hidden"
-    >
-      <div className="shrink-0 space-y-1.5">{children}</div>
-      <section className="flex min-h-0 flex-1 flex-col border-t border-[var(--page-edge)]/50 pt-1.5">
+    <div data-no-flip className="relative z-10 space-y-3 pb-2">
+      <div className="space-y-3">{children}</div>
+      <section className="border-t border-[var(--page-edge)]/40 pt-3">
         <CompactDailyNotes
           month={month}
           day={day}
@@ -124,30 +188,23 @@ export function ReviewPanelFrame({ month, day, notesPlaceholder = 'Quick note fo
 
 export function ChipGroup({ label, children }) {
   return (
-    <div className="mb-2 shrink-0">
-      {label && (
-        <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-[var(--ink-soft)]">
-          {label}
-        </p>
-      )}
+    <div className="mb-3 shrink-0">
+      {label && <ReviewHeading className="mb-2">{label}</ReviewHeading>}
       <div className="flex flex-wrap gap-1.5">{children}</div>
     </div>
   )
 }
 
 export function FieldLabel({ children }) {
-  return (
-    <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-[var(--ink-soft)]">
-      {children}
-    </p>
-  )
+  return <ReviewHeading className="mb-2">{children}</ReviewHeading>
 }
 
 export function SoftInput(props) {
   return (
     <input
       {...props}
-      className={`w-full rounded-xl border border-[var(--page-edge)] bg-[var(--surface)] px-2.5 py-1.5 text-xs outline-none focus:ring-1 focus:ring-[var(--accent)] ${props.className || ''}`}
+      data-no-flip
+      className={`relative z-20 w-full rounded-2xl border-0 bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 ${props.className || ''}`}
     />
   )
 }
@@ -156,7 +213,8 @@ export function SoftTextarea(props) {
   return (
     <textarea
       {...props}
-      className={`min-h-0 w-full flex-1 resize-none rounded-xl border border-[var(--page-edge)] bg-[var(--surface)] px-2.5 py-1.5 text-[11px] leading-relaxed outline-none focus:ring-1 focus:ring-[var(--accent)] ${props.className || ''}`}
+      data-no-flip
+      className={`relative z-20 min-h-[7.5rem] w-full resize-y rounded-2xl border-0 bg-[var(--surface)] px-3 py-2.5 text-[11px] leading-relaxed text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 ${props.className || ''}`}
     />
   )
 }
@@ -178,37 +236,45 @@ export function PanelShell({
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-2xl bg-[var(--accent-glow)]/80 p-2.5 sm:p-3">
-      <div className="mb-1.5 flex shrink-0 items-center justify-between gap-2">
+    <motion.div
+      initial={{ opacity: 0.9, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.22, ease: 'easeOut' }}
+      className="flex h-full min-h-0 flex-col overflow-hidden rounded-[1.5rem] bg-[var(--accent-glow)]/70 p-3.5 sm:p-4"
+    >
+      <div className="mb-3.5 flex shrink-0 items-start justify-between gap-3">
         <div className="min-w-0">
-          <h4 className="truncate font-display text-sm font-semibold text-[var(--ink)]">{title}</h4>
-          <span className="text-[10px] font-semibold text-[var(--ink-soft)]">
+          <h4 className="truncate font-display text-xl font-semibold tracking-tight text-[var(--ink)] sm:text-[1.35rem]">
+            {title}
+          </h4>
+          <p className="mt-1 font-display text-sm font-semibold tracking-tight text-[var(--accent-deep)] sm:text-[15px]">
             {MONTHS_FULL[month]} {day}
-          </span>
+          </p>
         </div>
-        <button
+        <motion.button
           type="button"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.96 }}
           onClick={clearToday}
-          className="inline-flex shrink-0 items-center gap-1 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] px-2 py-1 text-[9px] font-bold text-[var(--ink-soft)] transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]"
-          title="Clear today's selections for this tracker"
+          aria-label="Clear today"
+          className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--surface)] px-2.5 py-1.5 text-[10px] font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)]"
         >
           <RotateCcw size={11} />
-          Clear Today
-        </button>
+          Clear
+        </motion.button>
       </div>
       <div
-        className={`min-h-0 pr-0.5 ${
-          hideNotes ? 'flex flex-1 flex-col overflow-hidden' : 'flex-[3] overflow-y-auto'
-        }`}
+        data-no-flip
+        className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch]"
       >
         {children}
+        {!hideNotes && (
+          <div className="mt-3 border-t border-[var(--page-edge)]/40 pt-3">
+            <CompactDailyNotes month={month} day={day} />
+          </div>
+        )}
       </div>
-      {!hideNotes && (
-        <div className="mt-1.5 min-h-0 flex-1 border-t border-[var(--page-edge)]/50 pt-1.5">
-          <CompactDailyNotes month={month} day={day} />
-        </div>
-      )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -229,14 +295,14 @@ export function CompactDailyNotes({
   }, [month, day, saved])
 
   return (
-    <div className={`flex min-h-0 flex-col ${tall ? 'flex-1' : 'h-full'}`}>
-      {accentLabel ? <ReviewHeading className="mb-1">{label}</ReviewHeading> : <FieldLabel>{label}</FieldLabel>}
+    <div className="flex flex-col">
+      {accentLabel || label ? <ReviewHeading className="mb-2">{label}</ReviewHeading> : null}
       <SoftTextarea
         value={text}
         onChange={(e) => setText(e.target.value)}
         onBlur={() => setDailyNote(month, day, text)}
         placeholder={placeholder || 'Quick note for today...'}
-        className={tall ? 'min-h-[5.5rem] flex-1' : ''}
+        className={tall ? 'min-h-[8rem]' : 'min-h-[6.5rem]'}
       />
     </div>
   )

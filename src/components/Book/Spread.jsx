@@ -1,18 +1,30 @@
 import {
   Apple,
+  Bike,
   BookOpen,
+  Brain,
+  Camera,
   Candy,
   CheckSquare,
+  Coffee,
   Droplets,
   Dumbbell,
+  Flame,
   GlassWater,
+  Heart,
+  Leaf,
   MapPin,
   Moon,
+  MoonStar,
+  Music,
+  Palette,
   Pill,
   Smile,
   Sparkles,
   Star,
+  Sun,
   Target,
+  Wallet,
   Zap,
 } from 'lucide-react'
 import PixelGrid from '../Trackers/PixelGrid'
@@ -38,6 +50,7 @@ const ICONS = {
   Candy,
   GlassWater,
   Moon,
+  MoonStar,
   Target,
   Dumbbell,
   Smile,
@@ -46,6 +59,17 @@ const ICONS = {
   Pill,
   BookOpen,
   Sparkles,
+  Sun,
+  Heart,
+  Leaf,
+  Coffee,
+  Music,
+  Camera,
+  Wallet,
+  Bike,
+  Palette,
+  Brain,
+  Flame,
 }
 
 export default function Spread({ tracker, selectedDay, onSelectDay }) {
@@ -79,8 +103,8 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
         </div>
 
         {selectedLabel && (
-          <div className="mb-1.5 shrink-0 rounded-full bg-[var(--accent-glow)]/90 px-3 py-1 text-center">
-            <p className="font-display text-[11px] font-semibold text-[var(--accent-deep)] sm:text-xs">
+          <div className="date-anchor mb-2.5 shrink-0 rounded-2xl px-4 py-2.5 text-center ring-1 ring-[var(--accent-soft)]/60">
+            <p className="font-display text-base font-semibold tracking-tight text-[var(--ink)] sm:text-lg">
               {selectedLabel}
             </p>
           </div>
@@ -96,7 +120,7 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
         </div>
       </section>
 
-      <section className="min-h-[48vh] overflow-hidden md:min-h-0 md:pl-4">
+      <section className="flex min-h-[48vh] min-h-0 flex-col overflow-hidden md:h-full md:pl-4">
         <RightPage tracker={tracker} selectedDay={selectedDay} />
       </section>
     </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Plus, Trash2 } from 'lucide-react'
 import { useJournal } from '../../context/JournalContext'
 import { MONTHS_FULL } from '../../data/trackers'
@@ -40,14 +41,16 @@ export default function TodoList({ month, day, embedded = false }) {
   return (
     <div
       className={`flex h-full min-h-0 flex-col ${
-        embedded ? '' : 'rounded-2xl bg-[var(--accent-glow)]/80 p-3'
+        embedded ? '' : 'panel-card rounded-[1.35rem] p-3'
       }`}
     >
       {!embedded ? (
-        <div className="mb-2 flex shrink-0 items-center justify-between gap-2">
+        <div className="mb-2.5 flex shrink-0 items-center justify-between gap-2">
           <div>
-            <h4 className="font-display text-sm font-semibold text-[var(--ink)]">To-Do Checklist</h4>
-            <p className="text-[10px] text-[var(--ink-soft)]">Paired with today&apos;s pixel</p>
+            <h4 className="font-display text-[15px] font-semibold text-[var(--ink)]">
+              To-Do Checklist
+            </h4>
+            <p className="text-[10px] text-[var(--ink-soft)]">Little wins, logged with today&apos;s pixel</p>
           </div>
           <span className="text-[10px] font-semibold text-[var(--ink-soft)]">
             {MONTHS_FULL[month]} {day}
@@ -60,21 +63,23 @@ export default function TodoList({ month, day, embedded = false }) {
         </p>
       ) : null}
 
-      <div className="mb-2 flex shrink-0 gap-1.5">
+      <div className="mb-2.5 flex shrink-0 gap-1.5">
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && add()}
-          placeholder="Add a task..."
-          className="min-w-0 flex-1 rounded-xl border border-[var(--page-edge)] bg-[var(--surface)] px-2.5 py-1.5 text-xs outline-none focus:ring-1 focus:ring-[var(--accent)]"
+          placeholder="Add a gentle task..."
+          className="min-w-0 flex-1 rounded-xl border border-[var(--page-edge)] bg-[var(--surface)] px-2.5 py-1.5 text-xs outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/30"
         />
-        <button
+        <motion.button
           type="button"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.92 }}
           onClick={add}
           className="rounded-xl bg-[var(--accent-deep)] px-2.5 text-white shadow"
         >
           <Plus size={14} />
-        </button>
+        </motion.button>
       </div>
 
       <ul className="min-h-0 flex-1 space-y-1.5 overflow-y-auto pr-0.5">
@@ -83,38 +88,45 @@ export default function TodoList({ month, day, embedded = false }) {
             No tasks yet — add one above
           </li>
         )}
-        {todos.map((todo) => (
-          <li
-            key={todo.id}
-            className="flex items-center gap-2 rounded-xl bg-[var(--surface)] px-2.5 py-1.5 shadow-sm"
-          >
-            <button
-              type="button"
-              onClick={() => toggle(todo.id)}
-              className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                todo.done
-                  ? 'bg-[var(--accent)] text-white'
-                  : 'bg-[var(--paper-deep)] text-[var(--ink-soft)]'
-              }`}
+        <AnimatePresence initial={false}>
+          {todos.map((todo) => (
+            <motion.li
+              key={todo.id}
+              layout
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, x: -12 }}
+              className="flex items-center gap-2 rounded-xl bg-[var(--surface)] px-2.5 py-1.5 shadow-sm"
             >
-              <Check size={11} />
-            </button>
-            <span
-              className={`min-w-0 flex-1 text-xs ${
-                todo.done ? 'text-[var(--ink-soft)] line-through' : 'text-[var(--ink)]'
-              }`}
-            >
-              {todo.text}
-            </span>
-            <button
-              type="button"
-              onClick={() => remove(todo.id)}
-              className="rounded-full p-0.5 text-[var(--ink-soft)] hover:bg-[var(--paper-deep)]"
-            >
-              <Trash2 size={12} />
-            </button>
-          </li>
-        ))}
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.85 }}
+                onClick={() => toggle(todo.id)}
+                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full transition ${
+                  todo.done
+                    ? 'bg-[var(--accent)] text-white shadow-sm'
+                    : 'bg-[var(--paper-deep)] text-[var(--ink-soft)]'
+                }`}
+              >
+                <Check size={11} />
+              </motion.button>
+              <span
+                className={`min-w-0 flex-1 text-xs transition ${
+                  todo.done ? 'text-[var(--ink-soft)] line-through' : 'text-[var(--ink)]'
+                }`}
+              >
+                {todo.text}
+              </span>
+              <button
+                type="button"
+                onClick={() => remove(todo.id)}
+                className="rounded-full p-0.5 text-[var(--ink-soft)] transition hover:bg-[var(--paper-deep)]"
+              >
+                <Trash2 size={12} />
+              </button>
+            </motion.li>
+          ))}
+        </AnimatePresence>
       </ul>
     </div>
   )

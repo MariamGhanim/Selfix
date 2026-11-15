@@ -31,86 +31,42 @@ export function cellKey(year, month, day) {
 
 export const TRACKERS = [
   {
-    id: 'rating',
-    title: 'Day Rating',
-    subtitle: 'How was your day?',
-    tab: 'Rating',
-    icon: 'Star',
-    tabColor: '#f2a0b5',
-    panel: 'rating',
+    id: 'sleep',
+    title: 'Sleep & Rest Tracker',
+    subtitle: 'How last night carried into today',
+    tab: 'Sleep',
+    icon: 'Moon',
+    tabColor: '#9fa8da',
+    panel: 'sleep',
     levels: [
-      { value: 1, label: '1★ Tough', color: 'var(--c1)' },
-      { value: 2, label: '2★ Meh', color: 'var(--c2)' },
-      { value: 3, label: '3★ Okay', color: 'var(--c3)' },
-      { value: 4, label: '4★ Good', color: 'var(--c4)' },
-      { value: 5, label: '5★ Amazing', color: 'var(--c5)' },
+      { value: 1, label: 'Bad / Insomnia (<5 hrs)', color: '#ef5350' },
+      { value: 2, label: 'Fair (5-6 hrs / tired)', color: '#ffca28' },
+      { value: 3, label: 'Good (7-8 hrs / solid)', color: '#66bb6a' },
+      { value: 4, label: 'Excellent (>8 hrs)', color: '#7e57c2' },
     ],
   },
   {
-    id: 'energy',
-    title: 'Energy & Mood',
-    subtitle: 'Intensity check-in',
-    tab: 'Energy',
-    icon: 'Zap',
-    tabColor: '#f0d45a',
-    panel: 'energy',
+    id: 'salah',
+    title: 'Salah & Spiritual Tracker',
+    subtitle: 'Five daily prayers and heart presence',
+    tab: 'Praying',
+    icon: 'MoonStar',
+    tabColor: '#5db9a4',
+    panel: 'salah',
     levels: [
-      { value: 1, label: 'None', color: '#ef6b6b' },
-      { value: 2, label: 'Low', color: '#f0a05a' },
-      { value: 3, label: 'Medium', color: '#f0d45a' },
-      { value: 4, label: 'High', color: '#7bc47f' },
-    ],
-  },
-  {
-    id: 'shower',
-    title: 'Shower & Hair Care',
-    subtitle: 'Self-care routine',
-    tab: 'Shower',
-    icon: 'Droplets',
-    tabColor: '#90caf9',
-    panel: 'shower',
-    levels: [
-      { value: 1, label: 'Full + Hair', color: 'var(--c5)' },
-      { value: 2, label: 'Body only', color: 'var(--c3)' },
-      { value: 3, label: 'No shower', color: 'var(--c1)' },
-    ],
-  },
-  {
-    id: 'fruits',
-    title: 'Fruits & Vegetables',
-    subtitle: 'Servings today',
-    tab: 'Fruits',
-    icon: 'Apple',
-    tabColor: '#74bc64',
-    panel: 'fruits',
-    levels: [
-      { value: 0, label: '0', color: '#f0d0d0' },
-      { value: 1, label: '1', color: '#c8e6c0' },
-      { value: 2, label: '2', color: '#9fd48f' },
-      { value: 3, label: '3', color: '#74bc64' },
-      { value: 4, label: '4+', color: '#4a9a48' },
-    ],
-  },
-  {
-    id: 'sweets',
-    title: 'Sweets & Sugar',
-    subtitle: 'Sweet treats count',
-    tab: 'Sweets',
-    icon: 'Candy',
-    tabColor: '#ffab91',
-    panel: 'sweets',
-    levels: [
-      { value: 0, label: '0', color: '#e8f5e9' },
-      { value: 1, label: '1', color: '#ffe0b2' },
-      { value: 2, label: '2', color: '#ffcc80' },
-      { value: 3, label: '3', color: '#ffab91' },
-      { value: 4, label: '4+', color: '#ef9a9a' },
+      { value: 0, label: 'Missed / Delayed', color: '#ef9a9a' },
+      { value: 1, label: '1 on time', color: '#ffe082' },
+      { value: 2, label: '2 on time', color: '#ffd54f' },
+      { value: 3, label: '3 on time', color: '#c5e1a5' },
+      { value: 4, label: '4 on time', color: '#aed581' },
+      { value: 5, label: 'All 5 on time', color: '#66bb6a' },
+      { value: 6, label: 'All 5 + Sunnah', color: '#26a69a' },
     ],
   },
   {
     id: 'water',
     title: 'Water Intake',
-    subtitle: 'Hydration tracker',
+    subtitle: 'Morning sip to all-day hydration',
     tab: 'Water',
     icon: 'GlassWater',
     tabColor: '#64b5f6',
@@ -128,24 +84,83 @@ export const TRACKERS = [
     ],
   },
   {
-    id: 'sleep',
-    title: 'Sleep & Rest Tracker',
-    subtitle: 'Daily sleep hours and quality',
-    tab: 'Sleep',
-    icon: 'Moon',
-    tabColor: '#9fa8da',
-    panel: 'sleep',
+    id: 'teeth',
+    title: 'Teeth Brushing',
+    subtitle: 'Morning and night oral care',
+    tab: 'Teeth',
+    icon: 'Smile',
+    tabColor: '#80deea',
+    panel: 'teeth',
     levels: [
-      { value: 1, label: 'Bad / Insomnia (<5 hrs)', color: '#ef5350' },
-      { value: 2, label: 'Fair (5-6 hrs / tired)', color: '#ffca28' },
-      { value: 3, label: 'Good (7-8 hrs / solid)', color: '#66bb6a' },
-      { value: 4, label: 'Excellent (>8 hrs)', color: '#7e57c2' },
+      { value: 0, label: 'Missed', color: '#ef9a9a' },
+      { value: 1, label: 'Once a day', color: '#ffe082' },
+      { value: 2, label: 'Twice or more', color: '#81c784' },
+    ],
+  },
+  {
+    id: 'shower',
+    title: 'Shower & Hair Care',
+    subtitle: 'Wake-up self-care routine',
+    tab: 'Shower',
+    icon: 'Droplets',
+    tabColor: '#90caf9',
+    panel: 'shower',
+    levels: [
+      { value: 1, label: 'Full + Hair', color: 'var(--c5)' },
+      { value: 2, label: 'Body only', color: 'var(--c3)' },
+      { value: 3, label: 'No shower', color: 'var(--c1)' },
+    ],
+  },
+  {
+    id: 'vitamins',
+    title: 'Vitamins & Supplements',
+    subtitle: 'Morning supplements with food',
+    tab: 'Vitamins',
+    icon: 'Pill',
+    tabColor: '#aed581',
+    panel: 'vitamins',
+    levels: [
+      { value: 1, label: 'Taken', color: '#7bc47f' },
+      { value: 2, label: 'Partial', color: '#f0d45a' },
+      { value: 3, label: 'Skipped', color: '#ef6b6b' },
+    ],
+  },
+  {
+    id: 'fruits',
+    title: 'Fruits & Vegetables',
+    subtitle: 'Fresh fuel through the day',
+    tab: 'Fruits',
+    icon: 'Apple',
+    tabColor: '#74bc64',
+    panel: 'fruits',
+    levels: [
+      { value: 0, label: '0', color: '#f0d0d0' },
+      { value: 1, label: '1', color: '#c8e6c0' },
+      { value: 2, label: '2', color: '#9fd48f' },
+      { value: 3, label: '3', color: '#74bc64' },
+      { value: 4, label: '4+', color: '#4a9a48' },
+    ],
+  },
+  {
+    id: 'sweets',
+    title: 'Sweets & Sugar',
+    subtitle: 'Treats and cravings check-in',
+    tab: 'Sweets',
+    icon: 'Candy',
+    tabColor: '#ffab91',
+    panel: 'sweets',
+    levels: [
+      { value: 0, label: '0', color: '#e8f5e9' },
+      { value: 1, label: '1', color: '#ffe0b2' },
+      { value: 2, label: '2', color: '#ffcc80' },
+      { value: 3, label: '3', color: '#ffab91' },
+      { value: 4, label: '4+', color: '#ef9a9a' },
     ],
   },
   {
     id: 'focus',
     title: 'Focus & Deep Work Tracker',
-    subtitle: 'Daily focus sessions and flow hours',
+    subtitle: 'Midday deep work sessions',
     tab: 'Focus',
     icon: 'Target',
     tabColor: '#f48fb1',
@@ -158,53 +173,9 @@ export const TRACKERS = [
     ],
   },
   {
-    id: 'workout',
-    title: 'Gym & Stretching',
-    subtitle: 'Movement and recovery',
-    tab: 'Gym',
-    icon: 'Dumbbell',
-    tabColor: '#81c784',
-    panel: 'workout',
-    levels: [
-      { value: 0, label: 'None / Rest', color: '#eceff1' },
-      { value: 1, label: 'Light Stretch / Mobility', color: '#b2dfdb' },
-      { value: 2, label: 'Cardio / Walking', color: '#80cbc4' },
-      { value: 3, label: 'Gym Workout', color: '#4db6ac' },
-      { value: 4, label: 'Intense Training', color: '#00897b' },
-    ],
-  },
-  {
-    id: 'teeth',
-    title: 'Teeth Brushing',
-    subtitle: 'Daily oral care',
-    tab: 'Teeth',
-    icon: 'Smile',
-    tabColor: '#80deea',
-    panel: 'teeth',
-    levels: [
-      { value: 0, label: 'Missed', color: '#ef9a9a' },
-      { value: 1, label: 'Once a day', color: '#ffe082' },
-      { value: 2, label: 'Twice or more', color: '#81c784' },
-    ],
-  },
-  {
-    id: 'outings',
-    title: 'Outings & Hangouts',
-    subtitle: 'Real fun outings',
-    tab: 'Outings',
-    icon: 'MapPin',
-    tabColor: '#ffb74d',
-    panel: 'outings',
-    levels: [
-      { value: 0, label: 'Stayed home', color: '#eceff1' },
-      { value: 1, label: 'Casual errand / short trip', color: '#ffcc80' },
-      { value: 2, label: 'Real Fun Outing / Hangout', color: '#ff9800' },
-    ],
-  },
-  {
     id: 'tasks',
     title: 'Daily Tasks',
-    subtitle: 'To-do checklist',
+    subtitle: 'Checklist beside your focus blocks',
     tab: 'Tasks',
     icon: 'CheckSquare',
     tabColor: '#ce93d8',
@@ -218,23 +189,25 @@ export const TRACKERS = [
     ],
   },
   {
-    id: 'vitamins',
-    title: 'Vitamins & Supplements',
-    subtitle: 'Daily supplement check',
-    tab: 'Vitamins',
-    icon: 'Pill',
-    tabColor: '#aed581',
-    panel: 'vitamins',
+    id: 'workout',
+    title: 'Gym & Stretching',
+    subtitle: 'Afternoon movement and recovery',
+    tab: 'Gym',
+    icon: 'Dumbbell',
+    tabColor: '#81c784',
+    panel: 'workout',
     levels: [
-      { value: 1, label: 'Taken', color: '#7bc47f' },
-      { value: 2, label: 'Partial', color: '#f0d45a' },
-      { value: 3, label: 'Skipped', color: '#ef6b6b' },
+      { value: 0, label: 'None / Rest', color: '#eceff1' },
+      { value: 1, label: 'Light Stretch / Mobility', color: '#b2dfdb' },
+      { value: 2, label: 'Cardio / Walking', color: '#80cbc4' },
+      { value: 3, label: 'Gym Workout', color: '#4db6ac' },
+      { value: 4, label: 'Intense Training', color: '#00897b' },
     ],
   },
   {
     id: 'reading',
     title: 'Reading',
-    subtitle: 'Pages and progress',
+    subtitle: 'Pages between the busy hours',
     tab: 'Reading',
     icon: 'BookOpen',
     tabColor: '#d4a574',
@@ -248,9 +221,54 @@ export const TRACKERS = [
     ],
   },
   {
+    id: 'outings',
+    title: 'Outings & Hangouts',
+    subtitle: 'Evening plans and real-world fun',
+    tab: 'Outings',
+    icon: 'MapPin',
+    tabColor: '#ffb74d',
+    panel: 'outings',
+    levels: [
+      { value: 0, label: 'Stayed home', color: '#eceff1' },
+      { value: 1, label: 'Casual errand / short trip', color: '#ffcc80' },
+      { value: 2, label: 'Real Fun Outing / Hangout', color: '#ff9800' },
+    ],
+  },
+  {
+    id: 'energy',
+    title: 'Energy & Mood',
+    subtitle: 'Evening energy and mood wrap-up',
+    tab: 'Energy',
+    icon: 'Zap',
+    tabColor: '#f0d45a',
+    panel: 'energy',
+    levels: [
+      { value: 1, label: 'None', color: '#ef6b6b' },
+      { value: 2, label: 'Low', color: '#f0a05a' },
+      { value: 3, label: 'Medium', color: '#f0d45a' },
+      { value: 4, label: 'High', color: '#7bc47f' },
+    ],
+  },
+  {
+    id: 'rating',
+    title: 'Day Rating',
+    subtitle: 'How the whole day felt',
+    tab: 'Rating',
+    icon: 'Star',
+    tabColor: '#f2a0b5',
+    panel: 'rating',
+    levels: [
+      { value: 1, label: '1★ Tough', color: 'var(--c1)' },
+      { value: 2, label: '2★ Meh', color: 'var(--c2)' },
+      { value: 3, label: '3★ Okay', color: 'var(--c3)' },
+      { value: 4, label: '4★ Good', color: 'var(--c4)' },
+      { value: 5, label: '5★ Amazing', color: 'var(--c5)' },
+    ],
+  },
+  {
     id: 'study',
     title: 'Self-Development',
-    subtitle: 'Learning and growth',
+    subtitle: 'Night growth, reflection, and learning',
     tab: 'Self-Dev',
     icon: 'Sparkles',
     tabColor: '#7eb8e8',
@@ -270,3 +288,46 @@ export const TIMER_PRESETS = [
   { id: 'break5', label: '5m Break', seconds: 5 * 60 },
   { id: 'stretch15', label: '15m Stretch', seconds: 15 * 60 },
 ]
+
+export function defaultTrackerPrefs() {
+  return {
+    order: TRACKERS.map((t) => t.id),
+    hidden: [],
+    custom: [],
+  }
+}
+
+export function normalizeTrackerPrefs(raw) {
+  const base = defaultTrackerPrefs()
+  const custom = Array.isArray(raw?.custom) ? raw.custom.filter((t) => t?.id && t?.title) : []
+  const catalogIds = new Set([...TRACKERS.map((t) => t.id), ...custom.map((t) => t.id)])
+  const order = Array.isArray(raw?.order)
+    ? raw.order.filter((id) => catalogIds.has(id))
+    : [...base.order]
+  for (const id of catalogIds) {
+    if (!order.includes(id)) order.push(id)
+  }
+  const hidden = Array.isArray(raw?.hidden) ? raw.hidden.filter((id) => catalogIds.has(id)) : []
+  return { order, hidden, custom }
+}
+
+export function resolveActiveTrackers(prefsInput) {
+  const prefs = normalizeTrackerPrefs(prefsInput)
+  const catalog = [...TRACKERS, ...prefs.custom]
+  const byId = Object.fromEntries(catalog.map((t) => [t.id, t]))
+  return prefs.order.map((id) => byId[id]).filter((t) => t && !prefs.hidden.includes(t.id))
+}
+
+export function resolveManagedTrackers(prefsInput) {
+  const prefs = normalizeTrackerPrefs(prefsInput)
+  const catalog = [...TRACKERS, ...prefs.custom]
+  const byId = Object.fromEntries(catalog.map((t) => [t.id, t]))
+  return prefs.order
+    .map((id) => byId[id])
+    .filter(Boolean)
+    .map((t) => ({
+      ...t,
+      enabled: !prefs.hidden.includes(t.id),
+      isCustom: Boolean(t.custom),
+    }))
+}

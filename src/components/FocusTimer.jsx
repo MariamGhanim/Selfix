@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { Check, Pause, Play, RotateCcw, Timer } from 'lucide-react'
 import { TIMER_PRESETS } from '../data/trackers'
 import { focusMinutesToLevel } from '../data/panelOptions'
@@ -32,9 +33,10 @@ function format(sec) {
 
 const FOCUS_PRESET_IDS = new Set(['focus25', 'deep50'])
 
-export default function FocusTimer() {
+const FocusTimerContext = createContext(null)
+
+export function FocusTimerProvider({ children }) {
   const { getPanel, setPanel } = useJournal()
-  const [open, setOpen] = useState(false)
   const [presetId, setPresetId] = useState('focus25')
   const [remaining, setRemaining] = useState(TIMER_PRESETS[0].seconds)
   const [running, setRunning] = useState(false)
@@ -62,14 +64,14 @@ export default function FocusTimer() {
     [getPanel, setPanel],
   )
 
-  const applyPreset = (id) => {
+  const applyPreset = useCallback((id) => {
     const p = TIMER_PRESETS.find((x) => x.id === id) || TIMER_PRESETS[0]
     setPresetId(p.id)
     setRemaining(p.seconds)
     setRunning(false)
     endAt.current = null
     sessionLogged.current = false
-  }
+  }, [])
 
   const tick = useCallback(() => {
     if (!endAt.current) return
@@ -93,7 +95,7 @@ export default function FocusTimer() {
     return () => clearInterval(id)
   }, [running, tick])
 
-  const toggle = () => {
+  const toggle = useCallback(() => {
     if (running) {
       setRunning(false)
       endAt.current = null
@@ -108,103 +110,187 @@ export default function FocusTimer() {
       endAt.current = Date.now() + remaining * 1000
     }
     setRunning(true)
-  }
+  }, [presetId, remaining, running])
 
-  const reset = () => {
+  const reset = useCallback(() => {
     const p = TIMER_PRESETS.find((x) => x.id === presetId) || TIMER_PRESETS[0]
     setRunning(false)
     endAt.current = null
     setRemaining(p.seconds)
     sessionLogged.current = false
-  }
+  }, [presetId])
 
-  const manualLog = () => {
+  const manualLog = useCallback(() => {
     const p = TIMER_PRESETS.find((x) => x.id === presetId) || TIMER_PRESETS[0]
     if (!FOCUS_PRESET_IDS.has(p.id)) return
     logFocusMinutes(Math.round(p.seconds / 60))
-  }
+  }, [logFocusMinutes, presetId])
 
-  const canLog = FOCUS_PRESET_IDS.has(presetId)
+  const value = useMemo(
+    () => ({
+      presetId,
+      remaining,
+      running,
+      loggedFlash,
+      canLog: FOCUS_PRESET_IDS.has(presetId),
+      applyPreset,
+      toggle,
+      reset,
+      manualLog,
+      format,
+    }),
+    [applyPreset, loggedFlash, manualLog, presetId, remaining, reset, running, toggle],
+  )
+
+  return <FocusTimerContext.Provider value={value}>{children}</FocusTimerContext.Provider>
+}
+
+function useFocusTimer() {
+  const ctx = useContext(FocusTimerContext)
+  if (!ctx) throw new Error('useFocusTimer must be used within FocusTimerProvider')
+  return ctx
+}
+
+export function FocusTimerBadge({ onOpen } = {}) {
+  const { remaining, running, format: fmt } = useFocusTimer()
 
   return (
-    <div className="relative">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-bold shadow-md backdrop-blur transition ${
-          running
-            ? 'bg-[var(--accent-deep)] text-white animate-pulse'
-            : 'bg-[var(--surface)] text-[var(--ink)] hover:scale-[1.02]'
-        }`}
-      >
-        <Timer size={14} />
-        <span className="font-display tabular-nums">{format(remaining)}</span>
-      </button>
+    <button
+      type="button"
+      onClick={onOpen}
+      className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm shadow-md backdrop-blur transition hover:scale-[1.02] ${
+        running
+          ? 'bg-[var(--accent-deep)] text-white'
+          : 'bg-[var(--surface)] text-[var(--ink)] ring-1 ring-[var(--page-edge)]/50'
+      }`}
+      aria-label="Open Focus timer"
+      title="Open Focus timer"
+    >
+      <Timer size={14} className={running ? 'animate-pulse' : ''} />
+      <span className="font-display text-[13px] font-semibold tabular-nums tracking-wide">
+        {fmt(remaining)}
+      </span>
+    </button>
+  )
+}
 
-      {open && (
-        <div className="absolute right-0 top-[calc(100%+8px)] z-40 w-72 rounded-3xl border border-[var(--page-edge)] bg-[var(--surface-strong)] p-4 shadow-2xl backdrop-blur">
-          <p className="mb-2 font-display text-sm font-semibold text-[var(--ink)]">Focus Timer</p>
-          <div className="mb-3 grid grid-cols-2 gap-1.5">
-            {TIMER_PRESETS.map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => applyPreset(p.id)}
-                className={`rounded-2xl px-2 py-1.5 text-xs font-bold transition ${
-                  presetId === p.id
-                    ? 'bg-[var(--accent)] text-white'
-                    : 'bg-[var(--accent-glow)] text-[var(--ink-soft)] hover:bg-[var(--accent-soft)]'
-                }`}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
+export function FocusTimerCard() {
+  const {
+    presetId,
+    remaining,
+    running,
+    loggedFlash,
+    canLog,
+    applyPreset,
+    toggle,
+    reset,
+    manualLog,
+    format: fmt,
+  } = useFocusTimer()
 
-          <div className="mb-3 text-center font-display text-3xl tabular-nums text-[var(--ink)]">
-            {format(remaining)}
-          </div>
-
-          <div className="mb-2 flex justify-center gap-2">
-            <button
-              type="button"
-              onClick={toggle}
-              className="inline-flex items-center gap-1 rounded-2xl bg-[var(--accent-deep)] px-4 py-2 text-sm font-bold text-white shadow"
-            >
-              {running ? <Pause size={14} /> : <Play size={14} />}
-              {running ? 'Pause' : 'Start'}
-            </button>
-            <button
-              type="button"
-              onClick={reset}
-              className="inline-flex items-center gap-1 rounded-2xl bg-[var(--accent-glow)] px-3 py-2 text-sm font-bold text-[var(--ink-soft)]"
-            >
-              <RotateCcw size={14} /> Reset
-            </button>
-          </div>
-
-          {canLog && (
-            <button
-              type="button"
-              onClick={manualLog}
-              className="mb-1 flex w-full items-center justify-center gap-1 rounded-2xl border border-[var(--page-edge)] bg-[var(--accent-glow)] px-3 py-2 text-[11px] font-bold text-[var(--ink)] transition hover:bg-[var(--accent-soft)]"
-            >
-              <Check size={13} />
-              Log session to Focus Tracker
-            </button>
-          )}
-
-          {loggedFlash && (
-            <p className="text-center text-[10px] font-bold text-[var(--accent-deep)]">
-              Logged to today&apos;s Focus pixel
-            </p>
-          )}
-
-          <p className="mt-1 text-center text-[9px] text-[var(--ink-soft)]">
-            25m / 50m sessions auto-log when the timer finishes
+  return (
+    <section
+      data-no-flip
+      onPointerDown={(e) => e.stopPropagation()}
+      className="relative z-20 quote-banner mb-3 rounded-[1.4rem] px-3.5 py-4 ring-1 ring-[var(--accent-soft)]/50"
+    >
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <div>
+          <p className="font-display text-[13px] font-semibold tracking-tight text-[var(--ink)]">
+            Focus timer
+          </p>
+          <p className="text-[10px] font-medium text-[var(--ink-soft)]">
+            Soft sessions that log into today&apos;s pixel
           </p>
         </div>
+        {running && (
+          <span className="rounded-full bg-[var(--accent-deep)]/15 px-2.5 py-1 text-[10px] font-semibold text-[var(--accent-deep)]">
+            In flow
+          </span>
+        )}
+      </div>
+
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        {TIMER_PRESETS.map((p) => {
+          const active = presetId === p.id
+          return (
+            <motion.button
+              key={p.id}
+              type="button"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => applyPreset(p.id)}
+              className={`rounded-full px-3 py-1.5 text-[11px] font-medium transition ${
+                active
+                  ? 'bg-[var(--accent-deep)] text-white shadow-sm'
+                  : 'bg-[var(--surface)] text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/60 hover:text-[var(--ink)] hover:ring-[var(--accent)]/35'
+              }`}
+            >
+              {p.label}
+            </motion.button>
+          )
+        })}
+      </div>
+
+      <div className="mb-4 text-center">
+        <p
+          className={`font-display text-[2.75rem] font-semibold leading-none tracking-tight tabular-nums text-[var(--ink)] sm:text-[3rem] ${
+            running ? 'timer-glow' : ''
+          }`}
+        >
+          {fmt(remaining)}
+        </p>
+      </div>
+
+      <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={toggle}
+          className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-deep)] px-5 py-2 text-[12px] font-semibold text-white shadow-md"
+        >
+          {running ? <Pause size={14} /> : <Play size={14} />}
+          {running ? 'Pause' : 'Start'}
+        </motion.button>
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={reset}
+          className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-4 py-2 text-[12px] font-medium text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/60 hover:text-[var(--ink)]"
+        >
+          <RotateCcw size={14} />
+          Reset
+        </motion.button>
+      </div>
+
+      {canLog && (
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={manualLog}
+          className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-2 text-[11px] font-medium text-[var(--ink)] ring-1 ring-[var(--page-edge)]/55 transition hover:ring-[var(--accent)]/40"
+        >
+          <Check size={13} />
+          Log session to Focus Tracker
+        </motion.button>
       )}
-    </div>
+
+      {loggedFlash && (
+        <p className="mt-2 text-center text-[11px] font-semibold text-[var(--accent-deep)]">
+          Logged to today&apos;s Focus pixel
+        </p>
+      )}
+
+      <p className="mt-2 text-center text-[10px] font-medium text-[var(--ink-soft)]">
+        25m / 50m sessions auto-log when finished
+      </p>
+    </section>
   )
+}
+
+export default function FocusTimer({ onOpen }) {
+  return <FocusTimerBadge onOpen={onOpen} />
 }
