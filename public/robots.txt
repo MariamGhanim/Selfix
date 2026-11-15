@@ -1,5 +1,5 @@
-# Selfix — https://myselfix.me
+# Selfix — https://www.myselfix.me
 User-agent: *
 Allow: /
 
-Sitemap: https://myselfix.me/sitemap.xml
+Sitemap: https://www.myselfix.me/sitemap.xml

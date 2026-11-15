@@ -1,7 +1,7 @@
-import fs from 'node:fs'
+﻿import fs from 'node:fs'
 import path from 'node:path'
 
-const SITE = 'https://myselfix.me'
+const SITE = 'https://www.myselfix.me'
 const ABOUT_TITLE = 'About Selfix · Year in Pixels Journal — Soft Pastel Habit & Mood Tracking'
 const ABOUT_DESCRIPTION =
   'Selfix is a soft pastel space for your days, thoughts, and memories. Learn how Year in Pixels helps you track sleep, mood, habits, and daily notes with calm visual clarity.'

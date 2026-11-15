@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+﻿import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import {
@@ -162,7 +162,7 @@ export default function AboutPage() {
     ensureMeta('name', 'description', description)
     ensureMeta('property', 'og:title', title)
     ensureMeta('property', 'og:description', description)
-    ensureMeta('property', 'og:url', 'https://myselfix.me/about')
+    ensureMeta('property', 'og:url', 'https://www.myselfix.me/about')
     ensureMeta('property', 'og:type', 'article')
     ensureMeta('name', 'twitter:title', title)
     ensureMeta('name', 'twitter:description', description)
@@ -173,7 +173,7 @@ export default function AboutPage() {
       canonical.setAttribute('rel', 'canonical')
       document.head.appendChild(canonical)
     }
-    canonical.setAttribute('href', 'https://myselfix.me/about')
+    canonical.setAttribute('href', 'https://www.myselfix.me/about')
 
     return () => {
       document.title =
@@ -326,7 +326,7 @@ export default function AboutPage() {
             <blockquote className="about-quote relative rounded-[1.75rem] px-6 py-7 text-center sm:px-10 sm:py-9">
               <MoonStar className="mx-auto mb-3 text-[var(--accent-deep)]" size={22} />
               <p className="font-display text-xl font-semibold leading-snug tracking-tight text-[var(--ink)] sm:text-2xl">
-                “There is no perfect streak — only honest pixels and kind attention to your season.”
+                "There is no perfect streak — only honest pixels and kind attention to your season."
               </p>
             </blockquote>
           </ScrollReveal>
