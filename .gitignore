@@ -17,6 +17,10 @@ dist-ssr
 .env.*
 !.env.example
 
+# Google Search Console verification (served on Vercel via build env; never commit)
+public/google*.html
+google*.html
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
