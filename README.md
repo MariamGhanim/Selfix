@@ -6,8 +6,8 @@
 
 <br/>
 
-[![Live Demo](https://img.shields.io/badge/🌸_Live_Demo-selfix--omega.vercel.app-e8a0b0?style=for-the-badge&labelColor=1a1a1a)](https://selfix-omega.vercel.app)
-[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=f7c6d0)](https://selfix-omega.vercel.app)
+[![Live Demo](https://img.shields.io/badge/🌸_Live-myselfix.me-e8a0b0?style=for-the-badge&labelColor=1a1a1a)](https://www.myselfix.me/)
+[![Website](https://img.shields.io/badge/Website-www.myselfix.me-1a1a1a?style=for-the-badge&labelColor=e8a0b0)](https://www.myselfix.me/)
 
 <br/>
 
@@ -24,7 +24,7 @@
 **Paint your year in gentle pixels.**  
 Track habits, sleep, prayer, focus, and little life moments inside a cozy open-book journal.
 
-[🌐 Open Selfix Life](https://selfix-omega.vercel.app) · [📜 Terms](https://selfix-omega.vercel.app/terms) · [🔒 Privacy](https://selfix-omega.vercel.app/privacy)
+[🌐 Open Selfix Life](https://www.myselfix.me/) · [📜 Terms](https://www.myselfix.me/terms) · [🔒 Privacy](https://www.myselfix.me/privacy)
 
 </div>
 
@@ -60,19 +60,19 @@ Built for people who want reflection without pressure — soft rose mornings, mi
 
 ---
 
-## 🌐 Deployment & Live Link
+## 🌐 Live site
 
-Selfix Life is **live** and deployed on **Vercel**:
+Selfix Life is **live** at:
 
-### 👉 [https://selfix-omega.vercel.app](https://selfix-omega.vercel.app)
+### 👉 [https://www.myselfix.me](https://www.myselfix.me/)
 
 <div align="center">
 
-[![Visit Selfix Life](https://img.shields.io/badge/🌸_Visit_Selfix Life_Live-e8a0b0?style=for-the-badge&labelColor=1a1a1a)](https://selfix-omega.vercel.app)
+[![Visit Selfix Life](https://img.shields.io/badge/🌸_Visit_Selfix_Life-e8a0b0?style=for-the-badge&labelColor=1a1a1a)](https://www.myselfix.me/)
 
 </div>
 
-Production builds ship from this repository to Vercel. The live app includes the full journal experience: auth, cloud sync, Insights Logbook, Soft Rose / Night themes, and legal pages (`/about`, `/privacy`, `/terms`, `/contact`).
+The production app includes the full journal experience: auth, cloud sync, Insights Logbook, Soft Rose / Night themes, and legal pages (`/about`, `/privacy`, `/terms`, `/contact`).
 
 ---
 
@@ -85,7 +85,7 @@ Production builds ship from this repository to Vercel. The live app includes the
 | Charts | Recharts |
 | Routing | React Router |
 | Backend | Firebase Auth, Cloud Firestore |
-| Hosting | Vercel |
+| Live site | [www.myselfix.me](https://www.myselfix.me/) |
 
 ---
 
@@ -197,9 +197,9 @@ This software, its design system, visual identity, UX patterns, documentation, a
 
 **Unauthorized copying, modification, distribution, reverse engineering, republication, sublicensing, or commercial use of this project — in whole or in part, via any medium — is strictly prohibited** without prior written permission from the copyright holder.
 
-Selfix Life is provided for authorized use only. Access to the live demo at [selfix-omega.vercel.app](https://selfix-omega.vercel.app) does **not** grant any license to reuse, fork, or commercialize the codebase, brand, or design.
+Selfix Life is provided for authorized use only. Access to the live site at [www.myselfix.me](https://www.myselfix.me/) does **not** grant any license to reuse, fork, or commercialize the codebase, brand, or design.
 
-For licensing inquiries, use the [Contact](https://selfix-omega.vercel.app/contact) page.
+For licensing inquiries, use the [Contact](https://www.myselfix.me/contact) page.
 
 ---
 
@@ -211,7 +211,7 @@ For licensing inquiries, use the [Contact](https://selfix-omega.vercel.app/conta
 
 *A soft space for your day, thoughts, and habits*
 
-[Live app](https://selfix-omega.vercel.app) · Copyright © 2026 Selfix Life · All rights reserved
+[Live app](https://www.myselfix.me/) · Copyright © 2026 Selfix Life · All rights reserved
 
 <br/>
 

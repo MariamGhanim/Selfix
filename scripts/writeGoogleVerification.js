@@ -26,7 +26,7 @@ loadEnvFile(path.resolve(process.cwd(), '.env'))
 
 /**
  * Writes Google Search Console HTML verification into public/ at build time.
- * Content comes from env (Vercel / local .env) so the file is never committed.
+ * Content comes from env (host build env / local .env) so the file is never committed.
  *
  * GOOGLE_SITE_VERIFICATION_FILENAME=google………….html
  * GOOGLE_SITE_VERIFICATION_CONTENT=google-site-verification: google………….html
