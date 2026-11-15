@@ -144,9 +144,40 @@ export default function AboutPage() {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'pinky')
-    document.title = 'About · Selfix'
+    const title = 'About Selfix · Year in Pixels Journal — Soft Pastel Habit & Mood Tracking'
+    const description =
+      'Selfix is a soft pastel space for your days, thoughts, and memories. Learn how Year in Pixels helps you track sleep, mood, habits, and daily notes with calm visual clarity.'
+    document.title = title
+
+    const ensureMeta = (attr, key, content) => {
+      let el = document.head.querySelector(`meta[${attr}="${key}"]`)
+      if (!el) {
+        el = document.createElement('meta')
+        el.setAttribute(attr, key)
+        document.head.appendChild(el)
+      }
+      el.setAttribute('content', content)
+    }
+
+    ensureMeta('name', 'description', description)
+    ensureMeta('property', 'og:title', title)
+    ensureMeta('property', 'og:description', description)
+    ensureMeta('property', 'og:url', 'https://myselfix.me/about')
+    ensureMeta('property', 'og:type', 'article')
+    ensureMeta('name', 'twitter:title', title)
+    ensureMeta('name', 'twitter:description', description)
+
+    let canonical = document.head.querySelector('link[rel="canonical"]')
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.setAttribute('rel', 'canonical')
+      document.head.appendChild(canonical)
+    }
+    canonical.setAttribute('href', 'https://myselfix.me/about')
+
     return () => {
-      document.title = 'Selfix · Year in Pixels Journal'
+      document.title =
+        'Selfix · Year in Pixels Journal — Track Sleep, Mood, Habits & Daily Notes'
     }
   }, [])
 

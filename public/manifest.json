@@ -1,7 +1,7 @@
 {
   "name": "Selfix",
   "short_name": "Selfix",
-  "description": "Year in Pixels journal — track your days with a soft open-book vibe.",
+  "description": "A soft pastel Year in Pixels journal for sleep, mood, habits, and daily notes.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
