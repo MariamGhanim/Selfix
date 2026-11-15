@@ -732,3 +732,34 @@ h3,
     box-shadow: var(--panel-shadow);
   }
 }
+
+@media (max-width: 767px) {
+  .page-edge-hint,
+  .page-corner-hint {
+    display: none;
+  }
+
+  .book-shadow {
+    box-shadow:
+      0 12px 28px var(--shadow),
+      0 0 0 1px color-mix(in srgb, var(--page-edge) 55%, transparent);
+  }
+
+  .mobile-log-panel {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--surface) 92%, white),
+        var(--paper) 28%
+      );
+  }
+
+  [data-theme='midnight'] .mobile-log-panel {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--surface) 94%, #2a2548),
+        var(--paper) 30%
+      );
+  }
+}

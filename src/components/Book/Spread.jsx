@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Apple,
   Bike,
@@ -32,6 +32,7 @@ import { motion } from 'framer-motion'
 import PixelGrid from '../Trackers/PixelGrid'
 import Legend from '../Trackers/Legend'
 import RightPage from './RightPage'
+import MobileLogSheet from './MobileLogSheet'
 import { useJournal } from '../../context/JournalContext'
 
 function formatSelectedDate(year, month, day) {
@@ -74,117 +75,164 @@ const ICONS = {
   Flame,
 }
 
-function MobilePaneSwitch({ value, onChange }) {
-  return (
-    <div className="mb-2 flex shrink-0 rounded-full bg-[var(--accent-glow)] p-1 ring-1 ring-[var(--page-edge)]/50 md:hidden">
-      {[
-        { id: 'grid', label: 'Year grid' },
-        { id: 'today', label: 'Today' },
-      ].map((opt) => {
-        const active = value === opt.id
-        return (
-          <button
-            key={opt.id}
-            type="button"
-            onClick={() => onChange(opt.id)}
-            className={`flex-1 rounded-full px-3 py-1.5 text-center text-[11px] font-bold transition ${
-              active
-                ? 'bg-[var(--accent-deep)] text-white shadow-sm'
-                : 'text-[var(--ink-soft)]'
-            }`}
-          >
-            {opt.label}
-          </button>
-        )
-      })}
-    </div>
+function useIsMobileBook() {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false,
   )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const onChange = () => setIsMobile(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  return isMobile
 }
 
 export default function Spread({ tracker, selectedDay, onSelectDay }) {
-  const { year } = useJournal()
+  const { year, getPixel } = useJournal()
   const Icon = ICONS[tracker.icon] || Star
-  const [mobilePane, setMobilePane] = useState('today')
+  const isMobile = useIsMobileBook()
+  const [sheetOpen, setSheetOpen] = useState(false)
+
   const selectedLabel =
     selectedDay != null
       ? formatSelectedDate(year, selectedDay.month, selectedDay.day)
       : null
 
+  const selectedValue =
+    selectedDay != null ? getPixel(tracker.id, selectedDay.month, selectedDay.day) : null
+  const selectedLevel =
+    selectedValue != null
+      ? tracker.levels.find((level) => level.value === selectedValue)
+      : null
+
   useEffect(() => {
-    setMobilePane('today')
+    setSheetOpen(false)
   }, [tracker.id])
 
-  return (
-    <div className="flex h-full min-h-0 w-full flex-col overflow-hidden md:grid md:grid-cols-2">
-      <MobilePaneSwitch value={mobilePane} onChange={setMobilePane} />
+  const openLog = useCallback(() => {
+    if (selectedDay) setSheetOpen(true)
+  }, [selectedDay])
 
-      <section
-        className={`min-h-0 flex-col overflow-hidden border-[var(--page-edge)]/60 p-2.5 sm:p-3.5 md:flex md:min-h-0 md:pr-5 md:pl-4 ${
-          mobilePane === 'grid' ? 'flex flex-1' : 'hidden'
-        }`}
-      >
-        <div className="mb-2 flex shrink-0 items-center gap-2.5">
-          <motion.div
-            key={tracker.id}
-            initial={{ scale: 0.88, opacity: 0.7 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 22 }}
-            className="rounded-xl p-1.5 text-white shadow-md"
-            style={{
-              background: tracker.tabColor,
-              boxShadow: `0 6px 16px ${tracker.tabColor}55`,
-            }}
-          >
-            <Icon size={16} />
-          </motion.div>
-          <div className="min-w-0">
-            <h2 className="truncate font-display text-base font-semibold leading-tight tracking-tight text-[var(--ink)] sm:text-lg">
-              {tracker.title}
-            </h2>
-            <p className="truncate text-[10px] leading-snug text-[var(--ink-soft)]">{tracker.subtitle}</p>
-          </div>
+  const closeLog = useCallback(() => {
+    setSheetOpen(false)
+  }, [])
+
+  const handleSelectDay = useCallback(
+    (day) => {
+      onSelectDay?.(day)
+      if (typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches) {
+        setSheetOpen(true)
+      }
+    },
+    [onSelectDay],
+  )
+
+  const feed = (
+    <section className="flex min-h-0 flex-1 flex-col overflow-hidden md:border-0 md:pr-5 md:pl-4">
+      <div className="mb-3 flex shrink-0 items-center gap-3 px-1 md:mb-2 md:gap-2.5">
+        <motion.div
+          key={tracker.id}
+          initial={{ scale: 0.88, opacity: 0.7 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+          className="rounded-2xl p-2.5 text-white shadow-md md:rounded-xl md:p-1.5"
+          style={{
+            background: tracker.tabColor,
+            boxShadow: `0 8px 20px ${tracker.tabColor}55`,
+          }}
+        >
+          <Icon size={isMobile ? 20 : 16} />
+        </motion.div>
+        <div className="min-w-0">
+          <h2 className="truncate font-display text-xl font-semibold leading-tight tracking-tight text-[var(--ink)] md:text-lg">
+            {tracker.title}
+          </h2>
+          <p className="truncate text-[12px] leading-snug text-[var(--ink-soft)] md:text-[10px]">
+            {tracker.subtitle}
+          </p>
         </div>
+      </div>
 
-        <div className="mb-2 shrink-0 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <Legend trackerId={tracker.id} levels={tracker.levels} />
-        </div>
+      <div className="mb-3 shrink-0 overflow-x-auto px-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mb-2">
+        <Legend trackerId={tracker.id} levels={tracker.levels} />
+      </div>
 
-        {selectedLabel && (
-          <motion.div
-            key={selectedLabel}
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25 }}
-            className="date-anchor mb-2.5 shrink-0 rounded-2xl px-3 py-2 text-center ring-1 ring-[var(--accent-soft)]/60 sm:px-4 sm:py-2.5"
-          >
-            <p className="font-display text-sm font-semibold tracking-tight text-[var(--ink)] sm:text-lg">
-              {selectedLabel}
-            </p>
-          </motion.div>
-        )}
+      {selectedLabel && (
+        <motion.div
+          key={selectedLabel}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+          className="date-anchor mb-3 shrink-0 rounded-[1.35rem] px-4 py-3 ring-1 ring-[var(--accent-soft)]/60 md:mb-2.5 md:rounded-2xl md:px-4 md:py-2.5"
+        >
+          <p className="text-center font-display text-base font-semibold tracking-tight text-[var(--ink)] md:text-lg">
+            {selectedLabel}
+          </p>
+          {isMobile && (
+            <div className="mt-2.5 flex items-center justify-between gap-3">
+              <p className="min-w-0 text-[12px] font-medium text-[var(--ink-soft)]">
+                {selectedLevel ? (
+                  <>
+                    Logged as{' '}
+                    <span className="font-semibold text-[var(--ink)]">{selectedLevel.label}</span>
+                  </>
+                ) : (
+                  'No pixel yet — open the log to fill this day'
+                )}
+              </p>
+              <motion.button
+                type="button"
+                whileTap={{ scale: 0.96 }}
+                onClick={openLog}
+                className="shrink-0 rounded-full bg-[var(--accent-deep)] px-3.5 py-2 text-[12px] font-bold text-white shadow-md"
+              >
+                Open log
+              </motion.button>
+            </div>
+          )}
+        </motion.div>
+      )}
 
-        <div className="min-h-0 flex-1 overflow-auto">
+      {isMobile && (
+        <p className="mb-3 px-1 text-[12px] font-medium leading-relaxed text-[var(--ink-soft)]">
+          Tap any day on the year grid to open a soft log sheet with the mini-quiz and notes.
+        </p>
+      )}
+
+      <div className="min-h-0 flex-1 overflow-auto px-1 pb-2 md:px-0">
+        <div className="h-full min-h-[26rem] rounded-[1.25rem] bg-[var(--surface)]/45 p-2 ring-1 ring-[var(--page-edge)]/40 md:min-h-0 md:rounded-none md:bg-transparent md:p-0 md:ring-0">
           <PixelGrid
             trackerId={tracker.id}
             levels={tracker.levels}
             selectedDay={selectedDay}
-            onSelectDay={(day) => {
-              onSelectDay(day)
-              if (typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches) {
-                setMobilePane('today')
-              }
-            }}
+            onSelectDay={handleSelectDay}
+            tapOpensLog={isMobile}
           />
         </div>
-      </section>
+      </div>
+    </section>
+  )
 
-      <section
-        className={`min-h-0 flex-col overflow-hidden md:flex md:h-full md:min-h-0 md:pl-4 ${
-          mobilePane === 'today' ? 'flex flex-1' : 'hidden'
-        }`}
-      >
-        <RightPage tracker={tracker} selectedDay={selectedDay} />
-      </section>
-    </div>
+  return (
+    <>
+      <div className="flex h-full min-h-0 w-full flex-col overflow-hidden p-3 md:grid md:grid-cols-2 md:p-0">
+        {feed}
+
+        <section className="hidden min-h-0 flex-col overflow-hidden md:flex md:h-full md:min-h-0 md:pl-4">
+          <RightPage tracker={tracker} selectedDay={selectedDay} />
+        </section>
+      </div>
+
+      <MobileLogSheet
+        open={isMobile && sheetOpen && typeof onSelectDay === 'function'}
+        onClose={closeLog}
+        tracker={tracker}
+        selectedDay={selectedDay}
+      />
+    </>
   )
 }

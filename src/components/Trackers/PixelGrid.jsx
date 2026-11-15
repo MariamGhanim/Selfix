@@ -2,8 +2,14 @@ import { Fragment } from 'react'
 import { DAYS, MONTHS, MONTHS_FULL, isValidDate } from '../../data/trackers'
 import { useJournal } from '../../context/JournalContext'
 
-export default function PixelGrid({ trackerId, levels, onSelectDay, selectedDay }) {
-  const { year, getPixel, paintPixel } = useJournal()
+export default function PixelGrid({
+  trackerId,
+  levels,
+  onSelectDay,
+  selectedDay,
+  tapOpensLog = false,
+}) {
+  const { year, getPixel, paintPixel, state } = useJournal()
 
   const colorFor = (value) => {
     if (value == null) return 'var(--empty-cell)'
@@ -49,6 +55,13 @@ export default function PixelGrid({ trackerId, levels, onSelectDay, selectedDay 
                   title={valid ? `${MONTHS_FULL[m.id]} ${day}` : 'Invalid'}
                   onClick={() => {
                     if (!valid) return
+                    if (tapOpensLog) {
+                      if (state.selectedLevel?.[trackerId] != null) {
+                        paintPixel(trackerId, m.id, day, levels)
+                      }
+                      onSelectDay?.({ month: m.id, day })
+                      return
+                    }
                     if (isSelected) {
                       paintPixel(trackerId, m.id, day, levels)
                     } else {

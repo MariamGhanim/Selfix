@@ -1,10 +1,22 @@
-import { useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RotateCcw } from 'lucide-react'
 import { useJournal } from '../../context/JournalContext'
 import { MONTHS_FULL } from '../../data/trackers'
 import { PASTEL_CHIP_COLORS } from '../../data/panelOptions'
 import { supportNoteForAnswers } from '../../data/miniQuizzes'
+
+const PanelLayoutContext = createContext({ mode: 'page' })
+
+export function PanelLayoutProvider({ mode = 'page', children }) {
+  return (
+    <PanelLayoutContext.Provider value={{ mode }}>{children}</PanelLayoutContext.Provider>
+  )
+}
+
+export function usePanelLayout() {
+  return useContext(PanelLayoutContext)
+}
 
 export function Chip({ active, onClick, emoji, label, colorIndex = 0 }) {
   const palette = PASTEL_CHIP_COLORS[colorIndex % PASTEL_CHIP_COLORS.length]
@@ -250,6 +262,8 @@ export function PanelShell({
   children,
 }) {
   const { resetPanel } = useJournal()
+  const { mode } = usePanelLayout()
+  const isSheet = mode === 'sheet'
 
   const clearToday = () => {
     if (onClear) onClear()
@@ -258,35 +272,53 @@ export function PanelShell({
 
   return (
     <motion.div
-      initial={{ opacity: 0.88, y: 8, scale: 0.985 }}
+      initial={isSheet ? false : { opacity: 0.88, y: 8, scale: 0.985 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-      className="panel-glass flex h-full min-h-0 flex-col overflow-hidden rounded-[1.25rem] p-2.5 ring-1 ring-[var(--page-edge)]/40 sm:rounded-[1.55rem] sm:p-4"
+      className={
+        isSheet
+          ? 'flex min-h-0 flex-col overflow-visible rounded-[1.35rem] bg-[var(--surface)]/70 p-3.5 ring-1 ring-[var(--page-edge)]/35'
+          : 'panel-glass flex h-full min-h-0 flex-col overflow-hidden rounded-[1.25rem] p-2.5 ring-1 ring-[var(--page-edge)]/40 sm:rounded-[1.55rem] sm:p-4'
+      }
     >
-      <div className="mb-2.5 flex shrink-0 items-start justify-between gap-2 sm:mb-3.5 sm:gap-3">
-        <div className="min-w-0">
-          <h4 className="truncate font-display text-lg font-semibold tracking-tight text-[var(--ink)] sm:text-[1.35rem]">
-            {title}
-          </h4>
-          <p className="mt-0.5 font-display text-xs font-semibold tracking-tight text-[var(--accent-deep)] sm:mt-1 sm:text-[15px]">
-            {MONTHS_FULL[month]} {day}
+      <div
+        className={`flex shrink-0 items-start justify-between gap-2 ${
+          isSheet ? 'mb-3' : 'mb-2.5 sm:mb-3.5 sm:gap-3'
+        }`}
+      >
+        {isSheet ? (
+          <p className="pt-1 text-[11px] font-medium text-[var(--ink-soft)]">
+            Mini-quiz & notes
           </p>
-        </div>
+        ) : (
+          <div className="min-w-0">
+            <h4 className="truncate font-display text-lg font-semibold tracking-tight text-[var(--ink)] sm:text-[1.35rem]">
+              {title}
+            </h4>
+            <p className="mt-0.5 font-display text-xs font-semibold tracking-tight text-[var(--accent-deep)] sm:mt-1 sm:text-[15px]">
+              {MONTHS_FULL[month]} {day}
+            </p>
+          </div>
+        )}
         <motion.button
           type="button"
           whileHover={{ scale: 1.04, rotate: -8 }}
           whileTap={{ scale: 0.94, rotate: -16 }}
           onClick={clearToday}
           aria-label="Clear today"
-          className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--surface)] px-2 py-1.5 text-[10px] font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)] sm:px-2.5"
+          className="mt-0.5 inline-flex shrink-0 items-center gap-1 rounded-full bg-[var(--surface)] px-2.5 py-1.5 text-[10px] font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)]"
         >
           <RotateCcw size={11} />
-          <span className="hidden sm:inline">Clear</span>
+          Clear
         </motion.button>
       </div>
       <div
         data-no-flip
-        className="min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch]"
+        className={
+          isSheet
+            ? 'space-y-1 overflow-visible pr-0.5'
+            : 'min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch]'
+        }
       >
         {children}
         {!hideNotes && trackerId ? (
@@ -309,6 +341,7 @@ export function CompactDailyNotes({
   accentLabel = false,
 }) {
   const { getDailyNote, setDailyNote } = useJournal()
+  const { mode } = usePanelLayout()
   const saved = trackerId ? getDailyNote(trackerId, month, day) : ''
   const [text, setText] = useState(saved)
 
@@ -316,13 +349,21 @@ export function CompactDailyNotes({
     setText(saved)
   }, [trackerId, month, day, saved])
 
+  const persist = (next) => {
+    if (trackerId) setDailyNote(trackerId, month, day, next)
+  }
+
   return (
     <div className="flex flex-col">
       {accentLabel || label ? <ReviewHeading className="mb-2">{label}</ReviewHeading> : null}
       <SoftTextarea
         value={text}
-        onChange={(e) => setText(e.target.value)}
-        onBlur={() => trackerId && setDailyNote(trackerId, month, day, text)}
+        onChange={(e) => {
+          const next = e.target.value
+          setText(next)
+          if (mode === 'sheet') persist(next)
+        }}
+        onBlur={() => persist(text)}
         placeholder={placeholder || 'Quick note for today...'}
         className={tall ? 'min-h-[8rem]' : 'min-h-[6.5rem]'}
       />

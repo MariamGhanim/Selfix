@@ -21,6 +21,7 @@ import {
   CustomGridPanel,
   CustomNotesPanel,
 } from '../Trackers/CustomPanels'
+import { usePanelLayout } from '../Trackers/panelUi'
 
 const PANELS = {
   rating: RatingPanel,
@@ -41,6 +42,25 @@ const PANELS = {
   todos: TasksPanel,
 }
 
+function PageFrame({ children }) {
+  const { mode } = usePanelLayout()
+  const isSheet = mode === 'sheet'
+
+  return (
+    <div
+      data-right-page
+      data-no-flip
+      className={
+        isSheet
+          ? 'relative z-10 flex min-h-0 flex-col overflow-visible p-0'
+          : 'relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-1.5 sm:p-4'
+      }
+    >
+      {children}
+    </div>
+  )
+}
+
 export default function RightPage({ tracker, selectedDay }) {
   const { month, day } = selectedDay
 
@@ -48,49 +68,33 @@ export default function RightPage({ tracker, selectedDay }) {
   if (tracker?.custom) {
     if (tracker.panel === 'checklist') {
       return (
-        <div
-          data-right-page
-          data-no-flip
-          className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-1.5 sm:p-4"
-        >
+        <PageFrame>
           <CustomChecklistPanel
             trackerId={tracker.id}
             month={month}
             day={day}
             title={tracker.title}
           />
-        </div>
+        </PageFrame>
       )
     }
     if (tracker.panel === 'notes') {
       return (
-        <div
-          data-right-page
-          data-no-flip
-          className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-1.5 sm:p-4"
-        >
+        <PageFrame>
           <CustomNotesPanel trackerId={tracker.id} month={month} day={day} title={tracker.title} />
-        </div>
+        </PageFrame>
       )
     }
     return (
-      <div
-        data-right-page
-        data-no-flip
-        className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-1.5 sm:p-4"
-      >
+      <PageFrame>
         <CustomGridPanel trackerId={tracker.id} month={month} day={day} title={tracker.title} />
-      </div>
+      </PageFrame>
     )
   }
 
   return (
-    <div
-      data-right-page
-      data-no-flip
-      className="relative z-10 flex h-full min-h-0 flex-col overflow-hidden p-1.5 sm:p-4"
-    >
+    <PageFrame>
       <Panel month={month} day={day} />
-    </div>
+    </PageFrame>
   )
 }

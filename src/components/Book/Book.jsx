@@ -141,7 +141,7 @@ export default function Book() {
 
   return (
     <FocusTimerProvider>
-      <div className="relative flex h-[100dvh] w-screen flex-col overflow-hidden px-2 py-1.5 sm:px-5 sm:py-3">
+      <div className="relative flex h-[100dvh] w-screen flex-col overflow-hidden px-2.5 py-2 sm:px-5 sm:py-3">
         <AmbientGlow />
         <header className="relative z-10 mb-1 flex shrink-0 items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
@@ -265,12 +265,12 @@ export default function Book() {
 
           <motion.div
             layout
-            className="book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-b-[22px] rounded-t-[14px] border border-[var(--page-edge)] sm:rounded-b-[28px] sm:rounded-t-[18px]"
+            className="book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-[22px] border border-[var(--page-edge)] sm:rounded-b-[28px] sm:rounded-t-[18px]"
           >
-            <div className="pointer-events-none absolute -left-1 top-3 bottom-3 z-40 hidden w-2 rounded-l-md bg-[var(--page-edge)] opacity-80 sm:block" />
-            <div className="pointer-events-none absolute -left-2 top-5 bottom-5 z-40 hidden w-2 rounded-l-md bg-[var(--accent-soft)] opacity-50 sm:block" />
-            <div className="pointer-events-none absolute -right-1 top-3 bottom-3 z-40 hidden w-2 rounded-r-md bg-[var(--page-edge)] opacity-80 sm:block" />
-            <div className="pointer-events-none absolute -right-2 top-5 bottom-5 z-40 hidden w-2 rounded-r-md bg-[var(--accent-soft)] opacity-50 sm:block" />
+            <div className="pointer-events-none absolute -left-1 top-3 bottom-3 z-40 hidden w-2 rounded-l-md bg-[var(--page-edge)] opacity-80 md:block" />
+            <div className="pointer-events-none absolute -left-2 top-5 bottom-5 z-40 hidden w-2 rounded-l-md bg-[var(--accent-soft)] opacity-50 md:block" />
+            <div className="pointer-events-none absolute -right-1 top-3 bottom-3 z-40 hidden w-2 rounded-r-md bg-[var(--page-edge)] opacity-80 md:block" />
+            <div className="pointer-events-none absolute -right-2 top-5 bottom-5 z-40 hidden w-2 rounded-r-md bg-[var(--accent-soft)] opacity-50 md:block" />
 
             <div className="relative flex min-h-0 w-full flex-1">
               {!showInsights && (
