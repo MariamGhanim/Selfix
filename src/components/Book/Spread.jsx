@@ -162,8 +162,8 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
 
         <div className="flex w-full flex-col items-center gap-1.5">
           {selectedLabel ? (
-            <div className="date-anchor w-fit max-w-full rounded-full px-3.5 py-1 md:px-3 md:py-0.5">
-              <p className="date-anchor__stamp text-center text-[11px] md:text-[10px]">
+            <div className="date-anchor mb-2 w-fit max-w-full rounded-full px-3.5 py-1 md:px-3 md:py-0.5">
+              <p className="date-anchor__stamp text-center text-sm font-medium">
                 {selectedLabel}
               </p>
             </div>
