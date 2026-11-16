@@ -32,6 +32,7 @@ export default function SoftTimePicker({
   value = '',
   onChange,
   onCommit,
+  title = 'Time',
   placeholder = 'e.g. 11:30 PM',
   className = '',
   'aria-label': ariaLabel = 'Time',
@@ -203,7 +204,7 @@ export default function SoftTimePicker({
                 ref={popoverRef}
                 id={listId}
                 role="dialog"
-                aria-label="Choose a time"
+                aria-label={title}
                 data-no-flip
                 initial={{ opacity: 0, y: 6, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -224,11 +225,13 @@ export default function SoftTimePicker({
                   }}
                 >
                   <p className="font-display text-lg font-semibold tracking-tight text-[var(--accent-deep)]">
-                    {value ? formatDisplayTime(value) : 'Pick a soft time'}
+                    {title}
                   </p>
-                  <p className="mt-0.5 text-[10px] font-medium text-[var(--ink-soft)]">
-                    Type freely · or tap below
-                  </p>
+                  {value ? (
+                    <p className="mt-0.5 font-display text-sm font-semibold tabular-nums text-[var(--ink)]">
+                      {formatDisplayTime(value)}
+                    </p>
+                  ) : null}
                 </div>
 
                 <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">

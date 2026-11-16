@@ -1062,7 +1062,8 @@ export function SleepPanel({ month, day }) {
               <ReviewHeading className="mb-0.5 !text-[10px]">Sleep Time</ReviewHeading>
               <SoftTimePicker
                 value={sleepTime}
-                aria-label="Sleep time"
+                title="Bedtime"
+                aria-label="Bedtime"
                 placeholder="e.g. 11:30 PM"
                 onChange={setSleepTime}
                 onCommit={(next) => {
@@ -1075,7 +1076,8 @@ export function SleepPanel({ month, day }) {
               <ReviewHeading className="mb-0.5 !text-[10px]">Wake Up</ReviewHeading>
               <SoftTimePicker
                 value={wakeTime}
-                aria-label="Wake up time"
+                title="Wake-up Time"
+                aria-label="Wake-up time"
                 placeholder="e.g. 7:00 AM"
                 onChange={setWakeTime}
                 onCommit={(next) => {

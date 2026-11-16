@@ -267,30 +267,32 @@ export default function Book() {
 
           <motion.div
             layout
-            className="book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-[22px] border border-[var(--page-edge)] sm:rounded-b-[28px] sm:rounded-t-[18px]"
+            className="open-book book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-[20px] border border-[var(--cover)]/40 sm:rounded-b-[30px] sm:rounded-t-[20px]"
           >
-            <div className="pointer-events-none absolute -left-1 top-3 bottom-3 z-40 hidden w-2 rounded-l-md bg-[var(--page-edge)] opacity-80 md:block" />
-            <div className="pointer-events-none absolute -left-2 top-5 bottom-5 z-40 hidden w-2 rounded-l-md bg-[var(--accent-soft)] opacity-50 md:block" />
-            <div className="pointer-events-none absolute -right-1 top-3 bottom-3 z-40 hidden w-2 rounded-r-md bg-[var(--page-edge)] opacity-80 md:block" />
-            <div className="pointer-events-none absolute -right-2 top-5 bottom-5 z-40 hidden w-2 rounded-r-md bg-[var(--accent-soft)] opacity-50 md:block" />
+            {/* Hardcover rim + page stack at the outer edges */}
+            <div className="open-book__cover-edge" aria-hidden />
+            <div
+              className="pointer-events-none absolute -left-[3px] top-4 bottom-4 z-40 hidden w-[7px] rounded-l-[6px] md:block"
+              style={{
+                background:
+                  'linear-gradient(180deg, color-mix(in srgb, var(--cover) 80%, white), var(--cover-deep))',
+                boxShadow: '2px 0 6px rgba(80,45,55,0.12)',
+              }}
+              aria-hidden
+            />
+            <div
+              className="pointer-events-none absolute -right-[3px] top-4 bottom-4 z-40 hidden w-[7px] rounded-r-[6px] md:block"
+              style={{
+                background:
+                  'linear-gradient(180deg, color-mix(in srgb, var(--cover) 80%, white), var(--cover-deep))',
+                boxShadow: '-2px 0 6px rgba(80,45,55,0.12)',
+              }}
+              aria-hidden
+            />
 
-            <div className="relative flex min-h-0 w-full flex-1">
-              {!showInsights && (
-                <>
-                  <div
-                    className="pointer-events-none absolute inset-y-0 left-1/2 z-30 hidden w-6 -translate-x-1/2 md:block"
-                    style={{
-                      background:
-                        'linear-gradient(90deg, rgba(0,0,0,0.07), rgba(0,0,0,0.14) 45%, rgba(255,255,255,0.25) 50%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0.05))',
-                    }}
-                  />
-                  <div
-                    className="pointer-events-none absolute inset-y-0 left-1/2 z-30 hidden w-[2px] -translate-x-1/2 md:block"
-                    style={{ background: 'var(--spine)', opacity: 0.55 }}
-                  />
-                </>
-              )}
+            {!showInsights && <div className="open-book__spine hidden md:block" aria-hidden />}
 
+            <div className="relative z-10 flex min-h-0 w-full flex-1">
               {showInsights ? (
                 <div className="relative z-10 min-h-0 w-full flex-1 overflow-hidden">
                   <InsightsDashboard />

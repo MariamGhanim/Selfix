@@ -132,7 +132,7 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
   )
 
   const feed = (
-    <section className="flex min-h-0 flex-1 flex-col overflow-hidden md:border-0 md:pr-5 md:pl-4">
+    <section className="book-page--left flex min-h-0 flex-1 flex-col overflow-hidden md:border-0 md:pr-6 md:pl-5">
       <div className="mb-3 flex shrink-0 items-center gap-3 px-1 md:mb-2 md:gap-2.5">
         <motion.div
           key={tracker.id}
@@ -219,10 +219,10 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
 
   return (
     <>
-      <div className="flex h-full min-h-0 w-full flex-col overflow-hidden p-3 md:grid md:grid-cols-2 md:p-0">
+      <div className="flex h-full min-h-0 w-full flex-col overflow-hidden p-3 md:grid md:grid-cols-2 md:gap-0 md:p-0 md:pt-1 md:pb-1">
         {feed}
 
-        <section className="hidden min-h-0 flex-col overflow-hidden md:flex md:h-full md:min-h-0 md:pl-4">
+        <section className="book-page--right hidden min-h-0 flex-col overflow-hidden md:flex md:h-full md:min-h-0 md:pl-6 md:pr-5">
           <RightPage tracker={tracker} selectedDay={selectedDay} />
         </section>
       </div>

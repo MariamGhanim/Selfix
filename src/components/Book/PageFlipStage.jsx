@@ -198,13 +198,15 @@ export default function PageFlipStage({
         )}
       </div>
 
+      {/* Soft spine highlight intensifies while a page turns */}
       {flipping && (
         <motion.div
-          className="pointer-events-none absolute inset-y-0 left-1/2 z-[25] w-10 -translate-x-1/2"
+          className="pointer-events-none absolute inset-y-0 left-1/2 z-[25] w-14 -translate-x-1/2"
           style={{
             opacity: spineGlow,
             background:
-              'linear-gradient(90deg, transparent, rgba(0,0,0,0.18), rgba(255,255,255,0.12), rgba(0,0,0,0.16), transparent)',
+              'linear-gradient(90deg, transparent, rgba(0,0,0,0.16), rgba(255,255,255,0.18), rgba(0,0,0,0.14), transparent)',
+            filter: 'blur(0.5px)',
           }}
         />
       )}
