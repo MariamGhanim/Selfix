@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
 import { Check, Pause, Play, RotateCcw, Timer } from 'lucide-react'
 import { TIMER_PRESETS } from '../data/trackers'
 import { focusMinutesToLevel } from '../data/panelOptions'
@@ -41,13 +40,25 @@ export function FocusTimerProvider({ children }) {
   const [remaining, setRemaining] = useState(TIMER_PRESETS[0].seconds)
   const [running, setRunning] = useState(false)
   const [loggedFlash, setLoggedFlash] = useState(false)
+  /** Seconds of this session already written to Logged today (avoids double-count). */
+  const [loggedElapsed, setLoggedElapsed] = useState(0)
   const endAt = useRef(null)
-  const sessionLogged = useRef(false)
+  const loggedElapsedRef = useRef(0)
   const presetIdRef = useRef(presetId)
+  const remainingRef = useRef(remaining)
+  const runningRef = useRef(running)
 
   useEffect(() => {
     presetIdRef.current = presetId
   }, [presetId])
+
+  useEffect(() => {
+    remainingRef.current = remaining
+  }, [remaining])
+
+  useEffect(() => {
+    runningRef.current = running
+  }, [running])
 
   const logFocusMinutes = useCallback(
     (mins) => {
@@ -64,13 +75,42 @@ export function FocusTimerProvider({ children }) {
     [getPanel, setPanel],
   )
 
+  const liveRemainingSeconds = useCallback(() => {
+    if (runningRef.current && endAt.current) {
+      return Math.max(0, Math.ceil((endAt.current - Date.now()) / 1000))
+    }
+    return Math.max(0, remainingRef.current)
+  }, [])
+
+  const elapsedSeconds = useCallback(() => {
+    const p = TIMER_PRESETS.find((x) => x.id === presetIdRef.current) || TIMER_PRESETS[0]
+    return Math.max(0, p.seconds - liveRemainingSeconds())
+  }, [liveRemainingSeconds])
+
+  /** Log only the unlogged portion of elapsed focus time. */
+  const logElapsedDelta = useCallback(() => {
+    const p = TIMER_PRESETS.find((x) => x.id === presetIdRef.current) || TIMER_PRESETS[0]
+    if (!FOCUS_PRESET_IDS.has(p.id)) return 0
+
+    const elapsed = elapsedSeconds()
+    const unlogged = Math.max(0, elapsed - loggedElapsedRef.current)
+    if (unlogged <= 0) return 0
+
+    const mins = Math.max(1, Math.round(unlogged / 60))
+    logFocusMinutes(mins)
+    loggedElapsedRef.current = elapsed
+    setLoggedElapsed(elapsed)
+    return mins
+  }, [elapsedSeconds, logFocusMinutes])
+
   const applyPreset = useCallback((id) => {
     const p = TIMER_PRESETS.find((x) => x.id === id) || TIMER_PRESETS[0]
     setPresetId(p.id)
     setRemaining(p.seconds)
     setRunning(false)
     endAt.current = null
-    sessionLogged.current = false
+    loggedElapsedRef.current = 0
+    setLoggedElapsed(0)
   }, [])
 
   const tick = useCallback(() => {
@@ -81,13 +121,9 @@ export function FocusTimerProvider({ children }) {
       setRunning(false)
       endAt.current = null
       playChime()
-      const current = TIMER_PRESETS.find((x) => x.id === presetIdRef.current)
-      if (current && FOCUS_PRESET_IDS.has(current.id) && !sessionLogged.current) {
-        sessionLogged.current = true
-        logFocusMinutes(Math.round(current.seconds / 60))
-      }
+      logElapsedDelta()
     }
-  }, [logFocusMinutes])
+  }, [logElapsedDelta])
 
   useEffect(() => {
     if (!running) return undefined
@@ -97,6 +133,10 @@ export function FocusTimerProvider({ children }) {
 
   const toggle = useCallback(() => {
     if (running) {
+      // Freeze remaining at the live value so pause keeps accurate elapsed.
+      const left = liveRemainingSeconds()
+      setRemaining(left)
+      remainingRef.current = left
       setRunning(false)
       endAt.current = null
       return
@@ -104,27 +144,37 @@ export function FocusTimerProvider({ children }) {
     if (remaining <= 0) {
       const p = TIMER_PRESETS.find((x) => x.id === presetId) || TIMER_PRESETS[0]
       setRemaining(p.seconds)
+      remainingRef.current = p.seconds
       endAt.current = Date.now() + p.seconds * 1000
-      sessionLogged.current = false
+      loggedElapsedRef.current = 0
+      setLoggedElapsed(0)
     } else {
       endAt.current = Date.now() + remaining * 1000
     }
     setRunning(true)
-  }, [presetId, remaining, running])
+  }, [liveRemainingSeconds, presetId, remaining, running])
 
   const reset = useCallback(() => {
     const p = TIMER_PRESETS.find((x) => x.id === presetId) || TIMER_PRESETS[0]
     setRunning(false)
     endAt.current = null
     setRemaining(p.seconds)
-    sessionLogged.current = false
+    remainingRef.current = p.seconds
+    loggedElapsedRef.current = 0
+    setLoggedElapsed(0)
   }, [presetId])
 
   const manualLog = useCallback(() => {
-    const p = TIMER_PRESETS.find((x) => x.id === presetId) || TIMER_PRESETS[0]
-    if (!FOCUS_PRESET_IDS.has(p.id)) return
-    logFocusMinutes(Math.round(p.seconds / 60))
-  }, [logFocusMinutes, presetId])
+    logElapsedDelta()
+  }, [logElapsedDelta])
+
+  const activePreset = TIMER_PRESETS.find((x) => x.id === presetId) || TIMER_PRESETS[0]
+  const displayRemaining =
+    running && endAt.current
+      ? Math.max(0, Math.ceil((endAt.current - Date.now()) / 1000))
+      : remaining
+  const displayElapsed = Math.max(0, activePreset.seconds - displayRemaining)
+  const canLog = FOCUS_PRESET_IDS.has(presetId) && displayElapsed > loggedElapsed
 
   const value = useMemo(
     () => ({
@@ -132,14 +182,14 @@ export function FocusTimerProvider({ children }) {
       remaining,
       running,
       loggedFlash,
-      canLog: FOCUS_PRESET_IDS.has(presetId),
+      canLog,
       applyPreset,
       toggle,
       reset,
       manualLog,
       format,
     }),
-    [applyPreset, loggedFlash, manualLog, presetId, remaining, reset, running, toggle],
+    [applyPreset, canLog, loggedFlash, manualLog, presetId, remaining, reset, running, toggle],
   )
 
   return <FocusTimerContext.Provider value={value}>{children}</FocusTimerContext.Provider>
@@ -174,6 +224,7 @@ export function FocusTimerBadge({ onOpen } = {}) {
   )
 }
 
+/** Slim timer bar — shares state with the header badge via FocusTimerProvider. */
 export function FocusTimerCard() {
   const {
     presetId,
@@ -192,101 +243,79 @@ export function FocusTimerCard() {
     <section
       data-no-flip
       onPointerDown={(e) => e.stopPropagation()}
-      className="relative z-20 quote-banner mb-3 rounded-[1.4rem] px-3.5 py-4 ring-1 ring-[var(--accent-soft)]/50"
+      className="relative z-20 mb-2 rounded-2xl bg-[var(--surface)]/90 px-2.5 py-2 ring-1 ring-[var(--page-edge)]/50"
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <div>
-          <p className="font-display text-[13px] font-semibold tracking-tight text-[var(--ink)]">
-            Focus timer
-          </p>
-          <p className="text-[10px] font-medium text-[var(--ink-soft)]">
-            Soft sessions that log into today&apos;s pixel
-          </p>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1">
+          {TIMER_PRESETS.map((p) => {
+            const active = presetId === p.id
+            const short =
+              p.id === 'focus25'
+                ? '25m'
+                : p.id === 'deep50'
+                  ? '50m'
+                  : p.id === 'break5'
+                    ? '5m'
+                    : '15m'
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => applyPreset(p.id)}
+                className={`rounded-full px-2 py-1 text-[10px] font-semibold transition-colors duration-150 ${
+                  active
+                    ? 'bg-[var(--accent-deep)] text-white'
+                    : 'bg-[var(--accent-glow)]/50 text-[var(--ink-soft)] hover:text-[var(--ink)]'
+                }`}
+              >
+                {short}
+              </button>
+            )
+          })}
         </div>
-        {running && (
-          <span className="rounded-full bg-[var(--accent-deep)]/15 px-2.5 py-1 text-[10px] font-semibold text-[var(--accent-deep)]">
-            In flow
-          </span>
-        )}
-      </div>
 
-      <div className="mb-4 flex flex-wrap gap-1.5">
-        {TIMER_PRESETS.map((p) => {
-          const active = presetId === p.id
-          return (
-            <motion.button
-              key={p.id}
-              type="button"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={() => applyPreset(p.id)}
-              className={`rounded-full px-3 py-1.5 text-[11px] font-medium transition ${
-                active
-                  ? 'bg-[var(--accent-deep)] text-white shadow-sm'
-                  : 'bg-[var(--surface)] text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/60 hover:text-[var(--ink)] hover:ring-[var(--accent)]/35'
-              }`}
-            >
-              {p.label}
-            </motion.button>
-          )
-        })}
-      </div>
-
-      <div className="mb-4 text-center">
         <p
-          className={`font-display text-[2.75rem] font-semibold leading-none tracking-tight tabular-nums text-[var(--ink)] sm:text-[3rem] ${
+          className={`ml-auto font-display text-lg font-semibold tabular-nums tracking-tight text-[var(--ink)] sm:text-xl ${
             running ? 'timer-glow' : ''
           }`}
         >
           {fmt(remaining)}
         </p>
-      </div>
 
-      <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
-        <motion.button
+        <button
           type="button"
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.96 }}
           onClick={toggle}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-deep)] px-5 py-2 text-[12px] font-semibold text-white shadow-md"
+          className="inline-flex h-8 items-center gap-1 rounded-full bg-[var(--accent-deep)] px-2.5 text-[11px] font-semibold text-white"
+          aria-label={running ? 'Pause timer' : 'Start timer'}
         >
-          {running ? <Pause size={14} /> : <Play size={14} />}
+          {running ? <Pause size={13} /> : <Play size={13} />}
           {running ? 'Pause' : 'Start'}
-        </motion.button>
-        <motion.button
+        </button>
+        <button
           type="button"
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.96 }}
           onClick={reset}
-          className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-4 py-2 text-[12px] font-medium text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/60 hover:text-[var(--ink)]"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/55 hover:text-[var(--ink)]"
+          aria-label="Reset timer"
         >
-          <RotateCcw size={14} />
-          Reset
-        </motion.button>
+          <RotateCcw size={13} />
+        </button>
+        {canLog && (
+          <button
+            type="button"
+            onClick={manualLog}
+            className="inline-flex h-8 items-center gap-1 rounded-full px-2 text-[10px] font-medium text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/55 hover:text-[var(--ink)]"
+            title="Log elapsed focus time to today"
+          >
+            <Check size={12} />
+            Log
+          </button>
+        )}
       </div>
-
-      {canLog && (
-        <motion.button
-          type="button"
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={manualLog}
-          className="flex w-full items-center justify-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-2 text-[11px] font-medium text-[var(--ink)] ring-1 ring-[var(--page-edge)]/55 transition hover:ring-[var(--accent)]/40"
-        >
-          <Check size={13} />
-          Log session to Focus Tracker
-        </motion.button>
-      )}
-
       {loggedFlash && (
-        <p className="mt-2 text-center text-[11px] font-semibold text-[var(--accent-deep)]">
+        <p className="mt-1.5 text-[10px] font-semibold text-[var(--accent-deep)]">
           Logged to today&apos;s Focus pixel
         </p>
       )}
-
-      <p className="mt-2 text-center text-[10px] font-medium text-[var(--ink-soft)]">
-        25m / 50m sessions auto-log when finished
-      </p>
     </section>
   )
 }

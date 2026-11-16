@@ -261,33 +261,33 @@ export const SLEEP_QUALITY = [
 ]
 
 export const FOCUS_QUICK_ADDS = [
-  { id: 'pomodoro', emoji: '🍅', label: '+25m Session', minutes: 25 },
-  { id: 'hour', emoji: '⏳', label: '+1 Hour Deep Work', minutes: 60 },
-  { id: 'flow', emoji: '🚀', label: '+2 Hours Flow', minutes: 120 },
+  { id: 'pomodoro', emoji: '🍅', label: '+25m', minutes: 25 },
+  { id: 'hour', emoji: '⏳', label: '+1h', minutes: 60 },
+  { id: 'flow', emoji: '🚀', label: '+2h', minutes: 120 },
 ]
 
 export const FOCUS_VIBES = [
-  { id: 'laser', emoji: '🎯', label: 'Laser Focus Flow' },
-  { id: 'breakthrough', emoji: '💡', label: 'Breakthrough Idea' },
-  { id: 'coding', emoji: '💻', label: 'Coding / Development Session' },
-  { id: 'data', emoji: '📊', label: 'Data Analysis & Math' },
-  { id: 'research', emoji: '📚', label: 'Deep Reading & Research' },
-  { id: 'writing', emoji: '✍️', label: 'Writing & Content Creation' },
-  { id: 'course', emoji: '🎓', label: 'Online Course / Studying' },
-  { id: 'saas', emoji: '🚀', label: 'Project Execution & SaaS' },
-  { id: 'lofi', emoji: '🎧', label: 'Lo-Fi Beats & Headphones On' },
-  { id: 'fog', emoji: '🌪️', label: 'Struggling with Brain Fog' },
-  { id: 'phone', emoji: '📱', label: 'Distracted by Phone / Procrastination' },
-  { id: 'caffeine', emoji: '☕', label: 'Caffeinated Productivity Boost' },
+  { id: 'laser', emoji: '🎯', label: 'Deep Flow' },
+  { id: 'breakthrough', emoji: '💡', label: 'Idea' },
+  { id: 'coding', emoji: '💻', label: 'Coding' },
+  { id: 'data', emoji: '📊', label: 'Data' },
+  { id: 'research', emoji: '📚', label: 'Reading' },
+  { id: 'writing', emoji: '✍️', label: 'Writing' },
+  { id: 'course', emoji: '🎓', label: 'Studying' },
+  { id: 'saas', emoji: '🚀', label: 'Building' },
+  { id: 'lofi', emoji: '🎧', label: 'Lo-Fi' },
+  { id: 'fog', emoji: '🌪️', label: 'Brain Fog' },
+  { id: 'phone', emoji: '📱', label: 'Distracted' },
+  { id: 'caffeine', emoji: '☕', label: 'Caffeinated' },
 ]
 
 export const FOCUS_ENVIRONMENTS = [
-  { id: 'desk', emoji: '🛏️', label: 'Desk Setup' },
-  { id: 'bedside', emoji: '🛋️', label: 'Cozy Bedside Working' },
-  { id: 'cafe', emoji: '☕', label: 'Cafe / Public Space' },
-  { id: 'library', emoji: '📚', label: 'Library Silence' },
-  { id: 'late-night', emoji: '🌙', label: 'Late Night Quiet Hours' },
-  { id: 'morning', emoji: '☀️', label: 'Early Morning Focus' },
+  { id: 'desk', emoji: '🖥️', label: 'Desk' },
+  { id: 'bedside', emoji: '🛋️', label: 'Bed' },
+  { id: 'cafe', emoji: '☕', label: 'Cafe' },
+  { id: 'library', emoji: '📚', label: 'Library' },
+  { id: 'late-night', emoji: '🌙', label: 'Late Night' },
+  { id: 'morning', emoji: '☀️', label: 'Morning' },
 ]
 
 export function focusMinutesToLevel(minutes) {
@@ -296,6 +296,43 @@ export function focusMinutesToLevel(minutes) {
   if (m < 60) return 1
   if (m < 240) return 2
   return 3
+}
+
+/** Parse "45m", "1.5h", "1h30", or bare numbers (≤8 → hours, else minutes). */
+export function parseFocusDurationToMinutes(raw) {
+  const s = String(raw || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '')
+  if (!s) return null
+
+  let m = s.match(/^(\d+(?:\.\d+)?)h(\d{1,2})m?$/)
+  if (m) {
+    const mins = parseFloat(m[1]) * 60 + parseInt(m[2], 10)
+    return Number.isFinite(mins) && mins > 0 ? Math.round(mins) : null
+  }
+
+  m = s.match(/^(\d+(?:\.\d+)?)(h|hr|hrs|hours)$/)
+  if (m) {
+    const mins = parseFloat(m[1]) * 60
+    return Number.isFinite(mins) && mins > 0 ? Math.round(mins) : null
+  }
+
+  m = s.match(/^(\d+(?:\.\d+)?)(m|min|mins|minutes)$/)
+  if (m) {
+    const mins = parseFloat(m[1])
+    return Number.isFinite(mins) && mins > 0 ? Math.round(mins) : null
+  }
+
+  m = s.match(/^(\d+(?:\.\d+)?)$/)
+  if (m) {
+    const n = parseFloat(m[1])
+    if (!Number.isFinite(n) || n <= 0) return null
+    if (String(m[1]).includes('.') || n <= 8) return Math.round(n * 60)
+    return Math.round(n)
+  }
+
+  return null
 }
 
 export const OUTING_VIBES = [

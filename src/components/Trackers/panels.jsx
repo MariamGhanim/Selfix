@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Plus } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Minus, Plus } from 'lucide-react'
 import { useJournal } from '../../context/JournalContext'
 import {
   ENERGY_BATTERY,
@@ -11,6 +11,7 @@ import {
   FOCUS_VIBES,
   FRUIT_FOODS,
   focusMinutesToLevel,
+  parseFocusDurationToMinutes,
   OUTING_VIBES,
   RATING_DAY_TYPES,
   RATING_MEANINGFUL,
@@ -911,97 +912,131 @@ export function WorkoutPanel({ month, day }) {
 
 export function FocusPanel({ month, day }) {
   const { data, patch } = usePanel('focus', month, day)
-  const [customHours, setCustomHours] = useState('')
+  const [customRaw, setCustomRaw] = useState('')
+  const lastDeltaRef = useRef(0)
+  const [canUndo, setCanUndo] = useState(false)
   const minutes = data.minutes || 0
   const hours = (minutes / 60).toFixed(minutes % 60 === 0 ? 0 : 1)
 
-  const setMinutes = (nextMinutes) => {
+  const setMinutes = (nextMinutes, delta = null) => {
     const m = Math.max(0, nextMinutes)
     patch({ minutes: m }, focusMinutesToLevel(m))
+    if (delta != null && delta > 0) {
+      lastDeltaRef.current = delta
+      setCanUndo(true)
+    }
+  }
+
+  const addDelta = (delta) => {
+    if (!delta) return
+    setMinutes(minutes + delta, delta)
   }
 
   const addCustom = () => {
-    const h = parseFloat(customHours)
-    if (!Number.isFinite(h) || h <= 0) return
-    setMinutes(minutes + Math.round(h * 60))
-    setCustomHours('')
+    const parsed = parseFocusDurationToMinutes(customRaw)
+    if (parsed == null) return
+    addDelta(parsed)
+    setCustomRaw('')
+  }
+
+  const undoLast = () => {
+    if (!canUndo || lastDeltaRef.current <= 0) return
+    setMinutes(minutes - lastDeltaRef.current)
+    lastDeltaRef.current = 0
+    setCanUndo(false)
   }
 
   return (
-    <PanelShell month={month} day={day} title="Focus & deep work" trackerId="focus">
-      <p className="mb-3 text-[11px] font-medium leading-relaxed text-[var(--ink-soft)]">
-        Midday deep work lives here — Tasks sits right next door for your checklist.
-      </p>
+    <PanelShell month={month} day={day} title="Focus & deep work" trackerId="focus" hideNotes>
       <FocusTimerCard />
 
-      <div className="mb-3 rounded-2xl bg-[var(--surface)] px-3 py-2.5 text-center shadow-sm ring-1 ring-[var(--page-edge)]/50">
-        <p className="text-[10px] font-medium text-[var(--ink-soft)]">Logged today</p>
-        <p className="font-display text-sm font-semibold text-[var(--ink)]">
-          {minutes} min · {hours}h
-        </p>
-      </div>
-
-      <ChipGroup label="Quick logger">
-        <div className="flex flex-wrap gap-1.5">
-          {FOCUS_QUICK_ADDS.map((q, i) => (
-            <Chip
-              key={q.id}
-              emoji={q.emoji}
-              label={q.label}
-              active={false}
-              colorIndex={i}
-              onClick={() => setMinutes(minutes + q.minutes)}
-            />
-          ))}
-          {minutes > 0 && (
-            <Chip
-              emoji="↩️"
-              label="-25m"
-              active={false}
-              colorIndex={7}
-              onClick={() => setMinutes(minutes - 25)}
-            />
-          )}
+      <div
+        data-no-flip
+        className="mb-2 flex flex-wrap items-center gap-1.5 rounded-2xl bg-[var(--surface)]/80 px-2.5 py-2 ring-1 ring-[var(--page-edge)]/45"
+      >
+        <div className="mr-1 min-w-0 shrink-0">
+          <p className="text-[9px] font-medium uppercase tracking-wide text-[var(--ink-soft)]">
+            Logged today
+          </p>
+          <p className="font-display text-[13px] font-semibold tabular-nums text-[var(--ink)]">
+            {minutes}m · {hours}h
+          </p>
         </div>
-      </ChipGroup>
 
-      <FieldLabel>Custom focus hours</FieldLabel>
-      <div className="mb-3 flex gap-1.5">
-        <SoftInput
-          type="number"
-          min="0"
-          step="0.25"
-          value={customHours}
-          onChange={(e) => setCustomHours(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && addCustom()}
-          placeholder="e.g. 1.5 hours"
-        />
-        <button
-          type="button"
-          onClick={addCustom}
-          className="tap-pop rounded-full bg-[var(--accent-deep)] px-3 text-white shadow-sm"
-          aria-label="Add custom hours"
-        >
-          <Plus size={14} />
-        </button>
+        {FOCUS_QUICK_ADDS.map((q) => (
+          <button
+            key={q.id}
+            type="button"
+            onClick={() => addDelta(q.minutes)}
+            className="inline-flex h-8 items-center rounded-full bg-[var(--accent-glow)]/55 px-2.5 text-[11px] font-semibold text-[var(--accent-deep)] ring-1 ring-[var(--accent)]/25 transition-colors duration-150 hover:bg-[var(--accent-soft)]/70"
+          >
+            {q.label}
+          </button>
+        ))}
+
+        <div className="flex min-w-[7.5rem] flex-1 items-center gap-1">
+          <SoftInput
+            value={customRaw}
+            onChange={(e) => setCustomRaw(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && addCustom()}
+            placeholder="45m / 1.5h"
+            className="!min-h-8 !rounded-full !px-2.5 !py-1 !text-[11px] sm:!text-[11px]"
+          />
+          <button
+            type="button"
+            onClick={addCustom}
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-deep)] text-white"
+            aria-label="Add custom time"
+          >
+            <Plus size={14} />
+          </button>
+          <button
+            type="button"
+            onClick={undoLast}
+            disabled={!canUndo || minutes <= 0}
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/55 transition enabled:hover:text-[var(--ink)] disabled:opacity-35"
+            aria-label="Undo last add"
+            title="Undo last add"
+          >
+            <Minus size={14} />
+          </button>
+        </div>
       </div>
 
-      <ChipGroup label="How did focus feel?">
+      <div className="mb-2 shrink-0">
+        <p className="mb-1 font-display text-[11px] font-medium text-[var(--ink)]">
+          What / how did it feel?
+        </p>
         <ChoiceChips
+          compact
           options={FOCUS_VIBES}
           selected={data.vibes}
           onToggle={(id) => patch({ vibes: toggleInList(data.vibes, id) })}
         />
-      </ChipGroup>
+      </div>
 
-      <ChipGroup label="Where did you settle in?">
+      <div className="mb-2 shrink-0">
+        <p className="mb-1 font-display text-[11px] font-medium text-[var(--ink)]">
+          Where did you settle in?
+        </p>
         <ChoiceChips
+          compact
           options={FOCUS_ENVIRONMENTS}
           selected={data.environments}
           onToggle={(id) => patch({ environments: toggleInList(data.environments, id) })}
           startIndex={3}
         />
-      </ChipGroup>
+      </div>
+
+      <div className="mt-1 border-t border-[var(--page-edge)]/40 pt-2">
+        <CompactDailyNotes
+          trackerId="focus"
+          month={month}
+          day={day}
+          compact
+          placeholder="Session note…"
+        />
+      </div>
     </PanelShell>
   )
 }

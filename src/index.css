@@ -35,11 +35,12 @@
   --orb-a: rgba(240, 170, 190, 0.45);
   --orb-b: rgba(255, 220, 200, 0.38);
   --orb-c: rgba(210, 180, 220, 0.28);
-  --c1: #edd5dc;
-  --c2: #dbb0bc;
-  --c3: #c992a2;
-  --c4: #b07588;
-  --c5: #946070;
+  /* Distinct multi-hue pastels for pixel levels (not monochrome shades) */
+  --c1: #f3a6a0; /* coral rose */
+  --c2: #f0d06a; /* butter amber */
+  --c3: #8fd4a8; /* mint sage */
+  --c4: #8ec5f0; /* sky blue */
+  --c5: #b8a0e8; /* soft lavender */
 }
 
 [data-theme="midnight"] {
@@ -71,11 +72,11 @@
   --orb-a: rgba(150, 120, 230, 0.28);
   --orb-b: rgba(220, 130, 180, 0.18);
   --orb-c: rgba(100, 140, 220, 0.16);
-  --c1: #e8d4ff;
-  --c2: #d4b8f5;
-  --c3: #c4a0f0;
-  --c4: #f0a8c8;
-  --c5: #e878a8;
+  --c1: #e8a0b4; /* rose */
+  --c2: #e8c97a; /* soft gold */
+  --c3: #7dcea0; /* mint */
+  --c4: #7eb8e8; /* sky */
+  --c5: #b8a4e8; /* lavender */
 }
 
 * {

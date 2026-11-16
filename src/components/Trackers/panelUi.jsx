@@ -18,7 +18,7 @@ export function usePanelLayout() {
   return useContext(PanelLayoutContext)
 }
 
-export function Chip({ active, onClick, emoji, label, colorIndex = 0 }) {
+export function Chip({ active, onClick, emoji, label, colorIndex = 0, compact = false }) {
   const palette = PASTEL_CHIP_COLORS[colorIndex % PASTEL_CHIP_COLORS.length]
   return (
     <motion.button
@@ -26,18 +26,24 @@ export function Chip({ active, onClick, emoji, label, colorIndex = 0 }) {
       onClick={onClick}
       aria-pressed={active}
       aria-label={label}
-      whileHover={{ scale: 1.03 }}
+      whileHover={compact ? undefined : { scale: 1.03 }}
       whileTap={{ scale: 0.96 }}
       transition={{ type: 'spring', stiffness: 400, damping: 26 }}
-      className={`inline-flex min-h-11 max-w-full items-center gap-1.5 rounded-full px-3.5 py-2.5 text-left text-xs font-medium leading-tight sm:min-h-0 sm:gap-1 sm:px-2.5 sm:py-1 sm:text-[11px] ${
-        active ? 'shadow-sm ring-2 ring-white/50' : 'opacity-90 hover:opacity-100'
-      }`}
+      className={`inline-flex max-w-full items-center text-left font-medium leading-tight ${
+        compact
+          ? 'min-h-8 gap-1 rounded-full px-2 py-1 text-[10px] sm:min-h-0 sm:px-1.5 sm:py-0.5 sm:text-[10px]'
+          : 'min-h-11 gap-1.5 rounded-full px-3.5 py-2.5 text-xs sm:min-h-0 sm:gap-1 sm:px-2.5 sm:py-1 sm:text-[11px]'
+      } ${active ? 'shadow-sm ring-2 ring-white/50' : 'opacity-90 hover:opacity-100'}`}
       style={{
         background: active ? palette.active : palette.bg,
         color: active ? '#fff' : palette.text,
       }}
     >
-      {emoji && <span className="shrink-0 text-[12px] leading-none">{emoji}</span>}
+      {emoji && (
+        <span className={`shrink-0 leading-none ${compact ? 'text-[10px]' : 'text-[12px]'}`}>
+          {emoji}
+        </span>
+      )}
       <span className="truncate">{label}</span>
     </motion.button>
   )
@@ -244,12 +250,14 @@ export function SoftInput(props) {
   )
 }
 
-export function SoftTextarea(props) {
+export function SoftTextarea({ className = '', ...props }) {
   return (
     <textarea
       {...props}
       data-no-flip
-      className={`soft-field relative z-20 min-h-[7.5rem] w-full resize-y rounded-2xl border-0 bg-[var(--surface)] px-3.5 py-3 text-base leading-relaxed text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 sm:px-3 sm:py-2.5 sm:text-sm ${props.className || ''}`}
+      className={`soft-field relative z-20 w-full resize-y rounded-2xl border-0 bg-[var(--surface)] px-3.5 py-3 text-base leading-relaxed text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 sm:px-3 sm:py-2.5 sm:text-sm ${
+        className.includes('min-h-') ? '' : 'min-h-[7.5rem]'
+      } ${className}`}
     />
   )
 }
@@ -340,6 +348,7 @@ export function CompactDailyNotes({
   label = 'Notes',
   placeholder,
   tall,
+  compact = false,
   accentLabel = false,
 }) {
   const { getDailyNote, setDailyNote } = useJournal()
@@ -357,7 +366,9 @@ export function CompactDailyNotes({
 
   return (
     <div className="flex flex-col">
-      {accentLabel || label ? <ReviewHeading className="mb-2">{label}</ReviewHeading> : null}
+      {accentLabel || label ? (
+        <ReviewHeading className={compact ? 'mb-1.5' : 'mb-2'}>{label}</ReviewHeading>
+      ) : null}
       <SoftTextarea
         value={text}
         onChange={(e) => {
@@ -367,7 +378,13 @@ export function CompactDailyNotes({
         }}
         onBlur={() => persist(text)}
         placeholder={placeholder || 'Quick note for today...'}
-        className={tall ? 'min-h-[8rem]' : 'min-h-[6.5rem]'}
+        className={
+          compact
+            ? 'min-h-[3.75rem] sm:min-h-[4rem]'
+            : tall
+              ? 'min-h-[8rem]'
+              : 'min-h-[6.5rem]'
+        }
       />
     </div>
   )
@@ -378,9 +395,9 @@ export function toggleInList(list, item) {
   return arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item]
 }
 
-export function ChoiceChips({ options, selected, onToggle, startIndex = 0 }) {
+export function ChoiceChips({ options, selected, onToggle, startIndex = 0, compact = false }) {
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className={`flex flex-wrap ${compact ? 'gap-1' : 'gap-1.5'}`}>
       {options.map((opt, i) => (
         <Chip
           key={opt.id}
@@ -389,6 +406,7 @@ export function ChoiceChips({ options, selected, onToggle, startIndex = 0 }) {
           active={(selected || []).includes(opt.id)}
           onClick={() => onToggle(opt.id)}
           colorIndex={startIndex + i}
+          compact={compact}
         />
       ))}
     </div>

@@ -65,28 +65,26 @@ export const CUSTOM_TRACKER_TYPES = [
   },
 ]
 
-/** Distinct, readable swatches for per-level color picks (not near-identical pinks). */
+/** Distinct multi-hue pastel swatches for per-level color picks. */
 export const LEVEL_COLOR_SWATCHES = [
-  '#ef5350',
-  '#ec407a',
-  '#ab47bc',
-  '#7e57c2',
-  '#5c6bc0',
-  '#42a5f5',
-  '#29b6f6',
-  '#26c6da',
-  '#26a69a',
-  '#66bb6a',
-  '#9ccc65',
-  '#d4e157',
-  '#ffee58',
-  '#ffca28',
-  '#ffa726',
-  '#ff7043',
-  '#8d6e63',
-  '#78909c',
-  '#eceff1',
-  '#90a4ae',
+  '#f3a6a0',
+  '#f2b8c6',
+  '#f5c9a8',
+  '#f0d06a',
+  '#f0d89a',
+  '#c5dbb4',
+  '#8fd4a8',
+  '#b8dfc8',
+  '#9fd4c4',
+  '#a8d8e8',
+  '#8ec5f0',
+  '#a8b8e8',
+  '#b8a0e8',
+  '#d4a0e8',
+  '#e8a0b4',
+  '#f28b82',
+  '#7dcea0',
+  '#a78bda',
 ]
 
 export const GRID_LEVEL_PRESETS = [
@@ -94,40 +92,40 @@ export const GRID_LEVEL_PRESETS = [
     id: 'yesno',
     label: 'Yes / No',
     levels: [
-      { value: 0, label: 'No', color: '#ef9a9a' },
-      { value: 1, label: 'Yes', color: '#66bb6a' },
+      { value: 0, label: 'No', color: '#f3a6a0' },
+      { value: 1, label: 'Yes', color: '#8fd4a8' },
     ],
   },
   {
     id: 'scale04',
     label: '0 to 4 Scale',
     levels: [
-      { value: 0, label: '0', color: '#eceff1' },
-      { value: 1, label: '1', color: '#90caf9' },
-      { value: 2, label: '2', color: '#42a5f5' },
-      { value: 3, label: '3', color: '#1e88e5' },
-      { value: 4, label: '4', color: '#0d47a1' },
+      { value: 0, label: '0', color: '#f2b8c6' },
+      { value: 1, label: '1', color: '#f0d06a' },
+      { value: 2, label: '2', color: '#8fd4a8' },
+      { value: 3, label: '3', color: '#8ec5f0' },
+      { value: 4, label: '4', color: '#b8a0e8' },
     ],
   },
   {
     id: 'lowhigh',
     label: 'Low to High',
     levels: [
-      { value: 1, label: 'Low', color: '#ef5350' },
-      { value: 2, label: 'Mild', color: '#ffca28' },
-      { value: 3, label: 'Good', color: '#66bb6a' },
-      { value: 4, label: 'High', color: '#42a5f5' },
-      { value: 5, label: 'Peak', color: '#7e57c2' },
+      { value: 1, label: 'Low', color: '#f3a6a0' },
+      { value: 2, label: 'Mild', color: '#f0d06a' },
+      { value: 3, label: 'Good', color: '#8fd4a8' },
+      { value: 4, label: 'High', color: '#8ec5f0' },
+      { value: 5, label: 'Peak', color: '#b8a0e8' },
     ],
   },
   {
     id: 'custom',
     label: 'Custom',
     levels: [
-      { value: 1, label: 'Missed', color: '#ef9a9a' },
-      { value: 2, label: 'Partial', color: '#ffd54f' },
-      { value: 3, label: 'Done', color: '#81c784' },
-      { value: 4, label: 'Extra', color: '#64b5f6' },
+      { value: 1, label: 'Missed', color: '#f3a6a0' },
+      { value: 2, label: 'Partial', color: '#f0d06a' },
+      { value: 3, label: 'Done', color: '#8fd4a8' },
+      { value: 4, label: 'Extra', color: '#b8a0e8' },
     ],
   },
 ]
@@ -135,15 +133,15 @@ export const GRID_LEVEL_PRESETS = [
 export const DEFAULT_CUSTOM_GRID_LEVELS = GRID_LEVEL_PRESETS.find((p) => p.id === 'custom').levels
 
 export const DEFAULT_CUSTOM_CHECKLIST_LEVELS = [
-  { value: 0, label: '0', color: '#ef9a9a' },
-  { value: 1, label: '1', color: '#ffd54f' },
-  { value: 2, label: '2', color: '#81c784' },
-  { value: 3, label: '3', color: '#64b5f6' },
-  { value: 4, label: 'All Done', color: '#7e57c2' },
+  { value: 0, label: '0', color: '#f3a6a0' },
+  { value: 1, label: '1', color: '#f0d06a' },
+  { value: 2, label: '2', color: '#8fd4a8' },
+  { value: 3, label: '3', color: '#8ec5f0' },
+  { value: 4, label: 'All Done', color: '#b8a0e8' },
 ]
 
 export const DEFAULT_CUSTOM_NOTES_LEVELS = [
-  { value: 1, label: 'Noted', color: '#64b5f6' },
+  { value: 1, label: 'Noted', color: '#8ec5f0' },
 ]
 
 const HEX_COLOR = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/
