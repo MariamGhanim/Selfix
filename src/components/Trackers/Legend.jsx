@@ -12,7 +12,7 @@ export default function Legend({ trackerId, levels }) {
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.96 }}
         onClick={() => setSelectedLevel(trackerId, null)}
-        className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[10px] font-medium tracking-wide transition sm:min-h-0 sm:px-2 sm:py-1 sm:text-[9px] ${
+        className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[10px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-1 sm:text-[9px] ${
           selected == null
             ? 'bg-[var(--accent-soft)]/80 text-[var(--accent-deep)] ring-1 ring-[var(--accent)]/35 shadow-sm'
             : 'bg-[#fffaf7] text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/45'
@@ -30,7 +30,7 @@ export default function Legend({ trackerId, levels }) {
             whileHover={{ scale: 1.03, y: -0.5 }}
             whileTap={{ scale: 0.96 }}
             onClick={() => setSelectedLevel(trackerId, active ? null : level.value)}
-            className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[10px] font-medium tracking-wide transition sm:min-h-0 sm:px-2 sm:py-1 sm:text-[9px] ${
+            className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[10px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-1 sm:text-[9px] ${
               active
                 ? 'ring-1 ring-[var(--accent-deep)]/40 shadow-sm'
                 : 'ring-1 ring-[var(--page-edge)]/35'

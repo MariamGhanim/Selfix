@@ -92,13 +92,14 @@ export default function Book() {
 
   const go = (next) => {
     if (next < 0 || next >= trackers.length) return
+    const from = pageIndex
+    const wasInsights = showInsights
     setShowInsights(false)
-    if (next === pageIndex && !showInsights) return
-    if (showInsights) {
-      setPageIndex(next)
-      return
-    }
-    flipToPage(next, next > pageIndex ? 1 : -1)
+    if (next === from && !wasInsights) return
+    // Update active tab UI immediately — don't wait for the page flip to finish.
+    setPageIndex(next)
+    if (wasInsights) return
+    flipToPage(next, next > from ? 1 : -1, from)
   }
 
   const toggleInsights = () => setShowInsights((v) => !v)
@@ -108,10 +109,14 @@ export default function Book() {
       if (e.target.matches?.('input, textarea')) return
       if (showInsights) return
       if (e.key === 'ArrowRight' && pageIndex < trackers.length - 1) {
-        flipToPage(pageIndex + 1, 1)
+        const next = pageIndex + 1
+        setPageIndex(next)
+        flipToPage(next, 1, pageIndex)
       }
       if (e.key === 'ArrowLeft' && pageIndex > 0) {
-        flipToPage(pageIndex - 1, -1)
+        const next = pageIndex - 1
+        setPageIndex(next)
+        flipToPage(next, -1, pageIndex)
       }
     }
     window.addEventListener('keydown', onKey)
@@ -224,49 +229,33 @@ export default function Book() {
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
         <div className="relative z-10 mx-auto flex w-full max-w-7xl min-h-0 flex-1 flex-col overflow-x-hidden sm:max-h-[min(88vh,100%)] sm:w-[min(95%,72rem)]">
-          <div className="book-tabs-scroll relative z-20 flex shrink-0 justify-start gap-1 overflow-x-auto px-1 pb-0 sm:justify-center sm:gap-1 sm:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="book-tabs-scroll relative z-20 flex h-11 shrink-0 items-end justify-start gap-1 overflow-x-auto px-1 pb-0 sm:h-9 sm:justify-center sm:gap-1 sm:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {trackers.map((t, i) => {
               const TabIcon = ICONS[t.icon] || Star
               const active = !showInsights && i === pageIndex
               return (
-                <motion.button
+                <button
                   key={t.id}
                   type="button"
-                  layout
-                  whileHover={active ? undefined : { y: -4, scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
                   onClick={() => go(i)}
                   title={t.title}
-                  className={`relative flex min-h-11 shrink-0 items-center gap-1.5 rounded-t-xl px-3 pb-2 pt-2 text-[11px] font-bold sm:min-h-0 sm:gap-1 sm:px-2 sm:pb-1.5 sm:pt-1 sm:text-[10px] ${
+                  className={`relative inline-flex h-11 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-t-xl px-3 text-[11px] font-bold leading-none transition-colors duration-150 sm:h-7 sm:gap-1 sm:px-2 sm:text-[10px] ${
                     active
-                      ? 'translate-y-0 text-white shadow-md'
-                      : '-translate-y-0.5 text-[var(--ink)] opacity-90'
+                      ? 'z-[1] text-white shadow-sm'
+                      : 'text-[var(--ink)] opacity-90 hover:opacity-100'
                   }`}
                   style={{
                     background: active ? t.tabColor : `${t.tabColor}99`,
-                    marginBottom: active ? 0 : 2,
                   }}
-                  transition={{ type: 'spring', stiffness: 420, damping: 28 }}
                 >
-                  {active && (
-                    <motion.span
-                      layoutId="tab-glow"
-                      className="pointer-events-none absolute inset-0 rounded-t-xl"
-                      style={{
-                        boxShadow: `0 -4px 18px ${t.tabColor}66, inset 0 1px 0 rgba(255,255,255,0.35)`,
-                      }}
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                  <TabIcon size={14} className="relative z-10 sm:h-[11px] sm:w-[11px]" />
+                  <TabIcon size={12} className="relative z-10 shrink-0" aria-hidden />
                   <span className="relative z-10 whitespace-nowrap">{t.tab}</span>
-                </motion.button>
+                </button>
               )
             })}
           </div>
 
-          <motion.div
-            layout
+          <div
             className="open-book book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-[20px] border border-[var(--cover)]/40 sm:rounded-b-[30px] sm:rounded-t-[20px]"
           >
             {/* Hardcover rim, stacked paper edges, spine + ribbon */}
@@ -295,7 +284,7 @@ export default function Book() {
                 />
               )}
             </div>
-          </motion.div>
+          </div>
 
           <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 pb-[4.75rem] sm:mt-1.5 sm:pb-0">
             {showInsights ? (

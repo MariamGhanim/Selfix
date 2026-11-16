@@ -1,12 +1,34 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
 import Spread from './Spread'
+
 const FLIP_EASE = [0.33, 0.0, 0.2, 1]
 const SETTLE_EASE = [0.22, 1, 0.36, 1]
 const COMMIT_ANGLE = 48
 const MAX_DRAG = 190
 
-export default function PageFlipStage({
+/** Lightweight departing page — avoids mounting a second 365-cell grid mid-flip. */
+function FlipGhost({ tracker }) {
+  if (!tracker) return null
+  return (
+    <div className="flex h-full min-h-0 w-full flex-col items-center justify-center gap-3 p-8">
+      <div
+        className="rounded-2xl px-4 py-3 text-white shadow-md"
+        style={{ background: tracker.tabColor }}
+      >
+        <p className="font-display text-sm font-semibold">{tracker.title}</p>
+        <p className="text-[11px] opacity-90">{tracker.subtitle}</p>
+      </div>
+      <div
+        className="h-24 w-40 rounded-xl opacity-40"
+        style={{ background: `color-mix(in srgb, ${tracker.tabColor} 35%, #fffdfb)` }}
+        aria-hidden
+      />
+    </div>
+  )
+}
+
+function PageFlipStage({
   pageIndex,
   onPageChange,
   selectedDay,
@@ -19,6 +41,8 @@ export default function PageFlipStage({
   const [flipping, setFlipping] = useState(false)
   const [dir, setDir] = useState(1)
   const busy = useRef(false)
+  const pageIndexRef = useRef(pageIndex)
+  pageIndexRef.current = pageIndex
 
   const rotateY = useMotionValue(0)
   const progress = useTransform(rotateY, (v) => Math.min(1, Math.abs(v) / 180))
@@ -27,12 +51,8 @@ export default function PageFlipStage({
   const sheetBrightness = useTransform(rotateY, [-180, -90, 0, 90, 180], [0.88, 0.72, 1, 0.72, 0.88])
   const brightnessFilter = useTransform(sheetBrightness, (v) => `brightness(${v})`)
   const curlOpacity = useTransform(rotateY, [-150, -50, 0, 50, 150], [0.35, 0.95, 0, 0.95, 0.35])
-  const liftZ = useTransform(progress, [0, 0.45, 1], [0, 42, 8])
-  const pageScale = useTransform(progress, [0, 0.5, 1], [1, 1.015, 1])
-  const skewHint = useTransform(rotateY, [-180, 0, 180], [4, 0, -4])
-  const underDim = useTransform(progress, [0, 0.35, 1], [0, 0.12, 0.04])
-  const spineGlow = useTransform(progress, [0, 0.5, 1], [0.15, 0.55, 0.2])
-  const cornerLift = useTransform(progress, [0, 0.25, 0.7, 1], [0, 18, 10, 0])
+  const liftZ = useTransform(progress, [0, 0.45, 1], [0, 28, 6])
+  const underDim = useTransform(progress, [0, 0.35, 1], [0, 0.1, 0.03])
 
   useEffect(() => {
     if (!flipping && !busy.current) {
@@ -47,9 +67,14 @@ export default function PageFlipStage({
       if (committed) {
         setFromIndex(nextIndex)
         setToIndex(nextIndex)
-        onPageChange(nextIndex)
+        if (pageIndexRef.current !== nextIndex) {
+          onPageChange(nextIndex)
+        }
       } else {
         setToIndex(fromIndex)
+        if (pageIndexRef.current !== fromIndex) {
+          onPageChange(fromIndex)
+        }
       }
       rotateY.set(0)
       setFlipping(false)
@@ -59,50 +84,50 @@ export default function PageFlipStage({
   )
 
   const runFlip = useCallback(
-    async (nextIndex, direction) => {
+    async (nextIndex, direction, fromOverride) => {
       if (busy.current) return
       if (nextIndex < 0 || nextIndex >= trackers.length) return
-      if (nextIndex === pageIndex) return
+
+      const from = typeof fromOverride === 'number' ? fromOverride : pageIndexRef.current
+      if (nextIndex === from && !flipping) return
 
       busy.current = true
       setDir(direction)
-      setFromIndex(pageIndex)
+      setFromIndex(from)
       setToIndex(nextIndex)
       setFlipping(true)
       rotateY.set(0)
 
       const target = direction > 0 ? -180 : 180
-      await animate(rotateY, target * 0.55, {
-        duration: 0.38,
-        ease: FLIP_EASE,
-      })
       await animate(rotateY, target, {
-        duration: 0.42,
-        ease: SETTLE_EASE,
+        duration: 0.32,
+        ease: FLIP_EASE,
       })
       finishFlip(true, nextIndex)
     },
-    [finishFlip, pageIndex, rotateY, trackers.length],
+    [finishFlip, flipping, rotateY, trackers.length],
   )
 
   useEffect(() => {
     const onRequest = (e) => {
-      const { index, direction } = e.detail || {}
+      const { index, direction, fromIndex: from } = e.detail || {}
       if (typeof index !== 'number') return
-      const d = direction ?? (index > pageIndex ? 1 : index < pageIndex ? -1 : 1)
-      runFlip(index, d || 1)
+      const current = typeof from === 'number' ? from : pageIndexRef.current
+      const d = direction ?? (index > current ? 1 : index < current ? -1 : 1)
+      runFlip(index, d || 1, current)
     }
     window.addEventListener('book-flip-to', onRequest)
     return () => window.removeEventListener('book-flip-to', onRequest)
-  }, [pageIndex, runFlip])
+  }, [runFlip])
 
   const beginDrag = (direction, startX) => {
-    const next = pageIndex + direction
+    const from = pageIndexRef.current
+    const next = from + direction
     if (next < 0 || next >= trackers.length) return false
 
     busy.current = true
     setDir(direction)
-    setFromIndex(pageIndex)
+    setFromIndex(from)
     setToIndex(next)
     setFlipping(true)
     rotateY.set(0)
@@ -126,12 +151,13 @@ export default function PageFlipStage({
       const angle = Math.abs(rotateY.get())
       const commit = angle >= COMMIT_ANGLE
       if (commit) {
+        onPageChange(next)
         const target = direction > 0 ? -180 : 180
-        await animate(rotateY, target, { duration: 0.48, ease: SETTLE_EASE })
+        await animate(rotateY, target, { duration: 0.28, ease: SETTLE_EASE })
         finishFlip(true, next)
       } else {
-        await animate(rotateY, 0, { duration: 0.36, ease: SETTLE_EASE })
-        finishFlip(false, pageIndex)
+        await animate(rotateY, 0, { duration: 0.22, ease: SETTLE_EASE })
+        finishFlip(false, from)
       }
     }
 
@@ -171,8 +197,9 @@ export default function PageFlipStage({
     beginDrag(direction, e.clientX)
   }
 
+  // During a flip, show the destination under the peeling ghost sheet.
   const underTracker = trackers[flipping ? toIndex : pageIndex] || trackers[0]
-  const sheetTracker = trackers[flipping ? fromIndex : pageIndex] || trackers[0]
+  const sheetTracker = trackers[fromIndex] || trackers[0]
   const origin = dir > 0 ? 'left center' : 'right center'
 
   return (
@@ -180,7 +207,7 @@ export default function PageFlipStage({
       ref={stageRef}
       className="page-flip-stage relative h-full min-h-0 w-full flex-1"
       onPointerDown={onPointerDown}
-      style={{ perspective: '2600px', perspectiveOrigin: '50% 48%' }}
+      style={{ perspective: '2200px', perspectiveOrigin: '50% 48%' }}
     >
       <div className="absolute inset-0 overflow-hidden">
         <div className="paper-texture h-full w-full">
@@ -198,27 +225,12 @@ export default function PageFlipStage({
         )}
       </div>
 
-      {/* Soft spine highlight intensifies while a page turns */}
-      {flipping && (
-        <motion.div
-          className="pointer-events-none absolute inset-y-0 left-1/2 z-[25] w-14 -translate-x-1/2"
-          style={{
-            opacity: spineGlow,
-            background:
-              'linear-gradient(90deg, transparent, rgba(0,0,0,0.16), rgba(255,255,255,0.18), rgba(0,0,0,0.14), transparent)',
-            filter: 'blur(0.5px)',
-          }}
-        />
-      )}
-
       {flipping && (
         <motion.div
           className="page-flip-sheet absolute inset-0 z-20 will-change-transform"
           style={{
             rotateY,
             z: liftZ,
-            scale: pageScale,
-            skewY: skewHint,
             transformOrigin: origin,
             transformStyle: 'preserve-3d',
             filter: brightnessFilter,
@@ -231,14 +243,8 @@ export default function PageFlipStage({
               WebkitBackfaceVisibility: 'hidden',
             }}
           >
-            <div
-              className="paper-texture h-full w-full"
-              style={{
-                boxShadow:
-                  '0 24px 48px rgba(0,0,0,0.22), -8px 0 24px rgba(0,0,0,0.08)',
-              }}
-            >
-              <Spread tracker={sheetTracker} selectedDay={selectedDay} />
+            <div className="paper-texture h-full w-full shadow-lg">
+              <FlipGhost tracker={sheetTracker} />
             </div>
 
             <motion.div
@@ -263,26 +269,6 @@ export default function PageFlipStage({
                       background:
                         'linear-gradient(270deg, rgba(0,0,0,0.28), rgba(0,0,0,0.08) 38%, rgba(255,255,255,0.12) 62%, transparent)',
                     }),
-              }}
-            />
-
-            <motion.div
-              className="page-corner-curl pointer-events-none absolute"
-              style={{
-                width: 120,
-                height: 120,
-                bottom: 0,
-                [dir > 0 ? 'right' : 'left']: 0,
-                y: cornerLift,
-                rotate: dir > 0 ? -8 : 8,
-                background:
-                  dir > 0
-                    ? 'radial-gradient(circle at 100% 100%, rgba(255,255,255,0.55), transparent 55%), linear-gradient(225deg, transparent 40%, rgba(0,0,0,0.12) 100%)'
-                    : 'radial-gradient(circle at 0% 100%, rgba(255,255,255,0.55), transparent 55%), linear-gradient(135deg, transparent 40%, rgba(0,0,0,0.12) 100%)',
-                clipPath:
-                  dir > 0
-                    ? 'polygon(40% 100%, 100% 40%, 100% 100%)'
-                    : 'polygon(0 40%, 60% 100%, 0 100%)',
               }}
             />
           </div>
@@ -325,10 +311,12 @@ export default function PageFlipStage({
   )
 }
 
-export function flipToPage(index, direction) {
+export default memo(PageFlipStage)
+
+export function flipToPage(index, direction, fromIndex) {
   window.dispatchEvent(
     new CustomEvent('book-flip-to', {
-      detail: { index, direction },
+      detail: { index, direction, fromIndex },
     }),
   )
 }

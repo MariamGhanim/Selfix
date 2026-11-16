@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import {
   Apple,
   Bike,
@@ -28,7 +28,6 @@ import {
   Wallet,
   Zap,
 } from 'lucide-react'
-import { motion } from 'framer-motion'
 import PixelGrid from '../Trackers/PixelGrid'
 import Legend from '../Trackers/Legend'
 import RightPage from './RightPage'
@@ -91,7 +90,7 @@ function useIsMobileBook() {
   return isMobile
 }
 
-export default function Spread({ tracker, selectedDay, onSelectDay }) {
+function Spread({ tracker, selectedDay, onSelectDay }) {
   const { year, getPixel } = useJournal()
   const Icon = ICONS[tracker.icon] || Star
   const isMobile = useIsMobileBook()
@@ -135,19 +134,12 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
     <section className="book-page--left flex min-h-0 flex-1 flex-col overflow-hidden md:border-0 md:px-6 md:pt-4 md:pb-2 lg:px-8">
       <div className="mb-2.5 flex shrink-0 flex-col items-center gap-2 px-2 pt-2 text-center md:mb-2 md:gap-2 md:pt-0.5">
         <div className="flex max-w-full items-center justify-center gap-2.5">
-          <motion.div
-            key={tracker.id}
-            initial={{ scale: 0.88, opacity: 0.7 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 22 }}
-            className="shrink-0 rounded-2xl p-2 text-white shadow-md md:rounded-[12px] md:p-1.5"
-            style={{
-              background: tracker.tabColor,
-              boxShadow: `0 6px 14px ${tracker.tabColor}40`,
-            }}
+          <div
+            className="shrink-0 rounded-2xl p-2 text-white shadow-sm md:rounded-[12px] md:p-1.5"
+            style={{ background: tracker.tabColor }}
           >
             <Icon size={isMobile ? 18 : 14} />
-          </motion.div>
+          </div>
           <div className="min-w-0 text-left">
             <h2 className="truncate font-display text-lg font-semibold leading-tight tracking-tight text-[var(--ink)] md:text-[0.98rem]">
               {tracker.title}
@@ -164,13 +156,7 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
       </div>
 
       {selectedLabel && (
-        <motion.div
-          key={selectedLabel}
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="date-anchor mx-auto mb-2 w-fit max-w-[calc(100%-1rem)] shrink-0 rounded-full px-4 py-1.5 md:mb-1.5 md:px-3.5 md:py-1"
-        >
+        <div className="date-anchor mx-auto mb-2 w-fit max-w-[calc(100%-1rem)] shrink-0 rounded-full px-4 py-1.5 md:mb-1.5 md:px-3.5 md:py-1">
           <p className="date-anchor__stamp text-center text-[12px] md:text-[11px]">
             {selectedLabel}
           </p>
@@ -186,17 +172,16 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
                   'No pixel yet — open the log to fill this day'
                 )}
               </p>
-              <motion.button
+              <button
                 type="button"
-                whileTap={{ scale: 0.96 }}
                 onClick={openLog}
-                className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-[var(--accent-deep)] px-4 py-2.5 text-sm font-bold text-white shadow-md"
+                className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-[var(--accent-deep)] px-4 py-2.5 text-sm font-bold text-white shadow-md active:scale-[0.97]"
               >
                 Open log
-              </motion.button>
+              </button>
             </div>
           )}
-        </motion.div>
+        </div>
       )}
 
       <div className="page-section-divider shrink-0" aria-hidden>
@@ -242,3 +227,5 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
     </>
   )
 }
+
+export default memo(Spread)
