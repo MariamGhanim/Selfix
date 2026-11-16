@@ -224,10 +224,12 @@ export const WORKOUT_CHIPS = [
 ]
 
 export const WORKOUT_DURATIONS = [
-  { id: '15m', emoji: '⏱️', label: '15m' },
-  { id: '30m', emoji: '⏱️', label: '30m' },
-  { id: '45m', emoji: '⏱️', label: '45m' },
-  { id: '60m', emoji: '⏱️', label: '60m+' },
+  { id: 'lt5', emoji: '⏱️', label: 'Less than 5m' },
+  { id: '5-10', emoji: '⏱️', label: '5 - 10m' },
+  { id: '11-20', emoji: '⏱️', label: '11 - 20m' },
+  { id: '21-30', emoji: '⏱️', label: '21 - 30m' },
+  { id: '31-40', emoji: '⏱️', label: '31 - 40m' },
+  { id: '40plus', emoji: '⏱️', label: '40m+' },
 ]
 
 export const SLEEP_DURATIONS = [

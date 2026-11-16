@@ -31,6 +31,8 @@ import {
   WORKOUT_CHIPS,
   WORKOUT_DURATIONS,
 } from '../../data/panelOptions'
+import SoftTimePicker from './SoftTimePicker'
+import { sleepDurationFromHours, sleepHoursBetween } from '../../lib/timeParse'
 import {
   Chip,
   ChipGroup,
@@ -884,7 +886,7 @@ export function WorkoutPanel({ month, day }) {
             ))}
           </div>
           <ReviewHeading className="mb-1">Duration</ReviewHeading>
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1.5 sm:gap-1">
             {WORKOUT_DURATIONS.map((d) => (
               <SelectChip
                 key={d.id}
@@ -1020,6 +1022,24 @@ export function SleepPanel({ month, day }) {
     patch({ duration: next }, block?.level ?? null)
   }
 
+  const commitTimes = (nextSleep, nextWake) => {
+    const sleep = nextSleep ?? sleepTime
+    const wake = nextWake ?? wakeTime
+    const hours = sleepHoursBetween(sleep, wake)
+    const auto = sleepDurationFromHours(hours)
+    if (auto) {
+      patch({ sleepTime: sleep, wakeTime: wake, duration: auto.id }, auto.level)
+    } else {
+      patch({ sleepTime: sleep, wakeTime: wake })
+    }
+  }
+
+  const computedHours = sleepHoursBetween(sleepTime, wakeTime)
+  const computedLabel =
+    computedHours == null
+      ? null
+      : `${computedHours % 1 === 0 ? computedHours : computedHours.toFixed(1)}h logged from times`
+
   return (
     <PanelShell month={month} day={day} title="Sleep & rest" trackerId="sleep" hideNotes>
       <ReviewPanelFrame trackerId="sleep" month={month} day={day} notesPlaceholder="Sleep dreams & notes…">
@@ -1037,28 +1057,37 @@ export function SleepPanel({ month, day }) {
               />
             ))}
           </div>
-          <div className="mb-1.5 grid grid-cols-2 gap-1.5">
+          <div className="mb-1.5 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-1.5">
             <div>
               <ReviewHeading className="mb-0.5 !text-[10px]">Sleep Time</ReviewHeading>
-              <SoftInput
-                type="time"
+              <SoftTimePicker
                 value={sleepTime}
-                onChange={(e) => setSleepTime(e.target.value)}
-                onBlur={() => patch({ sleepTime })}
-                className="!py-2.5 !text-base sm:!py-1 sm:!text-sm"
+                aria-label="Sleep time"
+                placeholder="e.g. 11:30 PM"
+                onChange={setSleepTime}
+                onCommit={(next) => {
+                  setSleepTime(next)
+                  commitTimes(next, wakeTime)
+                }}
               />
             </div>
             <div>
               <ReviewHeading className="mb-0.5 !text-[10px]">Wake Up</ReviewHeading>
-              <SoftInput
-                type="time"
+              <SoftTimePicker
                 value={wakeTime}
-                onChange={(e) => setWakeTime(e.target.value)}
-                onBlur={() => patch({ wakeTime })}
-                className="!py-2.5 !text-base sm:!py-1 sm:!text-sm"
+                aria-label="Wake up time"
+                placeholder="e.g. 7:00 AM"
+                onChange={setWakeTime}
+                onCommit={(next) => {
+                  setWakeTime(next)
+                  commitTimes(sleepTime, next)
+                }}
               />
             </div>
           </div>
+          {computedLabel ? (
+            <p className="mb-1.5 text-[10px] font-semibold text-[var(--accent-deep)]">{computedLabel}</p>
+          ) : null}
           <ReviewHeading className="mb-1">Location & quality</ReviewHeading>
           <div className="flex flex-wrap gap-1">
             {SLEEP_LOCATIONS.map((opt) => (
