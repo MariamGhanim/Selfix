@@ -204,7 +204,7 @@ export default function Spread({ tracker, selectedDay, onSelectDay }) {
       )}
 
       <div className="min-h-0 flex-1 overflow-auto px-1 pb-2 md:px-0">
-        <div className="h-auto min-h-0 rounded-[1.25rem] bg-[var(--surface)]/45 p-2 ring-1 ring-[var(--page-edge)]/40 md:h-full md:rounded-none md:bg-transparent md:p-0 md:ring-0">
+        <div className="h-auto min-h-0 rounded-[1.25rem] bg-[var(--surface)]/45 p-2.5 pt-3 ring-1 ring-[var(--page-edge)]/40 md:h-full md:rounded-none md:bg-transparent md:p-0 md:pt-1 md:ring-0">
           <PixelGrid
             trackerId={tracker.id}
             levels={tracker.levels}

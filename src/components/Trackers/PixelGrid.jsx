@@ -17,23 +17,19 @@ export default function PixelGrid({
   }
 
   return (
-    <div className="flex h-full min-h-0 w-full max-w-full flex-col overflow-x-hidden">
+    <div className="flex h-full min-h-0 w-full max-w-full flex-col overflow-x-hidden pt-0.5">
       <div className="pixel-year-grid">
-        <div />
+        <div aria-hidden />
         {MONTHS.map((m) => (
-          <div
-            key={m.id}
-            className="flex items-end justify-center pb-0.5 text-[9px] font-bold uppercase tracking-wide text-[var(--ink-soft)]"
-            title={MONTHS_FULL[m.id]}
-          >
-            {m.short}
+          <div key={m.id} className="pixel-month-label" title={MONTHS_FULL[m.id]}>
+            <span aria-hidden>{m.short}</span>
           </div>
         ))}
 
         {DAYS.map((day) => (
           <Fragment key={day}>
-            <div className="flex items-center justify-center text-[9px] font-semibold leading-none text-[var(--ink-soft)] md:text-[8px]">
-              {day}
+            <div className="pixel-day-label" aria-hidden={false} title={`Day ${day}`}>
+              <span>{day}</span>
             </div>
             {MONTHS.map((m) => {
               const valid = isValidDate(year, m.id, day)
