@@ -17,18 +17,18 @@ export default function PixelGrid({
   }
 
   return (
-    <div className="flex h-full min-h-0 w-full max-w-full flex-col overflow-x-hidden pt-0.5">
+    <div className="pixel-matrix-stage">
       <div className="pixel-year-grid">
         <div aria-hidden />
         {MONTHS.map((m) => (
           <div key={m.id} className="pixel-month-label" title={MONTHS_FULL[m.id]}>
-            <span aria-hidden>{m.short}</span>
+            <span>{m.short}</span>
           </div>
         ))}
 
         {DAYS.map((day) => (
           <Fragment key={day}>
-            <div className="pixel-day-label" aria-hidden={false} title={`Day ${day}`}>
+            <div className="pixel-day-label" title={`Day ${day}`}>
               <span>{day}</span>
             </div>
             {MONTHS.map((m) => {
@@ -58,13 +58,9 @@ export default function PixelGrid({
                       onSelectDay?.({ month: m.id, day })
                     }
                   }}
-                  className={`pixel-btn h-full min-h-[24px] w-full rounded-[4px] md:min-h-0 md:rounded-[3px] ${
-                    !valid ? 'cursor-not-allowed opacity-35' : 'cursor-pointer'
-                  } ${
-                    isSelected
-                      ? 'z-[1] ring-2 ring-[var(--accent-deep)] ring-offset-1 ring-offset-[var(--paper)]'
-                      : ''
-                  }`}
+                  className={`pixel-btn h-full w-full ${
+                    !valid ? 'cursor-not-allowed opacity-25' : 'cursor-pointer'
+                  } ${isSelected ? 'is-selected' : ''}`}
                   style={{
                     background: valid ? colorFor(value) : 'var(--invalid-cell)',
                   }}

@@ -269,28 +269,16 @@ export default function Book() {
             layout
             className="open-book book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-[20px] border border-[var(--cover)]/40 sm:rounded-b-[30px] sm:rounded-t-[20px]"
           >
-            {/* Hardcover rim + page stack at the outer edges */}
+            {/* Hardcover rim, stacked paper edges, spine + ribbon */}
             <div className="open-book__cover-edge" aria-hidden />
-            <div
-              className="pointer-events-none absolute -left-[3px] top-4 bottom-4 z-40 hidden w-[7px] rounded-l-[6px] md:block"
-              style={{
-                background:
-                  'linear-gradient(180deg, color-mix(in srgb, var(--cover) 80%, white), var(--cover-deep))',
-                boxShadow: '2px 0 6px rgba(80,45,55,0.12)',
-              }}
-              aria-hidden
-            />
-            <div
-              className="pointer-events-none absolute -right-[3px] top-4 bottom-4 z-40 hidden w-[7px] rounded-r-[6px] md:block"
-              style={{
-                background:
-                  'linear-gradient(180deg, color-mix(in srgb, var(--cover) 80%, white), var(--cover-deep))',
-                boxShadow: '-2px 0 6px rgba(80,45,55,0.12)',
-              }}
-              aria-hidden
-            />
-
-            {!showInsights && <div className="open-book__spine hidden md:block" aria-hidden />}
+            <div className="open-book__page-stack open-book__page-stack--left hidden md:block" aria-hidden />
+            <div className="open-book__page-stack open-book__page-stack--right hidden md:block" aria-hidden />
+            {!showInsights && (
+              <>
+                <div className="open-book__spine hidden md:block" aria-hidden />
+                <div className="open-book__ribbon hidden md:block" aria-hidden />
+              </>
+            )}
 
             <div className="relative z-10 flex min-h-0 w-full flex-1">
               {showInsights ? (
