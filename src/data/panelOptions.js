@@ -58,22 +58,41 @@ export const ENERGY_BATTERY = [
   { id: 'solo', emoji: '🫂', label: 'Need Solo Recharge' },
 ]
 
-export const SHOWER_ROUTINE = [
-  { id: 'scalp-shampoo', emoji: '🧴', label: 'Deep Scalp Shampoo' },
-  { id: 'hair-mask', emoji: '🍯', label: 'Intensive Hair Mask' },
-  { id: 'clarifying', emoji: '🌿', label: 'Clarifying Hair Rinse' },
-  { id: 'leave-in', emoji: '💧', label: 'Leave-in Conditioner' },
-  { id: 'serum', emoji: '✨', label: 'Hair Serum / Anti-Frizz' },
-  { id: 'air-dry', emoji: '🌀', label: 'Air Drying Natural Curls' },
-  { id: 'diffuser', emoji: '🔥', label: 'Diffuser Blowout Styling' },
-  { id: 'body-scrub', emoji: '🫧', label: 'Full Body Exfoliating Scrub' },
-  { id: 'body-butter', emoji: '🧈', label: 'Rich Body Butter / Lotion' },
-  { id: 'sheet-mask', emoji: '🎭', label: 'Hydrating Face Sheet Mask' },
-  { id: 'skincare', emoji: '🧴', label: 'Complete Skincare Routine' },
-  { id: 'grooming', emoji: '🪒', label: 'Grooming & Shaving' },
-  { id: 'bubble-bath', emoji: '🛁', label: 'Relaxing Bubble Bath' },
-  { id: 'body-mist', emoji: '🌸', label: 'Luxury Body Mist / Perfume' },
+export const SHOWER_ROUTINE_GROUPS = [
+  {
+    id: 'hair',
+    label: 'Hair Routine',
+    options: [
+      { id: 'scalp-shampoo', emoji: '🧴', label: 'Scalp Treatment' },
+      { id: 'hair-mask', emoji: '🍯', label: 'Hair Mask' },
+      { id: 'leave-in', emoji: '💧', label: 'Leave-in' },
+      { id: 'serum', emoji: '✨', label: 'Serum / Anti-Frizz' },
+      { id: 'diffuser', emoji: '💨', label: 'Blowout / Styling' },
+    ],
+  },
+  {
+    id: 'skincare',
+    label: 'Skincare & Face',
+    options: [
+      { id: 'sheet-mask', emoji: '🎭', label: 'Hydrating Mask' },
+      { id: 'skincare', emoji: '🪞', label: 'Complete Skincare' },
+      { id: 'eye-patches', emoji: '👁️', label: 'Eye Patches' },
+      { id: 'grooming', emoji: '🪒', label: 'Grooming / Shave' },
+    ],
+  },
+  {
+    id: 'body',
+    label: 'Body & Relax',
+    options: [
+      { id: 'body-scrub', emoji: '🫧', label: 'Exfoliation' },
+      { id: 'body-butter', emoji: '🧈', label: 'Body Lotion' },
+      { id: 'bubble-bath', emoji: '🛁', label: 'Bath' },
+      { id: 'body-mist', emoji: '🌸', label: 'Perfume / Mist' },
+    ],
+  },
 ]
+
+export const SHOWER_ROUTINE = SHOWER_ROUTINE_GROUPS.flatMap((group) => group.options)
 
 export const FRUIT_FOODS = [
   { id: 'apple', emoji: '🍎', label: 'Crisp Apple' },

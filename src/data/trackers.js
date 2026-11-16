@@ -99,16 +99,16 @@ export const TRACKERS = [
   },
   {
     id: 'shower',
-    title: 'Shower & Hair Care',
-    subtitle: 'Wake-up self-care routine',
-    tab: 'Shower',
+    title: 'Hair & Skin Care',
+    subtitle: 'Daily self-care & grooming ritual',
+    tab: 'Care',
     icon: 'Droplets',
     tabColor: '#90caf9',
     panel: 'shower',
     levels: [
-      { value: 1, label: 'Full + Hair', color: '#8ec5f0' },
-      { value: 2, label: 'Body only', color: '#f0d06a' },
-      { value: 3, label: 'No shower', color: '#f3a6a0' },
+      { value: 1, label: 'Full ritual', color: '#8ec5f0' },
+      { value: 2, label: 'Partial care', color: '#f0d06a' },
+      { value: 3, label: 'Skipped', color: '#f3a6a0' },
     ],
   },
   {

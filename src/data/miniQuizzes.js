@@ -37,29 +37,29 @@ export function supportNoteForAnswers(answers = {}, questions = []) {
 export const SHOWER_QUIZ = [
   {
     key: 'q1',
-    question: 'What kind of shower vibe did you give yourself today?',
+    question: 'How intentional was your self-care today?',
     options: [
-      { id: 'quick', emoji: '⚡', label: 'Quick 5-Min Rinse' },
-      { id: 'spa', emoji: '🧖‍♀️', label: 'Full Spa & Self-Care' },
-      { id: 'relaxing', emoji: '🌡️', label: 'Warm & Relaxing' },
+      { id: 'quick', emoji: '⚡', label: 'Quick Essentials' },
+      { id: 'spa', emoji: '🧖‍♀️', label: 'Full Spa Ritual' },
+      { id: 'relaxing', emoji: '🌿', label: 'Slow & Nurturing' },
     ],
   },
   {
     key: 'q2',
-    question: 'How did the water feel on you?',
+    question: 'What got the most love?',
     options: [
-      { id: 'hot', emoji: '♨️', label: 'Hot & Steamy' },
-      { id: 'warm', emoji: '⚖️', label: 'Just Warm' },
-      { id: 'cold', emoji: '❄️', label: 'Refreshing Cold' },
+      { id: 'hair', emoji: '💇', label: 'Hair & Scalp' },
+      { id: 'face', emoji: '✨', label: 'Face & Skin' },
+      { id: 'body', emoji: '🫧', label: 'Body & Relax' },
     ],
   },
   {
     key: 'q3',
-    question: 'How do you feel stepping out of the steam?',
+    question: 'How do you feel after caring for yourself?',
     options: [
-      { id: 'reborn', emoji: '✨', label: 'Fresh & Reborn' },
+      { id: 'reborn', emoji: '✨', label: 'Fresh & Glowing' },
       { id: 'pampered', emoji: '🧴', label: 'Soft & Pampered' },
-      { id: 'bed', emoji: '😴', label: 'Ready for Bed' },
+      { id: 'bed', emoji: '😴', label: 'Calm & Ready to Rest' },
     ],
   },
 ]

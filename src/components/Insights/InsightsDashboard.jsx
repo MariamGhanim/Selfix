@@ -225,7 +225,7 @@ function chartModel(diary) {
   if (tracker.id === 'tasks') title = 'Tasks'
   if (tracker.id === 'workout') title = 'Movement'
   if (tracker.id === 'vitamins') title = 'Vitamins'
-  if (tracker.id === 'shower') title = 'Shower'
+  if (tracker.id === 'shower') title = 'Hair & Skin'
 
   return {
     kind: 'bar',

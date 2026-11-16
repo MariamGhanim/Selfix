@@ -20,7 +20,7 @@ import {
   READING_PAGE_BOOSTS,
   SELF_DEV_DURATIONS,
   SELF_DEV_TOPICS,
-  SHOWER_ROUTINE,
+  SHOWER_ROUTINE_GROUPS,
   SLEEP_DURATIONS,
   SLEEP_LOCATIONS,
   SLEEP_QUALITY,
@@ -409,22 +409,29 @@ export function ShowerPanel({ month, day }) {
   const { data, patch } = usePanel('shower', month, day)
 
   return (
-    <PanelShell month={month} day={day} title="Shower & hair care" trackerId="shower" hideNotes>
-      <ReviewPanelFrame trackerId="shower" month={month} day={day} notesPlaceholder="Shower thoughts, hair notes…">
-        <section>
-          <ReviewHeading className="mb-1.5">What did your routine include?</ReviewHeading>
-          <div className="flex flex-wrap gap-1">
-            {SHOWER_ROUTINE.map((opt) => (
-              <SelectChip
-                key={opt.id}
-                compact
-                emoji={opt.emoji}
-                label={opt.label}
-                active={(data.choices || []).includes(opt.id)}
-                onClick={() => patch({ choices: toggleInList(data.choices, opt.id) })}
-              />
-            ))}
-          </div>
+    <PanelShell month={month} day={day} title="Hair & Skin Care" trackerId="shower" hideNotes>
+      <ReviewPanelFrame trackerId="shower" month={month} day={day} notesPlaceholder="Hair, skin & self-care notes…">
+        <section className="space-y-2">
+          <ReviewHeading className="mb-0.5">What did your routine include?</ReviewHeading>
+          {SHOWER_ROUTINE_GROUPS.map((group) => (
+            <div key={group.id}>
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--ink-soft)]">
+                {group.label}
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {group.options.map((opt) => (
+                  <SelectChip
+                    key={opt.id}
+                    compact
+                    emoji={opt.emoji}
+                    label={opt.label}
+                    active={(data.choices || []).includes(opt.id)}
+                    onClick={() => patch({ choices: toggleInList(data.choices, opt.id) })}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
         </section>
         <MiniQuiz
           questions={SHOWER_QUIZ}
