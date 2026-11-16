@@ -131,38 +131,49 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
   )
 
   const feed = (
-    <section className="book-page--left flex min-h-0 flex-1 flex-col overflow-hidden md:border-0 md:px-6 md:pt-4 md:pb-2 lg:px-8">
-      <div className="mb-2.5 flex shrink-0 flex-col items-center gap-2 px-2 pt-2 text-center md:mb-2 md:gap-2 md:pt-0.5">
-        <div className="flex max-w-full items-center justify-center gap-2.5">
+    <section className="book-page--left flex min-h-0 flex-1 flex-col overflow-hidden md:border-0 md:px-6 md:pt-3 md:pb-2 lg:px-8">
+      {/* Shared center-aligned header — same stack on every tracker tab */}
+      <header className="left-page-header mx-auto flex w-full max-w-xl shrink-0 flex-col items-center gap-2.5 px-3 pt-2 text-center md:gap-2 md:px-2 md:pt-1">
+        <div className="flex w-full flex-col items-center gap-1.5">
           <div
-            className="shrink-0 rounded-2xl p-2 text-white shadow-sm md:rounded-[12px] md:p-1.5"
-            style={{ background: tracker.tabColor }}
+            className="left-page-header__icon inline-flex h-8 w-8 items-center justify-center rounded-full md:h-7 md:w-7"
+            style={{
+              background: `color-mix(in srgb, ${tracker.tabColor} 28%, #fffaf7)`,
+              color: tracker.tabColor,
+              boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${tracker.tabColor} 35%, transparent)`,
+            }}
+            aria-hidden
           >
-            <Icon size={isMobile ? 18 : 14} />
+            <Icon size={isMobile ? 15 : 13} strokeWidth={2.25} />
           </div>
-          <div className="min-w-0 text-left">
-            <h2 className="truncate font-display text-lg font-semibold leading-tight tracking-tight text-[var(--ink)] md:text-[0.98rem]">
+          <div className="min-w-0 max-w-full">
+            <h2 className="font-display text-[1.05rem] font-semibold leading-tight tracking-tight text-[var(--ink)] md:text-[0.95rem]">
               {tracker.title}
             </h2>
-            <p className="truncate text-[11px] font-medium leading-snug text-[var(--ink-soft)] md:text-[10px]">
+            <p className="mt-0.5 text-[11px] font-medium leading-snug text-[var(--ink-soft)] md:text-[10px]">
               {tracker.subtitle}
             </p>
           </div>
         </div>
-      </div>
 
-      <div className="mb-2 flex shrink-0 justify-center overflow-x-auto px-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mb-1.5">
-        <Legend trackerId={tracker.id} levels={tracker.levels} />
-      </div>
+        <div className="left-page-header__legend flex w-full min-h-[2rem] items-start justify-center">
+          <Legend trackerId={tracker.id} levels={tracker.levels} />
+        </div>
 
-      {selectedLabel && (
-        <div className="date-anchor mx-auto mb-2 w-fit max-w-[calc(100%-1rem)] shrink-0 rounded-full px-4 py-1.5 md:mb-1.5 md:px-3.5 md:py-1">
-          <p className="date-anchor__stamp text-center text-[12px] md:text-[11px]">
-            {selectedLabel}
-          </p>
-          {isMobile && (
-            <div className="mt-2 flex items-center justify-between gap-3">
-              <p className="min-w-0 text-[12px] font-medium text-[var(--ink-soft)]">
+        <div className="flex w-full flex-col items-center gap-1.5">
+          {selectedLabel ? (
+            <div className="date-anchor w-fit max-w-full rounded-full px-3.5 py-1 md:px-3 md:py-0.5">
+              <p className="date-anchor__stamp text-center text-[11px] md:text-[10px]">
+                {selectedLabel}
+              </p>
+            </div>
+          ) : (
+            <div className="h-[1.5rem] w-1 shrink-0" aria-hidden />
+          )}
+
+          {isMobile && selectedDay && (
+            <div className="flex w-full max-w-sm flex-col items-center gap-2">
+              <p className="text-[12px] font-medium leading-snug text-[var(--ink-soft)]">
                 {selectedLevel ? (
                   <>
                     Logged as{' '}
@@ -175,14 +186,14 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
               <button
                 type="button"
                 onClick={openLog}
-                className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-[var(--accent-deep)] px-4 py-2.5 text-sm font-bold text-white shadow-md active:scale-[0.97]"
+                className="inline-flex min-h-11 items-center rounded-full bg-[var(--accent-deep)] px-4 py-2.5 text-sm font-bold text-white shadow-md active:scale-[0.97]"
               >
                 Open log
               </button>
             </div>
           )}
         </div>
-      )}
+      </header>
 
       <div className="page-section-divider shrink-0" aria-hidden>
         <span className="page-section-divider__motif">✦ · ✦</span>

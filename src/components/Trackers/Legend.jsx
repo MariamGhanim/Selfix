@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { useJournal } from '../../context/JournalContext'
 
 export default function Legend({ trackerId, levels }) {
@@ -6,13 +5,11 @@ export default function Legend({ trackerId, levels }) {
   const selected = state.selectedLevel?.[trackerId]
 
   return (
-    <div className="flex w-max min-w-full flex-nowrap items-center justify-center gap-1.5">
-      <motion.button
+    <div className="flex w-full flex-wrap items-center justify-center gap-1.5">
+      <button
         type="button"
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.96 }}
         onClick={() => setSelectedLevel(trackerId, null)}
-        className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[10px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-1 sm:text-[9px] ${
+        className={`inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-[9px] ${
           selected == null
             ? 'bg-[var(--accent-soft)]/80 text-[var(--accent-deep)] ring-1 ring-[var(--accent)]/35 shadow-sm'
             : 'bg-[#fffaf7] text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/45'
@@ -20,23 +17,21 @@ export default function Legend({ trackerId, levels }) {
       >
         <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
         Cycle
-      </motion.button>
+      </button>
       {levels.map((level) => {
         const active = selected === level.value
         return (
-          <motion.button
+          <button
             key={String(level.value)}
             type="button"
-            whileHover={{ scale: 1.03, y: -0.5 }}
-            whileTap={{ scale: 0.96 }}
             onClick={() => setSelectedLevel(trackerId, active ? null : level.value)}
-            className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[10px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-1 sm:text-[9px] ${
+            className={`inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-[9px] ${
               active
                 ? 'ring-1 ring-[var(--accent-deep)]/40 shadow-sm'
                 : 'ring-1 ring-[var(--page-edge)]/35'
             }`}
             style={{
-              background: `color-mix(in srgb, ${level.color} ${active ? 28 : 16}%, #fffaf7)`,
+              background: `color-mix(in srgb, ${level.color} ${active ? 28 : 14}%, #fffaf7)`,
               color: '#6a5560',
             }}
             title={level.label}
@@ -46,7 +41,7 @@ export default function Legend({ trackerId, levels }) {
               style={{ background: level.color }}
             />
             <span>{level.label}</span>
-          </motion.button>
+          </button>
         )
       })}
     </div>
