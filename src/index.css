@@ -1994,7 +1994,6 @@ h3,
   .insights-journal-pane,
   .insights-chart-pane,
   .insights-journal-card,
-  .insights-chart-card,
   .insights-pane-scroll {
     height: auto !important;
     max-height: none !important;
@@ -2003,21 +2002,83 @@ h3,
     flex: none !important;
   }
 
+  .insights-cards {
+    gap: 12px;
+  }
+
+  /* Journal keeps outer padding 0; inner header/rows use 16px to match chart card */
   .insights-journal-card {
     width: 100%;
+    box-sizing: border-box;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 1.15rem;
   }
 
-  .insights-story-card {
-    padding-left: 0;
-    padding-right: 0;
+  .insights-journal-card > .border-b,
+  .insights-journal-card .insights-day-row {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
+  .insights-journal-card .insights-pane-scroll > div {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* Card keeps 16px padding; do NOT put aspect-ratio on the card itself —
+     that left the flex-1 / absolute plot area with height: auto → 0. */
   .insights-chart-card {
     width: 100%;
-    aspect-ratio: 4 / 3;
-    min-height: 220px !important;
-    max-height: 300px !important;
+    box-sizing: border-box;
+    padding: 14px 16px 12px !important;
     overflow: hidden !important;
+    border-radius: 1.15rem;
+    flex: none !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    aspect-ratio: auto;
+  }
+
+  .insights-chart-card > .shrink-0 {
+    margin: 0 0 10px;
+    padding: 0;
+  }
+
+  .insights-chart-card > .shrink-0 > p:first-child {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .insights-chart-card > .shrink-0 > p:last-child {
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  /* Measured plot box — Recharts gets explicit width/height from JS on mobile */
+  .insights-chart-plot {
+    position: relative;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    flex: none !important;
+    aspect-ratio: 4 / 3;
+    min-height: 220px;
+    max-height: 300px;
+    height: auto;
+    overflow: hidden;
+  }
+
+  .insights-chart-plot__inner {
+    position: static;
+    inset: auto;
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
   }
 
   .insights-habit-backdrop {

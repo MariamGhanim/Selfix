@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, ChevronLeft, ChevronRight, Home, MapPin, ShoppingBag } from 'lucide-react'
 import * as LucideIcons from 'lucide-react'
@@ -759,7 +759,67 @@ function StatusOverviewCard({ diary }) {
   )
 }
 
+const MOBILE_LOGBOOK_MQ = '(max-width: 639.98px)'
+
+function useIsMobileLogbook() {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(MOBILE_LOGBOOK_MQ).matches : false,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_LOGBOOK_MQ)
+    const onChange = () => setIsMobile(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  return isMobile
+}
+
+/** Measure the plot box; ignore 0×0 so ResponsiveContainer is never fed a collapsed size. */
+function usePlotBoxSize(enabled, remountKey) {
+  const plotRef = useRef(null)
+  const [size, setSize] = useState({ w: 0, h: 0 })
+
+  useLayoutEffect(() => {
+    if (!enabled) {
+      setSize({ w: 0, h: 0 })
+      return undefined
+    }
+
+    const el = plotRef.current
+    if (!el) return undefined
+
+    const apply = (w, h) => {
+      const rw = Math.round(w)
+      const rh = Math.round(h)
+      if (rw <= 0 || rh <= 0) return
+      setSize((prev) => (prev.w === rw && prev.h === rh ? prev : { w: rw, h: rh }))
+    }
+
+    const measure = () => {
+      const rect = el.getBoundingClientRect()
+      apply(rect.width, rect.height)
+    }
+
+    measure()
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0]
+      if (!entry) return
+      const { width, height } = entry.contentRect
+      apply(width, height)
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [enabled, remountKey])
+
+  return { plotRef, size }
+}
+
 function MetricChart({ diary }) {
+  const { theme } = useJournal()
+  const isMobile = useIsMobileLogbook()
   const model = useMemo(() => chartModel(diary), [diary])
   const axisColor = 'var(--ink-soft)'
   const gridColor = 'color-mix(in srgb, var(--accent-soft) 55%, transparent)'
@@ -767,10 +827,103 @@ function MetricChart({ diary }) {
   const chartData = model.data || []
   const xInterval = isWeek || chartData.length <= 10 ? 0 : 'preserveStartEnd'
   const barMargin = model.margin || { top: 8, right: 10, left: 0, bottom: 8 }
-  const yAxisWidth = model.axisWidth ?? (model.kind === 'area' ? 44 : 48)
-  const yTickStyle = model.axisWidth
+  const yAxisWidth = isMobile
+    ? 32
+    : (model.axisWidth ?? (model.kind === 'area' ? 44 : 48))
+  const yTickStyle = model.axisWidth || isMobile
     ? { fill: axisColor, fontSize: 11, whiteSpace: 'nowrap' }
     : { fill: axisColor, fontSize: 10 }
+
+  const remountKey = `${diary.tracker?.id || ''}|${diary.bounds?.label || ''}|${theme}|${model.kind}`
+  const { plotRef, size } = usePlotBoxSize(isMobile && model.kind !== 'empty', remountKey)
+
+  const areaMargin = { top: 8, right: 10, left: 0, bottom: 8 }
+
+  const chartNode = (pixelSize) => {
+    const sized = pixelSize && pixelSize.w > 0 && pixelSize.h > 0
+    if (model.kind === 'area') {
+      const chart = (
+        <AreaChart
+          data={chartData}
+          margin={areaMargin}
+          {...(sized ? { width: pixelSize.w, height: pixelSize.h } : {})}
+        >
+          <defs>
+            <linearGradient id="insightsFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={model.color} stopOpacity={0.45} />
+              <stop offset="100%" stopColor={model.color} stopOpacity={0.05} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid stroke={gridColor} strokeDasharray="3 6" vertical={false} />
+          <XAxis
+            dataKey="day"
+            type="category"
+            tick={{ fill: axisColor, fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+            interval={xInterval}
+            padding={{ left: 8, right: 8 }}
+          />
+          <YAxis
+            domain={model.domain}
+            ticks={model.ticks}
+            tickFormatter={model.tickFormat}
+            tick={yTickStyle}
+            axisLine={false}
+            tickLine={false}
+            width={yAxisWidth}
+          />
+          <Tooltip content={<SoftTooltip tipFormat={model.tipFormat} />} />
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke={model.color}
+            strokeWidth={2.5}
+            fill="url(#insightsFill)"
+            connectNulls={false}
+            dot={{ r: 3.5, fill: model.color, strokeWidth: 0 }}
+            activeDot={{ r: 5 }}
+          />
+        </AreaChart>
+      )
+      return chart
+    }
+
+    return (
+      <BarChart
+        data={chartData}
+        margin={barMargin}
+        {...(sized ? { width: pixelSize.w, height: pixelSize.h } : {})}
+      >
+        <CartesianGrid stroke={gridColor} strokeDasharray="3 6" vertical={false} />
+        <XAxis
+          dataKey="day"
+          type="category"
+          tick={{ fill: axisColor, fontSize: 11 }}
+          axisLine={false}
+          tickLine={false}
+          interval={xInterval}
+          padding={{ left: 4, right: 4 }}
+        />
+        <YAxis
+          domain={model.domain}
+          ticks={model.ticks}
+          tickFormatter={model.tickFormat}
+          tick={yTickStyle}
+          axisLine={false}
+          tickLine={false}
+          width={yAxisWidth}
+        />
+        <Tooltip content={<SoftTooltip tipFormat={model.tipFormat} />} />
+        <Bar
+          dataKey="value"
+          fill={model.color}
+          radius={[10, 10, 6, 6]}
+          maxBarSize={isWeek ? 28 : 36}
+        />
+      </BarChart>
+    )
+  }
 
   return (
     <StoryCard className="insights-chart-card flex h-full min-h-0 flex-col overflow-hidden px-3 py-3.5 sm:px-5 sm:py-4">
@@ -787,79 +940,15 @@ function MetricChart({ diary }) {
             {model.message || 'Nothing to chart yet.'}
           </p>
         </div>
+      ) : isMobile ? (
+        <div ref={plotRef} className="insights-chart-plot relative min-h-0 w-full">
+          {size.w > 0 && size.h > 0 ? chartNode(size) : null}
+        </div>
       ) : (
-        <div className="relative min-h-0 w-full flex-1">
-          <div className="absolute inset-0 min-h-0">
+        <div className="insights-chart-plot relative min-h-0 w-full flex-1">
+          <div className="insights-chart-plot__inner absolute inset-0 min-h-0">
             <ResponsiveContainer width="100%" height="100%" debounce={50}>
-              {model.kind === 'area' ? (
-                <AreaChart data={chartData} margin={{ top: 8, right: 10, left: 0, bottom: 8 }}>
-                  <defs>
-                    <linearGradient id="insightsFill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={model.color} stopOpacity={0.45} />
-                      <stop offset="100%" stopColor={model.color} stopOpacity={0.05} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid stroke={gridColor} strokeDasharray="3 6" vertical={false} />
-                  <XAxis
-                    dataKey="day"
-                    type="category"
-                    tick={{ fill: axisColor, fontSize: 11 }}
-                    axisLine={false}
-                    tickLine={false}
-                    interval={xInterval}
-                    padding={{ left: 8, right: 8 }}
-                  />
-                  <YAxis
-                    domain={model.domain}
-                    ticks={model.ticks}
-                    tickFormatter={model.tickFormat}
-                    tick={yTickStyle}
-                    axisLine={false}
-                    tickLine={false}
-                    width={yAxisWidth}
-                  />
-                  <Tooltip content={<SoftTooltip tipFormat={model.tipFormat} />} />
-                  <Area
-                    type="monotone"
-                    dataKey="value"
-                    stroke={model.color}
-                    strokeWidth={2.5}
-                    fill="url(#insightsFill)"
-                    connectNulls={false}
-                    dot={{ r: 3.5, fill: model.color, strokeWidth: 0 }}
-                    activeDot={{ r: 5 }}
-                  />
-                </AreaChart>
-              ) : (
-                <BarChart data={chartData} margin={barMargin}>
-                  <CartesianGrid stroke={gridColor} strokeDasharray="3 6" vertical={false} />
-                  <XAxis
-                    dataKey="day"
-                    type="category"
-                    tick={{ fill: axisColor, fontSize: 11 }}
-                    axisLine={false}
-                    tickLine={false}
-                    interval={xInterval}
-                    padding={{ left: 4, right: 4 }}
-                  />
-                  <YAxis
-                    domain={model.domain}
-                    ticks={model.ticks}
-                    tickFormatter={model.tickFormat}
-                    tick={yTickStyle}
-                    axisLine={false}
-                    tickLine={false}
-                    width={yAxisWidth}
-                  />
-                  <Tooltip content={<SoftTooltip tipFormat={model.tipFormat} />} />
-                  <Bar
-                    dataKey="value"
-                    fill={model.color}
-                    radius={[10, 10, 6, 6]}
-                    maxBarSize={isWeek ? 28 : 36}
-                  />
-                </BarChart>
-              )}
+              {chartNode(null)}
             </ResponsiveContainer>
           </div>
         </div>
