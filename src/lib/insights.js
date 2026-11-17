@@ -170,13 +170,11 @@ export function getRangeBounds(rangeId, year, anchor = new Date(), customRange =
     }
   }
 
+  // Full Mon–Sun week — do not clip at today so charts keep all 7 day slots.
   const day = inYear.getDay()
   const mondayOffset = day === 0 ? -6 : 1 - day
-  let from = addDays(inYear, mondayOffset)
-  let to = addDays(from, 6)
-  if (from < yearStart) from = yearStart
-  if (to > hardCap) to = hardCap
-  if (to < from) to = from
+  const from = addDays(inYear, mondayOffset)
+  const to = addDays(from, 6)
   return { from, to, label: formatShortRange(from, to) }
 }
 
@@ -488,7 +486,7 @@ function buildSmartMatrix({ days, pixelIndex, moodSeries, habitStats, rangeId })
   if (goodSleep.length >= 2 && weakSleep.length >= 1) {
     const morningSalahBoost = goodSleep.filter((d) => {
       const salah = pixelIndex.salah?.[d.key]
-      return salahIsStrong(salah) || salah >= 4
+      return salahIsStrong(salah) || (salah >= 4 && salah <= 6)
     })
     const focusOnGood =
       goodSleep.filter((d) => focusIsDeep(pixelIndex.focus?.[d.key])).length / goodSleep.length

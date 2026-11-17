@@ -40,46 +40,84 @@ function inRange(y, m, d, from, to) {
   return t >= from.getTime() && t <= to.getTime()
 }
 
+function formatWeekLabel(from, to) {
+  const sameMonth = from.getMonth() === to.getMonth() && from.getFullYear() === to.getFullYear()
+  const start = from.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  const end = to.toLocaleDateString('en-US', {
+    month: sameMonth ? undefined : 'short',
+    day: 'numeric',
+  })
+  return `${start} – ${end}`
+}
+
+/** Monday → Sunday week containing `date`. */
+export function weekBoundsContaining(date) {
+  const focus = startOfDay(date)
+  const day = focus.getDay()
+  const mondayOffset = day === 0 ? -6 : 1 - day
+  const from = addDays(focus, mondayOffset)
+  const to = addDays(from, 6)
+  return { from, to }
+}
+
 export function getDiaryBounds(rangeId, year, anchor = new Date()) {
-  const today = startOfDay(new Date())
   const focus = startOfDay(anchor)
   const yearStart = new Date(year, 0, 1)
   const yearEnd = new Date(year, 11, 31)
   const inYear = focus > yearEnd ? yearEnd : focus < yearStart ? yearStart : focus
-  const hardCap = today < yearEnd ? today : yearEnd
 
   if (rangeId === 'monthly') {
     const from = new Date(inYear.getFullYear(), inYear.getMonth(), 1)
     const monthEnd = new Date(inYear.getFullYear(), inYear.getMonth() + 1, 0)
-    const to = monthEnd > hardCap ? hardCap : monthEnd
+    // Keep the full calendar month so charts keep every day slot;
+    // future days simply stay empty until logged.
     return {
       from,
-      to: to < from ? from : to,
+      to: monthEnd < from ? from : monthEnd,
       label: from.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
       periodWord: 'month',
     }
   }
 
-  const day = inYear.getDay()
-  const mondayOffset = day === 0 ? -6 : 1 - day
-  let from = addDays(inYear, mondayOffset)
-  let to = addDays(from, 6)
-  if (from < yearStart) from = yearStart
-  if (to > hardCap) to = hardCap
-  if (to < from) to = from
+  // Full Mon–Sun container (never clip the week at "today").
+  const { from, to } = weekBoundsContaining(inYear)
   return {
     from,
     to,
-    label: `${from.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${to.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+    label: formatWeekLabel(from, to),
     periodWord: 'week',
   }
 }
 
 export function shiftDiaryAnchor(rangeId, anchor, direction) {
+  const today = startOfDay(new Date())
   const d = new Date(anchor)
-  if (rangeId === 'monthly') d.setMonth(d.getMonth() + direction)
-  else d.setDate(d.getDate() + direction * 7)
-  return d
+
+  if (rangeId === 'monthly') {
+    d.setMonth(d.getMonth() + direction)
+    const next = startOfDay(d)
+    if (next.getFullYear() > today.getFullYear()) return today
+    if (
+      next.getFullYear() === today.getFullYear() &&
+      next.getMonth() > today.getMonth()
+    ) {
+      return today
+    }
+    return next
+  }
+
+  d.setDate(d.getDate() + direction * 7)
+  const next = startOfDay(d)
+  const currentWeek = weekBoundsContaining(today)
+  if (next > currentWeek.to) return today
+  return next
+}
+
+export function canShiftDiary(rangeId, anchor, direction, year) {
+  const shifted = shiftDiaryAnchor(rangeId, anchor, direction)
+  const current = getDiaryBounds(rangeId, year, anchor)
+  const next = getDiaryBounds(rangeId, year, shifted)
+  return current.from.getTime() !== next.from.getTime() || current.to.getTime() !== next.to.getTime()
 }
 
 function enumerateDays(from, to) {
@@ -129,6 +167,15 @@ function collectWrittenNotes(panel, trackerNote) {
 }
 
 function describeSalahDay(value, panel) {
+  if (panel?.excused || value === 7) {
+    return {
+      headline: null,
+      details: [],
+      empty: false,
+      statusBadge: { label: 'Excused', tone: 'lavender' },
+    }
+  }
+
   const prayers = panel?.prayers || {}
   const statuses = SALAH_PRAYERS.map((p) => ({
     ...p,
@@ -136,13 +183,17 @@ function describeSalahDay(value, panel) {
   }))
   const onTime = statuses.filter((p) => p.status === 'onTime')
   const late = statuses.filter((p) => p.status === 'late')
+  const missed = statuses.filter((p) => p.status === 'missed')
   const bits = []
 
   if (onTime.length === 5 || value === 5) bits.push('All five prayers on time')
   else if (value === 6) bits.push('All five on time, plus sunnah')
   else if (onTime.length === 1) bits.push(`${onTime[0].label} on time`)
   else if (onTime.length) bits.push(`${onTime.map((p) => p.label).join(', ')} on time`)
-  else if (value != null && value > 0) bits.push(`${value} on time`)
+  else if (value != null && value > 0 && value < 7) bits.push(`${value} on time`)
+  else if (value === 0 || (missed.length && !onTime.length && !late.length)) {
+    bits.push('Missed')
+  }
 
   if (late.length) {
     bits.push(
@@ -330,6 +381,8 @@ export function buildTrackerDiary(state, trackerId, rangeId, year, anchor = new 
         empty,
         headline: described.headline,
         details: described.details,
+        statusBadge: described.statusBadge || null,
+        excused: Boolean(panel?.excused || value === 7),
         writtenNotes,
         minutes: mins,
         tasksDone: todos.filter((t) => t.done || t.completed).length,
@@ -337,6 +390,7 @@ export function buildTrackerDiary(state, trackerId, rangeId, year, anchor = new 
         qualityScore,
         qualityDetail,
         sleepHours: sleepScored?.durationHours ?? null,
+        companion: tracker.id === 'outings' ? (panel?.withWho || '').trim() || null : null,
       }
     })
     .reverse()

@@ -461,6 +461,7 @@ export const PANEL_DEFAULTS = {
       isha: null,
     },
     paintedPlus: false,
+    excused: false,
     q1: null,
     q2: null,
     q3: null,

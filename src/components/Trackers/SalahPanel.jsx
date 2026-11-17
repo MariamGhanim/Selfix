@@ -43,7 +43,8 @@ function prayersFromCount(count) {
   return prayers
 }
 
-function computeSalahLevel(prayers, paintedPlus) {
+function computeSalahLevel(prayers, paintedPlus, excused = false) {
+  if (excused) return 7
   if (paintedPlus) return 6
   const statuses = SALAH_PRAYERS.map((p) => prayers?.[p.id] ?? null)
   if (!statuses.some(Boolean)) return null
@@ -70,7 +71,8 @@ export default function SalahPanel({ month, day }) {
   const data = getPanel('salah', month, day)
   const prayers = { ...emptyPrayers(), ...(data.prayers || {}) }
   const paintedPlus = Boolean(data.paintedPlus)
-  const level = computeSalahLevel(prayers, paintedPlus)
+  const excused = Boolean(data.excused)
+  const level = computeSalahLevel(prayers, paintedPlus, excused)
   const [reflection, setReflection] = useState(data.reflection || '')
 
   useEffect(() => {
@@ -82,13 +84,28 @@ export default function SalahPanel({ month, day }) {
   const setPrayerStatus = (prayerId, status) => {
     const nextStatus = prayers[prayerId] === status ? null : status
     const nextPrayers = { ...prayers, [prayerId]: nextStatus }
-    patch({ prayers: nextPrayers, paintedPlus: false }, computeSalahLevel(nextPrayers, false))
+    patch(
+      { prayers: nextPrayers, paintedPlus: false, excused: false },
+      computeSalahLevel(nextPrayers, false, false),
+    )
   }
 
   const setCount = (value) => {
+    if (value == null) {
+      patch({ prayers: emptyPrayers(), paintedPlus: false, excused: false }, null)
+      return
+    }
     const nextPrayers = prayersFromCount(value)
     const plus = value === 6
-    patch({ prayers: nextPrayers, paintedPlus: plus }, value)
+    patch({ prayers: nextPrayers, paintedPlus: plus, excused: false }, value)
+  }
+
+  const toggleExcused = () => {
+    if (excused) {
+      patch({ excused: false, prayers: emptyPrayers(), paintedPlus: false }, null)
+      return
+    }
+    patch({ excused: true, prayers: emptyPrayers(), paintedPlus: false }, 7)
   }
 
   const onTimeCount = SALAH_PRAYERS.filter((p) => prayers[p.id] === 'onTime').length
@@ -112,49 +129,71 @@ export default function SalahPanel({ month, day }) {
                 key={opt.value}
                 compact
                 label={opt.label}
-                active={level === opt.value}
-                onClick={() => setCount(level === opt.value ? null : opt.value)}
+                active={!excused && level === opt.value}
+                onClick={() => setCount(!excused && level === opt.value ? null : opt.value)}
               />
             ))}
+            <SelectChip
+              compact
+              label="Excused"
+              active={excused}
+              onClick={toggleExcused}
+            />
           </div>
-          <p className="text-[10px] font-medium text-[var(--accent-deep)]">{onTimeCount}/5 on time</p>
+          {excused ? (
+            <p className="text-[10px] font-medium text-[#9a7aa8]">Rest day · no prayer count</p>
+          ) : (
+            <p className="text-[10px] font-medium text-[var(--accent-deep)]">{onTimeCount}/5 on time</p>
+          )}
         </section>
 
-        <section>
-          <ReviewHeading className="mb-2">Daily prayers</ReviewHeading>
-          <ul className="space-y-2">
-            {SALAH_PRAYERS.map((prayer) => (
-              <li
-                key={prayer.id}
-                className="rounded-2xl bg-[var(--surface)] px-3 py-2.5 ring-1 ring-[var(--page-edge)]/45"
-              >
-                <div className="mb-2 flex items-center gap-1.5">
-                  <span className="text-[14px] leading-none">{prayer.emoji}</span>
-                  <span className="text-[12px] font-semibold text-[var(--ink)]">{prayer.label}</span>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {SALAH_STATUSES.map((status) => {
-                    const active = prayers[prayer.id] === status.id
-                    return (
-                      <button
-                        key={status.id}
-                        type="button"
-                        data-no-flip
-                        onClick={() => setPrayerStatus(prayer.id, status.id)}
-                        className={`rounded-full px-2.5 py-1 text-[10px] font-semibold transition ${statusTone(
-                          active,
-                          status.tone,
-                        )}`}
-                      >
-                        {status.label}
-                      </button>
-                    )
-                  })}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {!excused ? (
+          <section>
+            <ReviewHeading className="mb-2">Daily prayers</ReviewHeading>
+            <ul className="space-y-2">
+              {SALAH_PRAYERS.map((prayer) => (
+                <li
+                  key={prayer.id}
+                  className="rounded-2xl bg-[var(--surface)] px-3 py-2.5 ring-1 ring-[var(--page-edge)]/45"
+                >
+                  <div className="mb-2 flex items-center gap-1.5">
+                    <span className="text-[14px] leading-none">{prayer.emoji}</span>
+                    <span className="text-[12px] font-semibold text-[var(--ink)]">{prayer.label}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {SALAH_STATUSES.map((status) => {
+                      const active = prayers[prayer.id] === status.id
+                      return (
+                        <button
+                          key={status.id}
+                          type="button"
+                          data-no-flip
+                          onClick={() => setPrayerStatus(prayer.id, status.id)}
+                          className={`rounded-full px-2.5 py-1 text-[10px] font-semibold transition ${statusTone(
+                            active,
+                            status.tone,
+                          )}`}
+                        >
+                          {status.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : (
+          <section
+            className="rounded-[1.2rem] px-4 py-3.5 ring-1 ring-[#e0c4e0]/55"
+            style={{ background: 'color-mix(in srgb, #e0c4e0 28%, #fffaf7)' }}
+          >
+            <p className="text-[12px] font-semibold text-[#7a5f88]">Excused / rest day</p>
+            <p className="mt-1 text-[11px] leading-relaxed text-[var(--ink-soft)]">
+              No prayer count for today — a gentle pause is still care for your heart.
+            </p>
+          </section>
+        )}
 
         <MiniQuiz
           title="Spiritual check-in"

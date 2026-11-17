@@ -61,6 +61,7 @@ export const TRACKERS = [
       { value: 4, label: '4 on time', color: '#9fd4c4' },
       { value: 5, label: 'All 5', color: '#8ec5f0' },
       { value: 6, label: '5 + Sunnah', color: '#b8a0e8' },
+      { value: 7, label: 'Excused', color: '#e0c4e0' },
     ],
   },
   {
