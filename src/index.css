@@ -1338,7 +1338,6 @@ h3,
 }
 
 .auth-brand-panel {
-  height: 100%;
   background:
     linear-gradient(
       155deg,
@@ -1346,6 +1345,12 @@ h3,
       color-mix(in srgb, var(--paper-deep) 55%, var(--paper)),
       color-mix(in srgb, var(--gold-soft) 35%, var(--paper))
     );
+}
+
+@media (min-width: 1024px) {
+  .auth-brand-panel {
+    height: 100%;
+  }
 }
 
 [data-theme="midnight"] .auth-brand-panel {
@@ -1489,9 +1494,8 @@ h3,
   }
 
   .auth-brand-panel {
-    min-height: auto;
-    padding-top: 0.85rem;
-    padding-bottom: 0.85rem;
+    height: auto;
+    min-height: 0;
   }
 }
 
@@ -1543,7 +1547,25 @@ h3,
     top: auto !important;
   }
 
-  /* Auth: drop nested frame chrome so the page breathes on ~360px */
+  /* Auth mobile: content-sized height — no min-h-screen dead space */
+  html:has(.auth-split-shell),
+  body:has(.auth-split-shell),
+  body:has(.auth-split-shell) #root {
+    height: auto !important;
+    min-height: 100%;
+  }
+
+  .auth-split-shell {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px)) !important;
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
   .auth-split-frame.book-shadow,
   .auth-split-frame.paper-texture,
   .auth-split-frame {
@@ -1552,33 +1574,76 @@ h3,
     border-radius: 0 !important;
     background: transparent !important;
     background-image: none !important;
-    min-height: 100dvh;
-    max-height: none;
-    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .auth-split-frame {
+    min-height: 0 !important;
   }
 
   .auth-site-header {
+    flex: 0 0 auto;
+    padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+    padding-bottom: 0.5rem;
     padding-left: max(1rem, env(safe-area-inset-left, 0px));
     padding-right: max(1rem, env(safe-area-inset-right, 0px));
     background: color-mix(in srgb, var(--surface) 88%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--page-edge) 35%, transparent);
+  }
+
+  .auth-split-body {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-direction: column;
+    justify-content: flex-start !important;
+    align-content: flex-start !important;
+    align-items: stretch;
+    gap: 0.2rem;
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    padding-top: 1rem; /* pt-4 */
+    padding-bottom: 1.5rem;
+  }
+
+  .auth-brand-wrap {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    border-bottom: none !important;
   }
 
   .auth-brand-panel {
-    padding-top: 0.75rem;
-    padding-bottom: 0.7rem;
+    height: auto !important;
+    min-height: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0.15rem;
     padding-left: max(1rem, env(safe-area-inset-left, 0px));
     padding-right: max(1rem, env(safe-area-inset-right, 0px));
     background: transparent;
   }
 
   .auth-brand-glow {
-    opacity: 0.55;
+    opacity: 0.28;
   }
 
   .auth-form-panel {
+    display: flex;
+    flex: 0 0 auto !important;
+    align-items: flex-start !important;
+    justify-content: center;
+    height: auto !important;
+    min-height: 0 !important;
+    padding-top: 0.5rem;
     padding-left: max(1rem, env(safe-area-inset-left, 0px));
     padding-right: max(1rem, env(safe-area-inset-right, 0px));
-    padding-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
   }
 
   .auth-form-card {
