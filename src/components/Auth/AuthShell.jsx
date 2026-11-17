@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Eye, EyeOff } from 'lucide-react'
 
 const AUTH_NAV = [
   { to: '/about', label: 'About' },
@@ -244,16 +246,37 @@ export default function AuthShell({ title, subtitle, children, footer }) {
   )
 }
 
-export function AuthInput({ label, error, className = '', ...props }) {
+export function AuthInput({ label, error, className = '', type = 'text', ...props }) {
+  const isPassword = type === 'password'
+  const [visible, setVisible] = useState(false)
+  const inputType = isPassword ? (visible ? 'text' : 'password') : type
+
   return (
     <label className="auth-input-label mb-3.5 block sm:mb-3.5">
       <span className="mb-1.5 block text-[12px] font-medium tracking-wide text-[var(--ink)] sm:mb-1.5">
         {label}
       </span>
-      <input
-        {...props}
-        className={`auth-field min-h-11 w-full rounded-xl border border-[var(--page-edge)]/80 bg-[var(--surface-strong)] px-3.5 py-2.5 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--ink-soft)]/55 focus:border-[var(--accent)] focus:bg-[var(--surface)] focus:ring-2 focus:ring-[var(--accent)]/25 ${className}`}
-      />
+      <span className="relative block">
+        <input
+          {...props}
+          type={inputType}
+          className={`auth-field min-h-11 w-full rounded-xl border border-[var(--page-edge)]/80 bg-[var(--surface-strong)] py-2.5 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--ink-soft)]/55 focus:border-[var(--accent)] focus:bg-[var(--surface)] focus:ring-2 focus:ring-[var(--accent)]/25 ${
+            isPassword ? 'pl-3.5 pr-11' : 'px-3.5'
+          } ${className}`}
+        />
+        {isPassword ? (
+          <button
+            type="button"
+            tabIndex={0}
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            aria-pressed={visible}
+            onClick={() => setVisible((v) => !v)}
+            className="absolute right-1.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-[var(--ink-soft)] transition hover:bg-[var(--accent-glow)]/70 hover:text-[var(--accent-deep)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-[var(--accent)]"
+          >
+            {visible ? <EyeOff size={18} strokeWidth={2} /> : <Eye size={18} strokeWidth={2} />}
+          </button>
+        ) : null}
+      </span>
       {error && <span className="mt-1.5 block text-[12px] font-medium text-[#b8385c]">{error}</span>}
     </label>
   )

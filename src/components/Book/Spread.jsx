@@ -122,10 +122,9 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
 
   const handleSelectDay = useCallback(
     (day) => {
+      // Select / paint only — never auto-open the log sheet on pixel tap.
+      // Users open the log explicitly via the "Open log" button.
       onSelectDay?.(day)
-      if (typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches) {
-        setSheetOpen(true)
-      }
     },
     [onSelectDay],
   )

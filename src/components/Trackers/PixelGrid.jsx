@@ -223,6 +223,8 @@ function PixelGrid({
       const sel = selectedDayRef.current
       const isSelected = sel != null && sel.month === month && sel.day === day
 
+      // Mobile (tapOpensLog): one tap paints when a color is selected, and
+      // always updates the selected day — without opening the log sheet.
       if (tapOpensLogRef.current) {
         if (selectedPaintRef.current != null) {
           paintPixel(trackerId, month, day, levels)
