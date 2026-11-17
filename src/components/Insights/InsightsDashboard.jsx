@@ -117,7 +117,7 @@ function IconByName({ name, size = 14 }) {
 
 function PeriodSwitcher({ value, onChange }) {
   return (
-    <div className="insights-pill-track inline-flex rounded-full p-1">
+    <div className="insights-pill-track inline-flex max-w-full rounded-full p-1">
       {DIARY_RANGES.map((range) => {
         const active = value === range.id
         return (
@@ -125,7 +125,7 @@ function PeriodSwitcher({ value, onChange }) {
             key={range.id}
             type="button"
             onClick={() => onChange(range.id)}
-            className={`rounded-full px-3.5 py-1.5 text-[11px] font-semibold tracking-wide transition ${
+            className={`inline-flex min-h-10 items-center rounded-full px-3.5 py-2 text-[11px] font-semibold tracking-wide transition sm:min-h-0 sm:py-1.5 ${
               active
                 ? 'bg-[var(--accent-deep)] text-white shadow-sm'
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
@@ -177,8 +177,8 @@ function DayRow({ entry, tracker }) {
   const badgeTone = badge ? statusBadgeTone(badge.tone) : null
 
   return (
-    <li className="px-4 py-3.5 sm:px-5 sm:py-4">
-      <div className="flex items-start gap-3">
+    <li className="px-3.5 py-3.5 sm:px-5 sm:py-4">
+      <div className="flex items-start gap-2.5 sm:gap-3">
         <span
           className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
           style={{ background: color }}
@@ -186,8 +186,8 @@ function DayRow({ entry, tracker }) {
         >
           <IconByName name={tracker.icon} size={15} />
         </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <div className="min-w-0 flex-1 overflow-hidden">
+          <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-3 sm:gap-y-1">
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <p className="font-display text-[12px] font-semibold text-[var(--accent-deep)]">
                 {entry.label}
@@ -206,7 +206,9 @@ function DayRow({ entry, tracker }) {
               ) : null}
             </div>
             {entry.headline ? (
-              <p className="text-[12px] font-semibold text-[var(--ink)]">{entry.headline}</p>
+              <p className="break-words text-[12px] font-semibold leading-snug text-[var(--ink)]">
+                {entry.headline}
+              </p>
             ) : null}
           </div>
           {details.length ? (
@@ -478,7 +480,7 @@ function StatusOverviewCard({ diary }) {
   }, [diary.entries, levels, tracker])
 
   return (
-    <StoryCard className="insights-chart-card insights-status-card flex h-full flex-col px-4 py-4 sm:px-5 sm:py-5">
+    <StoryCard className="insights-chart-card insights-status-card flex h-full flex-col px-3 py-3.5 sm:px-5 sm:py-5">
       <div className="mb-3 shrink-0">
         <p className="font-display text-[14px] font-semibold text-[var(--ink)] sm:text-[15px]">
           Summary
@@ -583,8 +585,8 @@ function MetricChart({ diary }) {
     : { fill: axisColor, fontSize: 10 }
 
   return (
-    <StoryCard className="insights-chart-card flex h-full min-h-[18rem] flex-col px-4 py-4 sm:min-h-[22rem] sm:px-5 sm:py-5">
-      <div className="mb-3 shrink-0">
+    <StoryCard className="insights-chart-card flex h-full min-h-[15rem] flex-col px-3 py-3.5 sm:min-h-[22rem] sm:px-5 sm:py-5">
+      <div className="mb-2.5 shrink-0 sm:mb-3">
         <p className="font-display text-[14px] font-semibold text-[var(--ink)] sm:text-[15px]">
           {model.title}
         </p>
@@ -592,13 +594,13 @@ function MetricChart({ diary }) {
       </div>
 
       {model.kind === 'empty' ? (
-        <div className="flex min-h-[14rem] flex-1 flex-col items-center justify-center rounded-[1.2rem] bg-[var(--surface)]/55 px-6 py-10 text-center ring-1 ring-[var(--page-edge)]/35 sm:min-h-[16rem]">
+        <div className="flex min-h-[12rem] flex-1 flex-col items-center justify-center rounded-[1.2rem] bg-[var(--surface)]/55 px-5 py-8 text-center ring-1 ring-[var(--page-edge)]/35 sm:min-h-[16rem] sm:px-6 sm:py-10">
           <p className="max-w-[14rem] text-[13px] leading-relaxed text-[var(--ink-soft)]">
             {model.message || 'Nothing to chart yet.'}
           </p>
         </div>
       ) : (
-        <div className="relative min-h-[14rem] w-full flex-1 sm:min-h-[16rem]">
+        <div className="relative min-h-[12.5rem] w-full flex-1 sm:min-h-[16rem]">
           <div className="absolute inset-0">
             <ResponsiveContainer width="100%" height="100%">
               {model.kind === 'area' ? (
@@ -741,8 +743,8 @@ export default function InsightsDashboard() {
   return (
     <div data-no-flip className="insights-shell flex h-full min-h-0 flex-col overflow-hidden">
       <header className="insights-header shrink-0 px-3 py-2.5 sm:px-6 sm:py-3">
-        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
-          <h2 className="font-display text-[1.15rem] font-semibold tracking-tight text-[var(--ink)] sm:text-[1.35rem]">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
+          <h2 className="font-display text-[1.1rem] font-semibold tracking-tight text-[var(--ink)] sm:text-[1.35rem]">
             Insights Logbook
           </h2>
           <PeriodSwitcher
@@ -759,46 +761,50 @@ export default function InsightsDashboard() {
             type="button"
             onClick={() => shift(-1)}
             disabled={!canGoPrev}
-            className="insights-nav-btn rounded-full p-1.5 disabled:cursor-default disabled:opacity-35"
+            className="insights-nav-btn inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full disabled:cursor-default disabled:opacity-35 sm:h-8 sm:w-8"
             aria-label="Previous period"
           >
-            <ChevronLeft size={14} />
+            <ChevronLeft size={16} />
           </button>
-          <p className="font-display text-[12px] font-semibold text-[var(--accent-deep)]">{boundsLabel}</p>
+          <p className="min-w-0 truncate px-1 text-center font-display text-[12px] font-semibold text-[var(--accent-deep)] sm:text-[13px]">
+            {boundsLabel}
+          </p>
           <button
             type="button"
             onClick={() => shift(1)}
             disabled={!canGoNext}
-            className="insights-nav-btn rounded-full p-1.5 disabled:cursor-default disabled:opacity-35"
+            className="insights-nav-btn inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full disabled:cursor-default disabled:opacity-35 sm:h-8 sm:w-8"
             aria-label="Next period"
           >
-            <ChevronRight size={14} />
+            <ChevronRight size={16} />
           </button>
         </div>
 
-        <div className="mt-3 flex gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {trackers.map((t) => {
-            const active = selectedTracker?.id === t.id
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => setSelectedId(t.id)}
-                className={`insights-chip inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold transition ${
-                  active ? 'text-white shadow-sm' : ''
-                }`}
-                style={active ? { background: t.tabColor, borderColor: 'transparent' } : undefined}
-              >
-                <IconByName name={t.icon} size={12} />
-                {t.tab || t.title}
-              </button>
-            )
-          })}
+        <div className="scroll-fade-x scroll-fade-x--surface mt-3">
+          <div className="touch-scroll-x flex gap-1.5 px-1 pb-0.5">
+            {trackers.map((t) => {
+              const active = selectedTracker?.id === t.id
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setSelectedId(t.id)}
+                  className={`insights-chip inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[12px] font-semibold transition sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-[11px] ${
+                    active ? 'text-white shadow-sm' : ''
+                  }`}
+                  style={active ? { background: t.tabColor, borderColor: 'transparent' } : undefined}
+                >
+                  <IconByName name={t.icon} size={13} />
+                  {t.tab || t.title}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3 sm:px-5 sm:py-4 lg:px-6">
-        <div className="mx-auto w-full max-w-6xl pb-8">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 py-3 sm:px-5 sm:py-4 lg:px-6">
+        <div className="mx-auto w-full max-w-6xl pb-[max(2rem,env(safe-area-inset-bottom))] sm:pb-8">
           <AnimatePresence mode="wait" initial={false}>
             {diary ? (
               <motion.div
@@ -808,7 +814,7 @@ export default function InsightsDashboard() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="mb-4 flex items-center gap-3">
+                <div className="mb-3 flex items-center gap-3 sm:mb-4">
                   <span
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white shadow-md"
                     style={{ background: diary.tracker.tabColor }}
@@ -816,7 +822,7 @@ export default function InsightsDashboard() {
                     <IconByName name={diary.tracker.icon} size={17} />
                   </span>
                   <div className="min-w-0">
-                    <h3 className="font-display text-[16px] font-semibold tracking-tight text-[var(--ink)]">
+                    <h3 className="truncate font-display text-[15px] font-semibold tracking-tight text-[var(--ink)] sm:text-[16px]">
                       {diary.tracker.title}
                     </h3>
                     <p className="text-[11px] text-[var(--ink-soft)]">
@@ -825,10 +831,11 @@ export default function InsightsDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2 lg:gap-6">
-                  <section className="min-w-0">
+                {/* Mobile: 1-col stack (journal → chart). Desktop: 2-col side-by-side. */}
+                <div className="flex flex-col gap-3 sm:gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
+                  <section className="order-1 min-w-0">
                     <StoryCard className="overflow-hidden !p-0">
-                      <div className="flex items-center justify-between gap-2 border-b border-[var(--page-edge)]/40 px-4 py-3 sm:px-5">
+                      <div className="flex items-center justify-between gap-2 border-b border-[var(--page-edge)]/40 px-3.5 py-3 sm:px-5">
                         <h4 className="font-display text-[13px] font-semibold text-[var(--ink)]">
                           Journal
                         </h4>
@@ -845,7 +852,7 @@ export default function InsightsDashboard() {
                           ))}
                         </ul>
                       ) : (
-                        <div className="px-5 py-8">
+                        <div className="px-4 py-7 sm:px-5 sm:py-8">
                           <p className="text-[13px] text-[var(--ink-soft)]">
                             No entries yet for this {diary.bounds.periodWord}.
                           </p>
@@ -854,7 +861,7 @@ export default function InsightsDashboard() {
                     </StoryCard>
                   </section>
 
-                  <aside className="min-w-0">
+                  <aside className="order-2 min-w-0">
                     <div className="lg:sticky lg:top-2">
                       <TrackerChart diary={diary} />
                     </div>

@@ -241,7 +241,7 @@ export default function SettingsModal({ open, onClose }) {
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[80] flex items-end justify-center px-3 py-4 sm:items-center sm:px-4 sm:py-6 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
+    <div className="fixed inset-0 z-[80] flex items-end justify-center px-0 py-0 sm:items-center sm:px-4 sm:py-6 pt-[max(0px,env(safe-area-inset-top))] pb-0 sm:pb-[max(1rem,env(safe-area-inset-bottom))]">
       <button
         type="button"
         aria-label="Close settings backdrop"
@@ -252,26 +252,29 @@ export default function SettingsModal({ open, onClose }) {
         role="dialog"
         aria-modal="true"
         aria-label="Settings"
-        initial={{ opacity: 0, scale: 0.96, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-        className="book-shadow paper-texture relative z-10 flex max-h-[min(88vh,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1.5rem))] w-full max-w-lg flex-col overflow-hidden rounded-[28px] border border-[var(--page-edge)]"
+        initial={{ opacity: 0, y: 48 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+        className="settings-sheet book-shadow paper-texture relative z-10 flex max-h-[min(92dvh,calc(100dvh-env(safe-area-inset-top)-0.5rem))] w-full max-w-lg flex-col overflow-hidden rounded-t-[1.75rem] border border-b-0 border-[var(--page-edge)] sm:max-h-[min(88vh,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1.5rem))] sm:rounded-[28px] sm:border"
       >
-        <div className="flex shrink-0 items-center justify-between border-b border-[var(--page-edge)]/70 px-5 py-4">
-          <div>
-            <p className="font-display text-lg font-semibold text-[var(--ink)]">Settings</p>
-            <p className="text-[11px] text-[var(--ink-soft)]">
-              Customize pages & keep your Selfix Life cozy
-            </p>
+        <div className="flex shrink-0 flex-col items-stretch border-b border-[var(--page-edge)]/70 px-4 pt-2.5 pb-3 sm:px-5 sm:pt-4 sm:pb-4">
+          <div className="mx-auto mb-2 h-1.5 w-11 rounded-full bg-[var(--page-edge)] sm:hidden" aria-hidden />
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-display text-lg font-semibold text-[var(--ink)]">Settings</p>
+              <p className="text-[11px] text-[var(--ink-soft)]">
+                Customize pages & keep your Selfix Life cozy
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[var(--ink-soft)] hover:bg-[var(--accent-glow)]"
+              aria-label="Close settings"
+            >
+              <X size={18} />
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-[var(--ink-soft)] hover:bg-[var(--accent-glow)]"
-            aria-label="Close settings"
-          >
-            <X size={18} />
-          </button>
         </div>
 
         <div className="flex shrink-0 gap-1 border-b border-[var(--page-edge)]/50 px-4 pt-3">
@@ -299,7 +302,7 @@ export default function SettingsModal({ open, onClose }) {
           })}
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-5 sm:pb-4">
           <AnimatePresence mode="wait">
             {tab === 'pages' ? (
               <motion.div

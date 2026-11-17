@@ -217,6 +217,63 @@ body,
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
 }
 
+/* Smooth horizontal pill / tab strips with edge fades */
+.touch-scroll-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.touch-scroll-x::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-fade-x {
+  position: relative;
+  isolation: isolate;
+}
+
+.scroll-fade-x::before,
+.scroll-fade-x::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(1.25rem, 6vw, 2rem);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.scroll-fade-x::before {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    var(--scroll-fade, var(--bg-1)),
+    transparent
+  );
+}
+
+.scroll-fade-x::after {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    var(--scroll-fade, var(--bg-1)),
+    transparent
+  );
+}
+
+.scroll-fade-x--surface {
+  --scroll-fade: color-mix(in srgb, var(--surface) 96%, var(--paper));
+}
+
+.scroll-fade-x--paper {
+  --scroll-fade: var(--paper);
+}
+
 .safe-pt {
   padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
 }
@@ -1280,14 +1337,20 @@ h3,
   }
 }
 
+.book-tabs-fade {
+  --scroll-fade: var(--bg-1);
+}
+
 .book-tabs-scroll {
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x proximity;
   align-items: flex-end;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
 }
 
 .book-tabs-scroll > button {
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   flex: 0 0 auto;
   box-sizing: border-box;
   line-height: 1;
@@ -1295,7 +1358,31 @@ h3,
 
 @media (max-width: 640px) {
   .insights-chart-card {
-    min-height: 17rem;
+    min-height: 15.5rem;
+  }
+
+  .insights-shell {
+    overflow-x: hidden;
+  }
+
+  .insights-header {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .settings-sheet {
+    border-radius: 1.75rem 1.75rem 0 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .soft-time-sheet {
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    width: auto !important;
+    max-width: none !important;
+    bottom: max(0.75rem, env(safe-area-inset-bottom, 0px)) !important;
+    top: auto !important;
   }
 
   .auth-form-card {

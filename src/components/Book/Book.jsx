@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   Apple,
@@ -78,6 +78,8 @@ export default function Book() {
   const [pageIndex, setPageIndex] = useState(0)
   const [showInsights, setShowInsights] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const tabsScrollRef = useRef(null)
+  const tabBtnRefs = useRef([])
 
   const today = useMemo(() => {
     const d = new Date()
@@ -89,6 +91,13 @@ export default function Book() {
     if (!trackers.length) return
     if (pageIndex >= trackers.length) setPageIndex(Math.max(0, trackers.length - 1))
   }, [trackers, pageIndex])
+
+  useEffect(() => {
+    if (showInsights) return
+    const btn = tabBtnRefs.current[pageIndex]
+    if (!btn) return
+    btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' })
+  }, [pageIndex, showInsights, trackers.length])
 
   const go = (next) => {
     if (next < 0 || next >= trackers.length) return
@@ -146,15 +155,15 @@ export default function Book() {
 
   return (
     <FocusTimerProvider>
-      <div className="safe-pt safe-px relative flex min-h-[100dvh] h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-auto px-2.5 py-2 sm:px-5 sm:py-3">
+      <div className="safe-pt safe-px relative flex min-h-[100dvh] h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-auto px-2 py-2 sm:px-5 sm:py-3">
         <AmbientGlow />
-        <header className="relative z-10 mb-1 flex shrink-0 items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+        <header className="relative z-10 mb-1 flex shrink-0 items-center justify-between gap-1.5 sm:gap-2">
+          <div className="flex min-w-0 items-center gap-1 sm:gap-2">
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="soft-shimmer flex min-h-11 shrink-0 items-center rounded-full bg-[var(--surface)] px-3 py-2 text-xs font-bold shadow-md backdrop-blur sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
+              className="soft-shimmer flex min-h-11 max-w-[42vw] shrink items-center truncate rounded-full bg-[var(--surface)] px-2.5 py-2 text-xs font-bold shadow-md backdrop-blur sm:max-w-none sm:min-h-0 sm:shrink-0 sm:px-3 sm:py-1.5 sm:text-xs"
             >
-              <span className="font-display text-[var(--accent-deep)]">Selfix Life</span>
+              <span className="truncate font-display text-[var(--accent-deep)]">Selfix Life</span>
               {profile.displayName && profile.displayName !== 'Selfix Life' ? (
                 <span className="hidden text-[var(--ink-soft)] sm:inline"> · {profile.displayName}</span>
               ) : null}
@@ -229,30 +238,38 @@ export default function Book() {
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
         <div className="relative z-10 mx-auto flex w-full max-w-7xl min-h-0 flex-1 flex-col overflow-x-hidden sm:max-h-[min(88vh,100%)] sm:w-[min(95%,72rem)]">
-          <div className="book-tabs-scroll relative z-20 flex h-11 shrink-0 items-end justify-start gap-1 overflow-x-auto px-1 pb-0 sm:h-9 sm:justify-center sm:gap-1 sm:px-8 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {trackers.map((t, i) => {
-              const TabIcon = ICONS[t.icon] || Star
-              const active = !showInsights && i === pageIndex
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => go(i)}
-                  title={t.title}
-                  className={`relative inline-flex h-11 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-t-xl px-3 text-[11px] font-bold leading-none transition-colors duration-150 sm:h-7 sm:gap-1 sm:px-2 sm:text-[10px] ${
-                    active
-                      ? 'z-[1] text-white shadow-sm'
-                      : 'text-[var(--ink)] opacity-90 hover:opacity-100'
-                  }`}
-                  style={{
-                    background: active ? t.tabColor : `${t.tabColor}99`,
-                  }}
-                >
-                  <TabIcon size={12} className="relative z-10 shrink-0" aria-hidden />
-                  <span className="relative z-10 whitespace-nowrap">{t.tab}</span>
-                </button>
-              )
-            })}
+          <div className="book-tabs-fade scroll-fade-x relative z-20 shrink-0">
+            <div
+              ref={tabsScrollRef}
+              className="book-tabs-scroll touch-scroll-x relative flex h-11 items-end justify-start gap-1.5 px-3 pb-0 sm:h-9 sm:justify-center sm:gap-1 sm:px-8"
+            >
+              {trackers.map((t, i) => {
+                const TabIcon = ICONS[t.icon] || Star
+                const active = !showInsights && i === pageIndex
+                return (
+                  <button
+                    key={t.id}
+                    ref={(el) => {
+                      tabBtnRefs.current[i] = el
+                    }}
+                    type="button"
+                    onClick={() => go(i)}
+                    title={t.title}
+                    className={`relative inline-flex h-11 min-w-[2.75rem] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-t-xl px-3.5 text-[11px] font-bold leading-none transition-colors duration-150 sm:h-7 sm:min-w-0 sm:gap-1 sm:px-2 sm:text-[10px] ${
+                      active
+                        ? 'z-[1] text-white shadow-sm'
+                        : 'text-[var(--ink)] opacity-90 hover:opacity-100'
+                    }`}
+                    style={{
+                      background: active ? t.tabColor : `${t.tabColor}99`,
+                    }}
+                  >
+                    <TabIcon size={13} className="relative z-10 shrink-0" aria-hidden />
+                    <span className="relative z-10 whitespace-nowrap">{t.tab}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           <div
@@ -286,7 +303,7 @@ export default function Book() {
             </div>
           </div>
 
-          <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 pb-[4.75rem] sm:mt-1.5 sm:pb-0">
+          <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 pb-[max(4.5rem,calc(env(safe-area-inset-bottom)+3.75rem))] sm:mt-1.5 sm:pb-0">
             {showInsights ? (
               <>
                 <span className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:inline">

@@ -117,7 +117,7 @@ export default function MobileLogSheet({ open, onClose, tracker, selectedDay }) 
             role="dialog"
             aria-modal="true"
             aria-label={`${title} for ${dateLabel}`}
-            className="mobile-log-panel absolute inset-x-0 bottom-0 flex max-h-[92dvh] flex-col overflow-hidden rounded-t-[1.75rem] border border-b-0 border-[var(--page-edge)] bg-[var(--paper)] shadow-[0_-18px_48px_rgba(0,0,0,0.18)]"
+            className="mobile-log-panel absolute inset-x-0 bottom-0 flex max-h-[min(94dvh,calc(100dvh-env(safe-area-inset-top)-0.5rem))] w-full max-w-full flex-col overflow-hidden rounded-t-[1.75rem] border border-b-0 border-[var(--page-edge)] bg-[var(--paper)] shadow-[0_-18px_48px_rgba(0,0,0,0.18)]"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}

@@ -978,24 +978,24 @@ export function FocusPanel({ month, day }) {
             key={q.id}
             type="button"
             onClick={() => addDelta(q.minutes)}
-            className="inline-flex h-8 items-center rounded-full bg-[var(--accent-glow)]/55 px-2.5 text-[11px] font-semibold text-[var(--accent-deep)] ring-1 ring-[var(--accent)]/25 transition-colors duration-150 hover:bg-[var(--accent-soft)]/70"
+            className="inline-flex min-h-10 items-center rounded-full bg-[var(--accent-glow)]/55 px-3 py-2 text-[12px] font-semibold text-[var(--accent-deep)] ring-1 ring-[var(--accent)]/25 transition-colors duration-150 hover:bg-[var(--accent-soft)]/70 sm:min-h-0 sm:h-8 sm:px-2.5 sm:py-0 sm:text-[11px]"
           >
             {q.label}
           </button>
         ))}
 
-        <div className="flex min-w-[7.5rem] flex-1 items-center gap-1">
+        <div className="flex min-w-0 flex-1 basis-[7.5rem] items-center gap-1">
           <SoftInput
             value={customRaw}
             onChange={(e) => setCustomRaw(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addCustom()}
             placeholder="45m / 1.5h"
-            className="!min-h-8 !rounded-full !px-2.5 !py-1 !text-[11px] sm:!text-[11px]"
+            className="!min-h-10 !rounded-full !px-2.5 !py-2 !text-base sm:!min-h-8 sm:!py-1 sm:!text-[11px]"
           />
           <button
             type="button"
             onClick={addCustom}
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent-deep)] text-white"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--accent-deep)] text-white sm:h-8 sm:w-8"
             aria-label="Add custom time"
           >
             <Plus size={14} />
@@ -1004,7 +1004,7 @@ export function FocusPanel({ month, day }) {
             type="button"
             onClick={undoLast}
             disabled={!canUndo || minutes <= 0}
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/55 transition enabled:hover:text-[var(--ink)] disabled:opacity-35"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/55 transition enabled:hover:text-[var(--ink)] disabled:opacity-35 sm:h-8 sm:w-8"
             aria-label="Undo last add"
             title="Undo last add"
           >

@@ -221,7 +221,7 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
 
   return (
     <>
-      <div className="flex h-full min-h-0 w-full flex-col overflow-hidden p-3 md:grid md:grid-cols-2 md:gap-0 md:p-0 md:pt-1 md:pb-1">
+      <div className="flex h-full min-h-0 w-full flex-col overflow-hidden p-2.5 sm:p-3 md:grid md:grid-cols-2 md:gap-0 md:p-0 md:pt-1 md:pb-1">
         {feed}
 
         <section className="book-page--right hidden min-h-0 flex-col overflow-hidden md:flex md:h-full md:min-h-0 md:pl-6 md:pr-5">

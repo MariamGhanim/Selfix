@@ -5,11 +5,11 @@ export default function Legend({ trackerId, levels }) {
   const selected = state.selectedLevel?.[trackerId]
 
   return (
-    <div className="flex w-full flex-wrap items-center justify-center gap-1.5">
+    <div className="flex w-full flex-wrap items-center justify-center gap-1.5 px-0.5">
       <button
         type="button"
         onClick={() => setSelectedLevel(trackerId, null)}
-        className={`inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-[9px] ${
+        className={`inline-flex min-h-10 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-[9px] ${
           selected == null
             ? 'bg-[var(--accent-soft)]/80 text-[var(--accent-deep)] ring-1 ring-[var(--accent)]/35 shadow-sm'
             : 'bg-[#fffaf7] text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/45'
@@ -23,9 +23,9 @@ export default function Legend({ trackerId, levels }) {
         return (
           <button
             key={String(level.value)}
-            type="button"
             onClick={() => setSelectedLevel(trackerId, active ? null : level.value)}
-            className={`inline-flex min-h-9 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-[9px] ${
+            type="button"
+            className={`inline-flex min-h-10 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-[11px] font-medium tracking-wide transition-colors duration-150 sm:min-h-0 sm:px-2 sm:py-0.5 sm:text-[9px] ${
               active
                 ? 'ring-1 ring-[var(--accent-deep)]/40 shadow-sm'
                 : 'ring-1 ring-[var(--page-edge)]/35'

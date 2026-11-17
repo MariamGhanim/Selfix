@@ -31,7 +31,7 @@ export function Chip({ active, onClick, emoji, label, colorIndex = 0, compact = 
       transition={{ type: 'spring', stiffness: 400, damping: 26 }}
       className={`inline-flex max-w-full items-center text-left font-medium leading-tight ${
         compact
-          ? 'min-h-8 gap-1 rounded-full px-2 py-1 text-[10px] sm:min-h-0 sm:px-1.5 sm:py-0.5 sm:text-[10px]'
+          ? 'min-h-10 gap-1 rounded-full px-2.5 py-2 text-[11px] sm:min-h-0 sm:px-1.5 sm:py-0.5 sm:text-[10px]'
           : 'min-h-11 gap-1.5 rounded-full px-3.5 py-2.5 text-xs sm:min-h-0 sm:gap-1 sm:px-2.5 sm:py-1 sm:text-[11px]'
       } ${active ? 'shadow-sm ring-2 ring-white/50' : 'opacity-90 hover:opacity-100'}`}
       style={{

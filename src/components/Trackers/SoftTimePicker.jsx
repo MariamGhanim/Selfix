@@ -28,6 +28,20 @@ function commitText(text) {
   return toStorageTime(parsed.hours24, parsed.minutes)
 }
 
+function useNarrowSheet(breakpoint = 640) {
+  const [narrow, setNarrow] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(`(max-width: ${breakpoint - 1}px)`).matches : false,
+  )
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`)
+    const onChange = () => setNarrow(mq.matches)
+    onChange()
+    mq.addEventListener?.('change', onChange)
+    return () => mq.removeEventListener?.('change', onChange)
+  }, [breakpoint])
+  return narrow
+}
+
 export default function SoftTimePicker({
   value = '',
   onChange,
@@ -44,6 +58,7 @@ export default function SoftTimePicker({
   const [text, setText] = useState(() => (value ? formatDisplayTime(value) : ''))
   const [open, setOpen] = useState(false)
   const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0, width: 260 })
+  const isSheet = useNarrowSheet(640)
 
   const parts = storageToParts(value)
 
@@ -56,6 +71,7 @@ export default function SoftTimePicker({
     if (!open) return undefined
 
     const place = () => {
+      if (isSheet) return
       const el = rootRef.current
       if (!el) return
       const rect = el.getBoundingClientRect()
@@ -92,7 +108,7 @@ export default function SoftTimePicker({
       document.removeEventListener('pointerdown', onDoc)
       document.removeEventListener('keydown', onKey)
     }
-  }, [open])
+  }, [open, isSheet])
 
   const emit = (storage, { commit = true } = {}) => {
     onChange?.(storage)
@@ -143,6 +159,141 @@ export default function SoftTimePicker({
     applyParts(hour12, next, isPm)
   }
 
+  const pickerBody = (
+    <>
+      <div
+        className="mb-3 rounded-[1.1rem] px-3 py-2.5 text-center"
+        style={{
+          background:
+            'linear-gradient(135deg, color-mix(in srgb, var(--accent-glow) 85%, white), color-mix(in srgb, var(--accent-soft) 35%, var(--surface)))',
+        }}
+      >
+        {isSheet ? (
+          <div className="mx-auto mb-2 h-1.5 w-10 rounded-full bg-[var(--page-edge)]" aria-hidden />
+        ) : null}
+        <p className="font-display text-lg font-semibold tracking-tight text-[var(--accent-deep)]">
+          {title}
+        </p>
+        {value ? (
+          <p className="mt-0.5 font-display text-sm font-semibold tabular-nums text-[var(--ink)]">
+            {formatDisplayTime(value)}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+        <div className="flex flex-col items-center rounded-2xl bg-[var(--accent-glow)]/55 p-1.5 ring-1 ring-[var(--page-edge)]/40">
+          <button
+            type="button"
+            aria-label="Hour up"
+            onClick={() => nudgeHour(1)}
+            className="inline-flex h-11 w-full items-center justify-center rounded-xl text-[var(--accent-deep)] hover:bg-[var(--surface)] sm:h-8"
+          >
+            <ChevronUp size={16} />
+          </button>
+          <p className="font-display text-2xl font-semibold tabular-nums text-[var(--ink)]">
+            {parts.hour12}
+          </p>
+          <button
+            type="button"
+            aria-label="Hour down"
+            onClick={() => nudgeHour(-1)}
+            className="inline-flex h-11 w-full items-center justify-center rounded-xl text-[var(--accent-deep)] hover:bg-[var(--surface)] sm:h-8"
+          >
+            <ChevronDown size={16} />
+          </button>
+        </div>
+
+        <span className="font-display text-2xl font-semibold text-[var(--accent-deep)]">:</span>
+
+        <div className="flex flex-col items-center rounded-2xl bg-[var(--accent-glow)]/55 p-1.5 ring-1 ring-[var(--page-edge)]/40">
+          <button
+            type="button"
+            aria-label="Minute up"
+            onClick={() => nudgeMinute(15)}
+            className="inline-flex h-11 w-full items-center justify-center rounded-xl text-[var(--accent-deep)] hover:bg-[var(--surface)] sm:h-8"
+          >
+            <ChevronUp size={16} />
+          </button>
+          <p className="font-display text-2xl font-semibold tabular-nums text-[var(--ink)]">
+            {String(parts.minutes).padStart(2, '0')}
+          </p>
+          <button
+            type="button"
+            aria-label="Minute down"
+            onClick={() => nudgeMinute(-15)}
+            className="inline-flex h-11 w-full items-center justify-center rounded-xl text-[var(--accent-deep)] hover:bg-[var(--surface)] sm:h-8"
+          >
+            <ChevronDown size={16} />
+          </button>
+        </div>
+      </div>
+
+      <div className="mb-3 grid grid-cols-2 gap-1.5">
+        {['AM', 'PM'].map((label) => {
+          const active = label === 'PM' ? parts.isPm : !parts.isPm
+          return (
+            <button
+              key={label}
+              type="button"
+              onClick={() => applyParts(parts.hour12, parts.minutes, label === 'PM')}
+              className={`min-h-11 rounded-full px-3 py-2.5 text-xs font-bold transition sm:min-h-0 sm:py-2 ${
+                active
+                  ? 'bg-[var(--accent-deep)] text-white shadow-sm'
+                  : 'bg-[var(--surface)] text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/60 hover:bg-[var(--accent-glow)]'
+              }`}
+            >
+              {label}
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="mb-3 flex flex-wrap gap-1.5">
+        {MINUTE_PILLS.map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => applyParts(parts.hour12, m, parts.isPm)}
+            className={`min-h-10 rounded-full px-3 py-2 text-[11px] font-bold transition sm:min-h-0 sm:px-2.5 sm:py-1.5 sm:text-[10px] ${
+              parts.minutes === m
+                ? 'bg-[var(--accent)] text-white'
+                : 'bg-[var(--accent-glow)] text-[var(--accent-deep)]'
+            }`}
+          >
+            :{String(m).padStart(2, '0')}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap gap-1.5">
+        {QUICK_TIMES.map((q) => (
+          <button
+            key={q.storage}
+            type="button"
+            onClick={() => {
+              emit(q.storage)
+              setOpen(false)
+            }}
+            className="min-h-10 rounded-full bg-[var(--surface)] px-3 py-2 text-[11px] font-bold text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/55 transition hover:bg-[var(--accent-glow)] hover:text-[var(--accent-deep)] sm:min-h-0 sm:px-2.5 sm:py-1.5 sm:text-[10px]"
+          >
+            {q.label}
+          </button>
+        ))}
+      </div>
+
+      {isSheet ? (
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[var(--accent-deep)] px-4 py-2.5 text-sm font-semibold text-white shadow-md"
+        >
+          Done
+        </button>
+      ) : null}
+    </>
+  )
+
   return (
     <div ref={rootRef} className={`relative ${className}`}>
       <div className="flex items-center gap-1">
@@ -162,7 +313,6 @@ export default function SoftTimePicker({
             if (value) setText(formatDisplayTime(value))
           }}
           onBlur={() => {
-            // Delay so picker clicks can land first.
             window.setTimeout(() => {
               if (popoverRef.current?.contains(document.activeElement)) return
               finalizeText()
@@ -199,8 +349,44 @@ export default function SoftTimePicker({
       {typeof document !== 'undefined' &&
         createPortal(
           <AnimatePresence>
-            {open && (
+            {open && isSheet ? (
               <motion.div
+                key="time-sheet"
+                className="fixed inset-0 z-[90]"
+                data-no-flip
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.18 }}
+              >
+                <button
+                  type="button"
+                  aria-label="Close time picker"
+                  className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"
+                  onClick={() => setOpen(false)}
+                />
+                <motion.div
+                  ref={popoverRef}
+                  id={listId}
+                  role="dialog"
+                  aria-label={title}
+                  data-no-flip
+                  initial={{ y: '100%' }}
+                  animate={{ y: 0 }}
+                  exit={{ y: '100%' }}
+                  transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+                  className="soft-time-sheet absolute inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-10 max-h-[min(78dvh,34rem)] overflow-y-auto rounded-[1.5rem] border border-[var(--page-edge)]/70 bg-[var(--surface)] p-4 shadow-[0_18px_40px_rgba(90,50,70,0.22)] backdrop-blur-md"
+                  onClick={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  {pickerBody}
+                </motion.div>
+              </motion.div>
+            ) : null}
+
+            {open && !isSheet ? (
+              <motion.div
+                key="time-popover"
                 ref={popoverRef}
                 id={listId}
                 role="dialog"
@@ -217,125 +403,9 @@ export default function SoftTimePicker({
                   width: popoverPos.width,
                 }}
               >
-                <div
-                  className="mb-3 rounded-[1.1rem] px-3 py-2.5 text-center"
-                  style={{
-                    background:
-                      'linear-gradient(135deg, color-mix(in srgb, var(--accent-glow) 85%, white), color-mix(in srgb, var(--accent-soft) 35%, var(--surface)))',
-                  }}
-                >
-                  <p className="font-display text-lg font-semibold tracking-tight text-[var(--accent-deep)]">
-                    {title}
-                  </p>
-                  {value ? (
-                    <p className="mt-0.5 font-display text-sm font-semibold tabular-nums text-[var(--ink)]">
-                      {formatDisplayTime(value)}
-                    </p>
-                  ) : null}
-                </div>
-
-                <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                  <div className="flex flex-col items-center rounded-2xl bg-[var(--accent-glow)]/55 p-1.5 ring-1 ring-[var(--page-edge)]/40">
-                    <button
-                      type="button"
-                      aria-label="Hour up"
-                      onClick={() => nudgeHour(1)}
-                      className="inline-flex h-8 w-full items-center justify-center rounded-xl text-[var(--accent-deep)] hover:bg-[var(--surface)]"
-                    >
-                      <ChevronUp size={16} />
-                    </button>
-                    <p className="font-display text-2xl font-semibold tabular-nums text-[var(--ink)]">
-                      {parts.hour12}
-                    </p>
-                    <button
-                      type="button"
-                      aria-label="Hour down"
-                      onClick={() => nudgeHour(-1)}
-                      className="inline-flex h-8 w-full items-center justify-center rounded-xl text-[var(--accent-deep)] hover:bg-[var(--surface)]"
-                    >
-                      <ChevronDown size={16} />
-                    </button>
-                  </div>
-
-                  <span className="font-display text-2xl font-semibold text-[var(--accent-deep)]">:</span>
-
-                  <div className="flex flex-col items-center rounded-2xl bg-[var(--accent-glow)]/55 p-1.5 ring-1 ring-[var(--page-edge)]/40">
-                    <button
-                      type="button"
-                      aria-label="Minute up"
-                      onClick={() => nudgeMinute(15)}
-                      className="inline-flex h-8 w-full items-center justify-center rounded-xl text-[var(--accent-deep)] hover:bg-[var(--surface)]"
-                    >
-                      <ChevronUp size={16} />
-                    </button>
-                    <p className="font-display text-2xl font-semibold tabular-nums text-[var(--ink)]">
-                      {String(parts.minutes).padStart(2, '0')}
-                    </p>
-                    <button
-                      type="button"
-                      aria-label="Minute down"
-                      onClick={() => nudgeMinute(-15)}
-                      className="inline-flex h-8 w-full items-center justify-center rounded-xl text-[var(--accent-deep)] hover:bg-[var(--surface)]"
-                    >
-                      <ChevronDown size={16} />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mb-3 grid grid-cols-2 gap-1.5">
-                  {['AM', 'PM'].map((label) => {
-                    const active = label === 'PM' ? parts.isPm : !parts.isPm
-                    return (
-                      <button
-                        key={label}
-                        type="button"
-                        onClick={() => applyParts(parts.hour12, parts.minutes, label === 'PM')}
-                        className={`rounded-full px-3 py-2 text-xs font-bold transition ${
-                          active
-                            ? 'bg-[var(--accent-deep)] text-white shadow-sm'
-                            : 'bg-[var(--surface)] text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/60 hover:bg-[var(--accent-glow)]'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    )
-                  })}
-                </div>
-
-                <div className="mb-3 flex flex-wrap gap-1.5">
-                  {MINUTE_PILLS.map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => applyParts(parts.hour12, m, parts.isPm)}
-                      className={`rounded-full px-2.5 py-1.5 text-[10px] font-bold transition ${
-                        parts.minutes === m
-                          ? 'bg-[var(--accent)] text-white'
-                          : 'bg-[var(--accent-glow)] text-[var(--accent-deep)]'
-                      }`}
-                    >
-                      :{String(m).padStart(2, '0')}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {QUICK_TIMES.map((q) => (
-                    <button
-                      key={q.storage}
-                      type="button"
-                      onClick={() => {
-                        emit(q.storage)
-                        setOpen(false)
-                      }}
-                      className="rounded-full bg-[var(--surface)] px-2.5 py-1.5 text-[10px] font-bold text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/55 transition hover:bg-[var(--accent-glow)] hover:text-[var(--accent-deep)]"
-                    >
-                      {q.label}
-                    </button>
-                  ))}
-                </div>
+                {pickerBody}
               </motion.div>
-            )}
+            ) : null}
           </AnimatePresence>,
           document.body,
         )}
