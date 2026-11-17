@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Home, MapPin, ShoppingBag } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, Home, MapPin, ShoppingBag } from 'lucide-react'
 import * as LucideIcons from 'lucide-react'
 import {
   Area,
@@ -117,7 +117,11 @@ function IconByName({ name, size = 14 }) {
 
 function PeriodSwitcher({ value, onChange }) {
   return (
-    <div className="insights-pill-track inline-flex max-w-full rounded-full p-1">
+    <div
+      className="insights-pill-track insights-pill-track--compact inline-flex h-[30px] max-w-full shrink-0 items-center rounded-full p-0.5"
+      role="group"
+      aria-label="Diary range"
+    >
       {DIARY_RANGES.map((range) => {
         const active = value === range.id
         return (
@@ -125,7 +129,7 @@ function PeriodSwitcher({ value, onChange }) {
             key={range.id}
             type="button"
             onClick={() => onChange(range.id)}
-            className={`inline-flex min-h-10 items-center rounded-full px-3.5 py-2 text-[11px] font-semibold tracking-wide transition sm:min-h-0 sm:py-1.5 ${
+            className={`inline-flex h-full items-center rounded-full px-3 text-[12px] font-semibold tracking-wide transition ${
               active
                 ? 'bg-[var(--accent-deep)] text-white shadow-sm'
                 : 'text-[var(--ink-soft)] hover:text-[var(--ink)]'
@@ -135,6 +139,146 @@ function PeriodSwitcher({ value, onChange }) {
           </button>
         )
       })}
+    </div>
+  )
+}
+
+function HabitSwitcher({ trackers, selectedId, onSelect, loggedIds }) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef(null)
+  const listRef = useRef(null)
+  const selected = trackers.find((t) => t.id === selectedId) || trackers[0]
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onPointerDown = (e) => {
+      if (!rootRef.current?.contains(e.target)) setOpen(false)
+    }
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setOpen(false)
+      }
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return
+    const active = listRef.current?.querySelector('[aria-selected="true"]')
+    active?.focus?.()
+  }, [open])
+
+  const onListKeyDown = useCallback(
+    (e) => {
+      const buttons = [...(listRef.current?.querySelectorAll('button[role="option"]') || [])]
+      if (!buttons.length) return
+      const idx = buttons.findIndex((b) => b === document.activeElement)
+      const cols = window.matchMedia('(min-width: 480px)').matches ? 4 : 3
+      let next = idx
+      if (e.key === 'ArrowRight') next = Math.min(buttons.length - 1, (idx < 0 ? 0 : idx) + 1)
+      else if (e.key === 'ArrowLeft') next = Math.max(0, (idx < 0 ? 0 : idx) - 1)
+      else if (e.key === 'ArrowDown') next = Math.min(buttons.length - 1, (idx < 0 ? 0 : idx) + cols)
+      else if (e.key === 'ArrowUp') next = Math.max(0, (idx < 0 ? 0 : idx) - cols)
+      else if (e.key === 'Home') next = 0
+      else if (e.key === 'End') next = buttons.length - 1
+      else return
+      e.preventDefault()
+      buttons[next]?.focus()
+    },
+    [],
+  )
+
+  if (!selected) return null
+
+  return (
+    <div ref={rootRef} className="relative shrink-0">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={`Habit, ${selected.tab || selected.title}`}
+        onClick={() => setOpen((v) => !v)}
+        className="insights-habit-trigger inline-flex h-8 max-w-[11.5rem] items-center gap-1.5 rounded-full px-2.5 text-[12px] font-semibold text-[var(--ink)] transition"
+      >
+        <span
+          className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white"
+          style={{ background: selected.tabColor }}
+          aria-hidden
+        >
+          <IconByName name={selected.icon} size={11} />
+        </span>
+        <span className="min-w-0 truncate">{selected.tab || selected.title}</span>
+        <ChevronDown
+          size={14}
+          className={`shrink-0 text-[var(--accent-deep)] transition-transform ${open ? 'rotate-180' : ''}`}
+          aria-hidden
+        />
+      </button>
+
+      {open ? (
+        <div
+          ref={listRef}
+          role="listbox"
+          aria-label="Habits"
+          tabIndex={-1}
+          onKeyDown={onListKeyDown}
+          className="insights-habit-popover absolute right-0 top-[calc(100%+0.4rem)] z-40 w-[min(18.5rem,calc(100vw-2rem))] rounded-2xl p-2 shadow-[0_14px_32px_rgba(160,110,125,0.16)]"
+        >
+          <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4">
+            {trackers.map((t) => {
+              const active = t.id === selected.id
+              const hasLog = loggedIds?.has(t.id)
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="option"
+                  aria-selected={active}
+                  onClick={() => {
+                    onSelect(t.id)
+                    setOpen(false)
+                  }}
+                  className={`insights-habit-option relative flex min-h-[3.35rem] flex-col items-center justify-center gap-1 rounded-xl px-1.5 py-1.5 text-center transition ${
+                    active ? 'is-active' : ''
+                  }`}
+                  style={
+                    active
+                      ? {
+                          background: `color-mix(in srgb, ${t.tabColor} 22%, var(--surface-strong))`,
+                          boxShadow: `inset 0 0 0 1.5px ${t.tabColor}`,
+                        }
+                      : undefined
+                  }
+                >
+                  <span
+                    className="inline-flex h-6 w-6 items-center justify-center rounded-full text-white"
+                    style={{ background: t.tabColor }}
+                    aria-hidden
+                  >
+                    <IconByName name={t.icon} size={12} />
+                  </span>
+                  <span className="w-full truncate text-[10px] font-semibold leading-tight text-[var(--ink)]">
+                    {t.tab || t.title}
+                  </span>
+                  {hasLog ? (
+                    <span
+                      className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full"
+                      style={{ background: t.tabColor }}
+                      aria-hidden
+                    />
+                  ) : null}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -177,7 +321,7 @@ function DayRow({ entry, tracker }) {
   const badgeTone = badge ? statusBadgeTone(badge.tone) : null
 
   return (
-    <li className="px-3.5 py-3.5 sm:px-5 sm:py-4">
+    <li className="px-3.5 py-3.5 sm:px-4 sm:py-3.5">
       <div className="flex items-start gap-2.5 sm:gap-3">
         <span
           className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
@@ -221,7 +365,8 @@ function DayRow({ entry, tracker }) {
               {notes.map((note) => (
                 <p
                   key={note}
-                  className="rounded-xl bg-[var(--surface)]/70 px-3 py-2 text-[12px] leading-relaxed text-[var(--ink)] ring-1 ring-[var(--page-edge)]/35"
+                  dir="auto"
+                  className="rounded-xl bg-[var(--surface)]/70 px-3 py-2 text-start text-[12px] leading-relaxed text-[var(--ink)] ring-1 ring-[var(--page-edge)]/35"
                 >
                   {note}
                 </p>
@@ -480,7 +625,7 @@ function StatusOverviewCard({ diary }) {
   }, [diary.entries, levels, tracker])
 
   return (
-    <StoryCard className="insights-chart-card insights-status-card flex h-full flex-col px-3 py-3.5 sm:px-5 sm:py-5">
+    <StoryCard className="insights-chart-card insights-status-card flex h-full min-h-0 flex-col overflow-y-auto px-3 py-3.5 sm:px-5 sm:py-4">
       <div className="mb-3 shrink-0">
         <p className="font-display text-[14px] font-semibold text-[var(--ink)] sm:text-[15px]">
           Summary
@@ -578,15 +723,15 @@ function MetricChart({ diary }) {
   const isWeek = diary.bounds.periodWord === 'week'
   const chartData = model.data || []
   const xInterval = isWeek || chartData.length <= 10 ? 0 : 'preserveStartEnd'
-  const barMargin = model.margin || { top: 8, right: 10, left: 0, bottom: 4 }
+  const barMargin = model.margin || { top: 8, right: 10, left: 0, bottom: 8 }
   const yAxisWidth = model.axisWidth ?? (model.kind === 'area' ? 44 : 48)
   const yTickStyle = model.axisWidth
     ? { fill: axisColor, fontSize: 11, whiteSpace: 'nowrap' }
     : { fill: axisColor, fontSize: 10 }
 
   return (
-    <StoryCard className="insights-chart-card flex h-full min-h-[15rem] flex-col px-3 py-3.5 sm:min-h-[22rem] sm:px-5 sm:py-5">
-      <div className="mb-2.5 shrink-0 sm:mb-3">
+    <StoryCard className="insights-chart-card flex h-full min-h-0 flex-col overflow-hidden px-3 py-3.5 sm:px-5 sm:py-4">
+      <div className="mb-2 shrink-0">
         <p className="font-display text-[14px] font-semibold text-[var(--ink)] sm:text-[15px]">
           {model.title}
         </p>
@@ -594,17 +739,17 @@ function MetricChart({ diary }) {
       </div>
 
       {model.kind === 'empty' ? (
-        <div className="flex min-h-[12rem] flex-1 flex-col items-center justify-center rounded-[1.2rem] bg-[var(--surface)]/55 px-5 py-8 text-center ring-1 ring-[var(--page-edge)]/35 sm:min-h-[16rem] sm:px-6 sm:py-10">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center rounded-[1.2rem] bg-[var(--surface)]/55 px-5 py-8 text-center ring-1 ring-[var(--page-edge)]/35 sm:px-6">
           <p className="max-w-[14rem] text-[13px] leading-relaxed text-[var(--ink-soft)]">
             {model.message || 'Nothing to chart yet.'}
           </p>
         </div>
       ) : (
-        <div className="relative min-h-[12.5rem] w-full flex-1 sm:min-h-[16rem]">
-          <div className="absolute inset-0">
-            <ResponsiveContainer width="100%" height="100%">
+        <div className="relative min-h-0 w-full flex-1">
+          <div className="absolute inset-0 min-h-0">
+            <ResponsiveContainer width="100%" height="100%" debounce={50}>
               {model.kind === 'area' ? (
-                <AreaChart data={chartData} margin={{ top: 8, right: 10, left: 0, bottom: 4 }}>
+                <AreaChart data={chartData} margin={{ top: 8, right: 10, left: 0, bottom: 8 }}>
                   <defs>
                     <linearGradient id="insightsFill" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor={model.color} stopOpacity={0.45} />
@@ -740,111 +885,107 @@ export default function InsightsDashboard() {
     setAnchor((prev) => shiftDiaryAnchor(rangeId, prev, dir))
   }
 
+  const loggedIds = useMemo(() => {
+    const ids = new Set()
+    for (const t of trackers) {
+      const d = buildTrackerDiary(state, t.id, rangeId, year, anchor)
+      if (d?.loggedCount > 0) ids.add(t.id)
+    }
+    return ids
+  }, [trackers, state, rangeId, year, anchor])
+
   return (
     <div data-no-flip className="insights-shell flex h-full min-h-0 flex-col overflow-hidden">
-      <header className="insights-header shrink-0 px-3 py-2.5 sm:px-6 sm:py-3">
-        <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
-          <h2 className="font-display text-[1.1rem] font-semibold tracking-tight text-[var(--ink)] sm:text-[1.35rem]">
+      <header className="insights-header shrink-0 px-3 pt-4 pb-3 sm:px-6">
+        <div className="insights-header__row flex min-w-0 flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <h2 className="insights-header__title shrink-0 font-display text-[20px] font-bold tracking-tight text-[var(--ink)]">
             Insights Logbook
           </h2>
-          <PeriodSwitcher
-            value={rangeId}
-            onChange={(id) => {
-              setRangeId(id)
-              setAnchor(new Date())
-            }}
-          />
-        </div>
 
-        <div className="mt-3 flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={() => shift(-1)}
-            disabled={!canGoPrev}
-            className="insights-nav-btn inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full disabled:cursor-default disabled:opacity-35 sm:h-8 sm:w-8"
-            aria-label="Previous period"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <p className="min-w-0 truncate px-1 text-center font-display text-[12px] font-semibold text-[var(--accent-deep)] sm:text-[13px]">
-            {boundsLabel}
-          </p>
-          <button
-            type="button"
-            onClick={() => shift(1)}
-            disabled={!canGoNext}
-            className="insights-nav-btn inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full disabled:cursor-default disabled:opacity-35 sm:h-8 sm:w-8"
-            aria-label="Next period"
-          >
-            <ChevronRight size={16} />
-          </button>
-        </div>
+          <div className="insights-week-pill flex min-w-0 items-center justify-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => shift(-1)}
+              disabled={!canGoPrev}
+              className="insights-nav-btn inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full disabled:cursor-default disabled:opacity-35"
+              aria-label="Previous period"
+            >
+              <ChevronLeft size={15} />
+            </button>
+            <p className="min-w-0 truncate px-1 text-center font-display text-[13px] font-semibold text-[var(--accent-deep)]">
+              {boundsLabel}
+            </p>
+            <button
+              type="button"
+              onClick={() => shift(1)}
+              disabled={!canGoNext}
+              className="insights-nav-btn inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full disabled:cursor-default disabled:opacity-35"
+              aria-label="Next period"
+            >
+              <ChevronRight size={15} />
+            </button>
+          </div>
 
-        <div className="scroll-fade-x scroll-fade-x--surface mt-3">
-          <div className="touch-scroll-x flex gap-1.5 px-1 pb-0.5">
-            {trackers.map((t) => {
-              const active = selectedTracker?.id === t.id
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setSelectedId(t.id)}
-                  className={`insights-chip inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[12px] font-semibold transition sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-[11px] ${
-                    active ? 'text-white shadow-sm' : ''
-                  }`}
-                  style={active ? { background: t.tabColor, borderColor: 'transparent' } : undefined}
-                >
-                  <IconByName name={t.icon} size={13} />
-                  {t.tab || t.title}
-                </button>
-              )
-            })}
+          <div className="insights-header__toggle shrink-0">
+            <PeriodSwitcher
+              value={rangeId}
+              onChange={(id) => {
+                setRangeId(id)
+                setAnchor(new Date())
+              }}
+            />
           </div>
         </div>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-2.5 py-3 sm:px-5 sm:py-4 lg:px-6">
-        <div className="mx-auto w-full max-w-6xl pb-[max(2rem,env(safe-area-inset-bottom))] sm:pb-8">
-          <AnimatePresence mode="wait" initial={false}>
-            {diary ? (
-              <motion.div
-                key={`${diary.tracker.id}-${rangeId}-${boundsLabel}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="mb-3 flex items-center gap-3 sm:mb-4">
-                  <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white shadow-md"
-                    style={{ background: diary.tracker.tabColor }}
-                  >
-                    <IconByName name={diary.tracker.icon} size={17} />
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="truncate font-display text-[15px] font-semibold tracking-tight text-[var(--ink)] sm:text-[16px]">
-                      {diary.tracker.title}
-                    </h3>
-                    <p className="text-[11px] text-[var(--ink-soft)]">
-                      {diary.loggedCount} logged · {diary.bounds.label}
-                    </p>
-                  </div>
+      <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col overflow-hidden px-2.5 pt-3 pb-3 sm:px-5 sm:pb-4 lg:px-6">
+        <AnimatePresence mode="wait" initial={false}>
+          {diary ? (
+            <motion.div
+              key={`${diary.tracker.id}-${rangeId}-${boundsLabel}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="flex min-h-0 flex-1 flex-col gap-3"
+            >
+              <div className="flex shrink-0 items-center gap-2.5 sm:gap-3">
+                <span
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl text-white shadow-md sm:h-10 sm:w-10"
+                  style={{ background: diary.tracker.tabColor }}
+                >
+                  <IconByName name={diary.tracker.icon} size={16} />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h3 className="truncate font-display text-[15px] font-semibold tracking-tight text-[var(--ink)] sm:text-[16px]">
+                    {diary.tracker.title}
+                  </h3>
+                  <p className="text-[11px] text-[var(--ink-soft)]">
+                    {diary.loggedCount} logged · {diary.bounds.label}
+                  </p>
                 </div>
+                <HabitSwitcher
+                  trackers={trackers}
+                  selectedId={selectedTracker?.id}
+                  onSelect={setSelectedId}
+                  loggedIds={loggedIds}
+                />
+              </div>
 
-                {/* Mobile: 1-col stack (journal → chart). Desktop: 2-col side-by-side. */}
-                <div className="flex flex-col gap-3 sm:gap-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6">
-                  <section className="order-1 min-w-0">
-                    <StoryCard className="overflow-hidden !p-0">
-                      <div className="flex items-center justify-between gap-2 border-b border-[var(--page-edge)]/40 px-3.5 py-3 sm:px-5">
-                        <h4 className="font-display text-[13px] font-semibold text-[var(--ink)]">
-                          Journal
-                        </h4>
-                        <span className="text-[10px] font-medium text-[var(--ink-soft)]">
-                          {timeline.length
-                            ? `${timeline.length} day${timeline.length === 1 ? '' : 's'}`
-                            : 'Empty'}
-                        </span>
-                      </div>
+              <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-5">
+                <section className="flex min-h-0 min-w-0 flex-col overflow-hidden">
+                  <StoryCard className="flex h-full min-h-0 flex-col overflow-hidden !p-0">
+                    <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[var(--page-edge)]/40 px-3.5 py-2.5 sm:px-5">
+                      <h4 className="font-display text-[13px] font-semibold text-[var(--ink)]">
+                        Journal
+                      </h4>
+                      <span className="text-[10px] font-medium text-[var(--ink-soft)]">
+                        {timeline.length
+                          ? `${timeline.length} day${timeline.length === 1 ? '' : 's'}`
+                          : 'Empty'}
+                      </span>
+                    </div>
+                    <div className="insights-pane-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain">
                       {timeline.length ? (
                         <ul className="divide-y divide-[var(--page-edge)]/35">
                           {timeline.map((entry) => (
@@ -858,25 +999,23 @@ export default function InsightsDashboard() {
                           </p>
                         </div>
                       )}
-                    </StoryCard>
-                  </section>
-
-                  <aside className="order-2 min-w-0">
-                    <div className="lg:sticky lg:top-2">
-                      <TrackerChart diary={diary} />
                     </div>
-                  </aside>
-                </div>
-              </motion.div>
-            ) : (
-              <StoryCard className="px-5 py-8 text-center">
-                <p className="text-[14px] text-[var(--ink-soft)]">
-                  Enable a tracker in Settings to begin.
-                </p>
-              </StoryCard>
-            )}
-          </AnimatePresence>
-        </div>
+                  </StoryCard>
+                </section>
+
+                <aside className="flex min-h-0 min-w-0 flex-col overflow-hidden max-lg:min-h-[16rem]">
+                  <TrackerChart diary={diary} />
+                </aside>
+              </div>
+            </motion.div>
+          ) : (
+            <StoryCard className="px-5 py-8 text-center">
+              <p className="text-[14px] text-[var(--ink-soft)]">
+                Enable a tracker in Settings to begin.
+              </p>
+            </StoryCard>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )

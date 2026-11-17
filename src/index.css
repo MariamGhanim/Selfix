@@ -1466,14 +1466,37 @@ h3,
 }
 
 .insights-header {
-  border-bottom: 1px solid color-mix(in srgb, var(--accent-soft) 55%, transparent);
+  position: relative;
+  border-bottom: 1px solid color-mix(in srgb, var(--page-edge) 70%, transparent);
   background: color-mix(in srgb, var(--surface) 82%, transparent);
   backdrop-filter: blur(10px);
+}
+
+.insights-header__row {
+  position: relative;
+  min-height: 2rem;
+}
+
+@media (min-width: 900px) {
+  .insights-week-pill {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(100%, 18rem);
+  }
 }
 
 .insights-pill-track {
   background: color-mix(in srgb, var(--log-card-base) 88%, var(--accent-soft));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-soft) 45%, transparent);
+}
+
+.insights-pill-track--compact {
+  min-height: 30px;
+}
+
+.insights-week-pill {
+  max-width: min(100%, 18rem);
 }
 
 .insights-nav-btn {
@@ -1482,9 +1505,66 @@ h3,
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent-soft) 50%, transparent);
 }
 
-.insights-nav-btn:hover {
+.insights-nav-btn:hover:not(:disabled) {
   color: var(--ink);
   background: var(--accent-glow);
+}
+
+.insights-habit-trigger {
+  background: color-mix(in srgb, var(--log-card-base) 92%, white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--page-edge) 65%, transparent);
+}
+
+.insights-habit-trigger:hover {
+  background: color-mix(in srgb, var(--accent-glow) 70%, var(--surface-strong));
+}
+
+.insights-habit-popover {
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--surface-strong) 94%, white),
+      color-mix(in srgb, var(--accent-glow) 40%, var(--surface-strong))
+    );
+  border: 1px solid color-mix(in srgb, var(--page-edge) 75%, transparent);
+}
+
+[data-theme='midnight'] .insights-habit-popover {
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--surface-strong) 92%, #3a3458),
+      color-mix(in srgb, var(--accent-glow) 55%, var(--surface))
+    );
+}
+
+.insights-habit-option {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--page-edge) 45%, transparent);
+  color: var(--ink);
+}
+
+.insights-habit-option:hover {
+  background: color-mix(in srgb, var(--accent-glow) 55%, var(--surface));
+}
+
+.insights-habit-option:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  outline-offset: 1px;
+}
+
+.insights-pane-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent-soft) 70%, transparent) transparent;
+}
+
+.insights-pane-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.insights-pane-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-soft) 70%, transparent);
 }
 
 .insights-chip {
@@ -1500,6 +1580,32 @@ h3,
 .insights-chip-active {
   background: var(--accent-deep);
   box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-deep) 28%, transparent);
+}
+
+@media (max-width: 899px) {
+  .insights-header__row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .insights-header__title {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .insights-header__toggle {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .insights-week-pill {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    max-width: none;
+    width: 100%;
+  }
 }
 
 .insights-story-card {
@@ -1575,7 +1681,8 @@ h3,
 }
 
 .insights-chart-card {
-  min-height: 22rem;
+  min-height: 0;
+  height: 100%;
 }
 
 .insights-status-card {
@@ -1877,10 +1984,6 @@ h3,
 }
 
 @media (max-width: 640px) {
-  .insights-chart-card {
-    min-height: 15.5rem;
-  }
-
   .insights-shell {
     overflow-x: hidden;
   }
