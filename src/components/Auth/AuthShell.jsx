@@ -158,11 +158,16 @@ function AuthBrandPanel() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
-          className="auth-hero-heading mt-3 font-display text-[1.7rem] font-semibold leading-[1.2] tracking-tight text-[var(--ink)] sm:mt-3 sm:max-w-sm sm:text-[1.85rem] sm:leading-[1.25] lg:text-[2rem]"
+          className="auth-hero-heading mt-3 w-full font-display text-[1.55rem] font-semibold leading-[1.25] tracking-tight text-[var(--ink)] sm:mt-3 sm:max-w-sm sm:text-[1.85rem] sm:leading-[1.25] lg:text-[2rem]"
         >
-          A calm place for the days
-          <br className="sm:hidden" />
-          that make your year
+          <span className="sm:hidden">
+            A calm place for
+            <br />
+            the days that make your year
+          </span>
+          <span className="hidden sm:inline">
+            A calm place for the days that make your year
+          </span>
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 10 }}

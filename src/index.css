@@ -1634,10 +1634,11 @@ h3,
   }
 
   .auth-hero-heading {
-    font-size: clamp(1.65rem, 7.2vw, 2rem) !important;
-    line-height: 1.18 !important;
+    font-size: clamp(1.45rem, 5.8vw, 1.65rem) !important;
+    line-height: 1.26 !important;
     letter-spacing: -0.02em;
-    max-width: 18.5rem;
+    max-width: none;
+    width: 100%;
   }
 
   .auth-brand-glow {
