@@ -101,15 +101,10 @@ export default function AuthPage() {
       subtitle={meta.subtitle}
       footer={
         mode === 'login' ? (
-          <>
-            <p>
-              New here?{' '}
-              <AuthLinkButton onClick={() => switchMode('signup')}>Create an account</AuthLinkButton>
-            </p>
-            <p className="mt-2 font-display text-[11px] font-medium tracking-wide text-[var(--ink-soft)]/85">
-              Free to use · Your journal stays private.
-            </p>
-          </>
+          <p>
+            New here?{' '}
+            <AuthLinkButton onClick={() => switchMode('signup')}>Create an account</AuthLinkButton>
+          </p>
         ) : mode === 'signup' ? (
           <>
             Already have an account?{' '}
@@ -176,30 +171,30 @@ export default function AuthPage() {
           )}
 
           {mode === 'login' && (
-            <div className="mb-3 text-right text-xs">
+            <div className="mb-4 flex justify-end">
               <AuthLinkButton onClick={() => switchMode('forgot')}>Forgot password?</AuthLinkButton>
             </div>
           )}
 
-          <AuthButton type="submit" loading={loading}>
+          <AuthButton type="submit" loading={loading} className={mode === 'login' ? '' : 'mt-1'}>
             {mode === 'login' && 'Sign in'}
             {mode === 'signup' && 'Create account'}
             {mode === 'forgot' && 'Send reset link'}
           </AuthButton>
 
           {(mode === 'login' || mode === 'signup') && (
-            <p className="mt-3 text-center text-[10px] leading-relaxed tracking-wide text-[var(--ink-soft)]/80">
+            <p className="mt-4 text-center text-[11px] leading-relaxed text-[var(--ink-soft)]/75">
               By continuing, you agree to our{' '}
               <Link
                 to="/terms"
-                className="font-semibold text-[var(--ink-soft)] underline-offset-2 transition hover:text-[var(--accent-deep)] hover:underline"
+                className="font-medium text-[var(--ink-soft)] underline-offset-4 transition hover:text-[var(--accent-deep)] hover:underline"
               >
                 Terms
               </Link>
               {' & '}
               <Link
                 to="/privacy"
-                className="font-semibold text-[var(--ink-soft)] underline-offset-2 transition hover:text-[var(--accent-deep)] hover:underline"
+                className="font-medium text-[var(--ink-soft)] underline-offset-4 transition hover:text-[var(--accent-deep)] hover:underline"
               >
                 Privacy
               </Link>
@@ -207,7 +202,7 @@ export default function AuthPage() {
           )}
 
           {mode === 'signup' && (
-            <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--ink-soft)]">
+            <p className="mt-3 text-center text-[12px] leading-relaxed text-[var(--ink-soft)]">
               We will send a verification email after you register. Your journal unlocks once your
               email is verified.
             </p>

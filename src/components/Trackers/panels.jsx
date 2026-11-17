@@ -54,6 +54,7 @@ import {
   VibeAnchor,
   toggleInList,
   toggleSingle,
+  usePanelLayout,
 } from './panelUi'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MOOD_MOTIVATIONS } from '../../data/motivations'
@@ -1064,12 +1065,20 @@ function formatSleepHours(hours) {
   return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
 }
 
-function SleepSection({ title, hint, children }) {
+function SleepSection({ title, hint, children, sheet = false }) {
   return (
-    <section className="rounded-[1.2rem] bg-[var(--surface)]/75 p-3 ring-1 ring-[var(--page-edge)]/40 sm:p-3.5">
-      <div className="mb-2 flex items-baseline justify-between gap-2">
-        <ReviewHeading className="!mb-0">{title}</ReviewHeading>
-        {hint ? <span className="text-[10px] font-medium text-[var(--ink-soft)]">{hint}</span> : null}
+    <section
+      className={
+        sheet
+          ? 'rounded-[1.35rem] bg-[var(--surface)]/85 px-4 py-3.5 ring-1 ring-[var(--page-edge)]/40'
+          : 'rounded-[1.2rem] bg-[var(--surface)]/75 p-3 ring-1 ring-[var(--page-edge)]/40 sm:p-3.5'
+      }
+    >
+      <div className={`mb-2.5 flex items-baseline justify-between gap-2 ${sheet ? 'mb-3' : ''}`}>
+        <ReviewHeading className={`!mb-0 ${sheet ? '!text-[13px]' : ''}`}>{title}</ReviewHeading>
+        {hint ? (
+          <span className="text-[10px] font-medium text-[var(--ink-soft)]">{hint}</span>
+        ) : null}
       </div>
       {children}
     </section>
@@ -1078,6 +1087,8 @@ function SleepSection({ title, hint, children }) {
 
 export function SleepPanel({ month, day }) {
   const { data, patch } = usePanel('sleep', month, day)
+  const { mode } = usePanelLayout()
+  const isSheet = mode === 'sheet'
   const [sleepTime, setSleepTime] = useState(data.sleepTime || '')
   const [wakeTime, setWakeTime] = useState(data.wakeTime || '')
   const scored = scoreSleep(data)
@@ -1139,13 +1150,14 @@ export function SleepPanel({ month, day }) {
   ].filter(Boolean)
   const badgeColor = SLEEP_BADGE_COLOR[scored.badge] || '#a78bda'
   const morningSupport = SLEEP_QUIZ[0]?.options?.find((o) => o.id === scored.morningInertia)?.support
-  const chipGrid = 'grid grid-cols-2 gap-1.5'
-  const chipFill = 'w-full justify-center'
+  const chipWrap = isSheet ? 'flex flex-wrap gap-2' : 'flex flex-wrap gap-1.5'
+  const chipGrid = isSheet ? 'flex flex-wrap gap-2' : 'grid grid-cols-2 gap-1.5'
+  const chipFill = isSheet ? '' : 'w-full justify-center'
 
   return (
     <PanelShell month={month} day={day} title="Sleep & rest" trackerId="sleep" hideNotes>
       <ReviewPanelFrame trackerId="sleep" month={month} day={day} notesPlaceholder="Sleep dreams & notes…">
-        <div className="space-y-2.5">
+        <div className={isSheet ? 'space-y-3.5' : 'space-y-2.5'}>
           <AnimatePresence mode="wait">
             {scored.score != null ? (
               <motion.div
@@ -1154,7 +1166,11 @@ export function SleepPanel({ month, day }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ type: 'spring', stiffness: 340, damping: 28 }}
-                className="flex items-center justify-between gap-3 rounded-[1.25rem] px-3.5 py-3 ring-1 ring-[var(--page-edge)]/45"
+                className={`flex items-center justify-between gap-3 ring-1 ring-[var(--page-edge)]/45 ${
+                  isSheet
+                    ? 'rounded-[1.35rem] px-4 py-3.5'
+                    : 'rounded-[1.25rem] px-3.5 py-3'
+                }`}
                 style={{
                   background: `color-mix(in srgb, ${badgeColor} 14%, var(--surface))`,
                 }}
@@ -1167,7 +1183,7 @@ export function SleepPanel({ month, day }) {
                     {scored.badgeLabel}
                   </p>
                   {metaBits.length ? (
-                    <p className="mt-1 truncate text-[10px] font-medium text-[var(--ink-soft)]">
+                    <p className="mt-1.5 text-[11px] font-medium leading-snug text-[var(--ink-soft)]">
                       {metaBits.join(' · ')}
                     </p>
                   ) : null}
@@ -1186,12 +1202,12 @@ export function SleepPanel({ month, day }) {
             ) : null}
           </AnimatePresence>
 
-          <SleepSection title="Duration">
+          <SleepSection title="Duration" sheet={isSheet}>
             <div className={chipGrid}>
               {SLEEP_DURATIONS.map((d) => (
                 <SelectChip
                   key={d.id}
-                  compact
+                  compact={!isSheet}
                   className={chipFill}
                   emoji={d.emoji}
                   label={d.label}
@@ -1200,9 +1216,17 @@ export function SleepPanel({ month, day }) {
                 />
               ))}
             </div>
-            <div className="mt-2.5 grid grid-cols-2 gap-2">
-              <div>
-                <p className="mb-1 text-[10px] font-medium text-[var(--ink-soft)]">Sleep time</p>
+            <div
+              className={
+                isSheet
+                  ? 'mt-3.5 grid grid-cols-1 gap-3'
+                  : 'mt-2.5 grid grid-cols-2 gap-2'
+              }
+            >
+              <div className="min-w-0">
+                <p className="mb-1.5 text-[11px] font-semibold text-[var(--ink-soft)]">
+                  Sleep time
+                </p>
                 <SoftTimePicker
                   value={sleepTime}
                   title="Bedtime"
@@ -1215,8 +1239,10 @@ export function SleepPanel({ month, day }) {
                   }}
                 />
               </div>
-              <div>
-                <p className="mb-1 text-[10px] font-medium text-[var(--ink-soft)]">Wake up</p>
+              <div className="min-w-0">
+                <p className="mb-1.5 text-[11px] font-semibold text-[var(--ink-soft)]">
+                  Wake up
+                </p>
                 <SoftTimePicker
                   value={wakeTime}
                   title="Wake-up Time"
@@ -1232,12 +1258,12 @@ export function SleepPanel({ month, day }) {
             </div>
           </SleepSection>
 
-          <SleepSection title="Night wakings">
-            <div className="flex flex-wrap gap-1.5">
+          <SleepSection title="Night wakings" sheet={isSheet}>
+            <div className={chipWrap}>
               {SLEEP_FRAGMENTATION.map((opt) => (
                 <SelectChip
                   key={opt.id}
-                  compact
+                  compact={!isSheet}
                   emoji={opt.emoji}
                   label={opt.label}
                   active={scored.fragmentationLevel === opt.id}
@@ -1251,12 +1277,12 @@ export function SleepPanel({ month, day }) {
             </div>
           </SleepSection>
 
-          <SleepSection title="Disrupters" hint="Select any">
-            <div className="flex flex-wrap gap-1.5">
+          <SleepSection title="Disrupters" hint="Select any" sheet={isSheet}>
+            <div className={chipWrap}>
               {SLEEP_DISRUPTERS.map((opt) => (
                 <SelectChip
                   key={opt.id}
-                  compact
+                  compact={!isSheet}
                   emoji={opt.emoji}
                   label={opt.label}
                   active={scored.sleepDisrupters.includes(opt.id)}
@@ -1270,12 +1296,12 @@ export function SleepPanel({ month, day }) {
             </div>
           </SleepSection>
 
-          <SleepSection title="Location">
-            <div className="flex flex-wrap gap-1.5">
+          <SleepSection title="Location" sheet={isSheet}>
+            <div className={chipWrap}>
               {SLEEP_LOCATIONS.map((opt) => (
                 <SelectChip
                   key={opt.id}
-                  compact
+                  compact={!isSheet}
                   emoji={opt.emoji}
                   label={opt.label}
                   active={(data.locations || []).includes(opt.id)}
@@ -1285,12 +1311,12 @@ export function SleepPanel({ month, day }) {
             </div>
           </SleepSection>
 
-          <SleepSection title="Morning">
+          <SleepSection title="Morning" sheet={isSheet}>
             <div className={chipGrid}>
               {SLEEP_MORNING.map((opt) => (
                 <SelectChip
                   key={opt.id}
-                  compact
+                  compact={!isSheet}
                   className={chipFill}
                   emoji={opt.emoji}
                   label={opt.label}
@@ -1305,7 +1331,9 @@ export function SleepPanel({ month, day }) {
             </div>
             <AnimatePresence mode="wait">
               {morningSupport ? (
-                <SupportNote key={scored.morningInertia}>{morningSupport}</SupportNote>
+                <div className={isSheet ? 'mt-2.5' : ''}>
+                  <SupportNote key={scored.morningInertia}>{morningSupport}</SupportNote>
+                </div>
               ) : null}
             </AnimatePresence>
           </SleepSection>

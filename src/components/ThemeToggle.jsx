@@ -8,7 +8,7 @@ export default function ThemeToggle() {
 
   return (
     <div
-      className="inline-flex min-h-11 items-center gap-0.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] p-0.5 shadow-md backdrop-blur sm:min-h-0"
+      className="inline-flex h-10 items-center gap-0.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] p-0.5 shadow-md backdrop-blur sm:h-auto sm:min-h-0"
       role="group"
       aria-label="Color theme"
     >
@@ -19,7 +19,7 @@ export default function ThemeToggle() {
             key={t.id}
             type="button"
             onClick={() => setTheme(t.id)}
-            className="relative flex h-11 min-w-11 items-center justify-center rounded-full px-2.5 sm:h-7 sm:min-w-0 sm:px-2"
+            className="relative flex h-9 min-w-9 items-center justify-center rounded-full px-2 sm:h-7 sm:min-w-0 sm:px-2"
             title={t.label}
             aria-label={t.label}
             aria-pressed={active}

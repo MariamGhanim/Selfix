@@ -295,8 +295,8 @@ export default function SoftTimePicker({
   )
 
   return (
-    <div ref={rootRef} className={`relative ${className}`}>
-      <div className="flex items-center gap-1">
+    <div ref={rootRef} className={`relative w-full min-w-0 ${className}`}>
+      <div className="flex w-full min-w-0 items-center gap-1.5">
         <input
           ref={inputRef}
           type="text"
@@ -326,7 +326,7 @@ export default function SoftTimePicker({
               inputRef.current?.blur()
             }
           }}
-          className="soft-field relative z-20 min-h-11 w-full min-w-0 flex-1 rounded-2xl border-0 bg-[var(--surface)] px-3 py-2.5 text-base text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 sm:min-h-0 sm:py-1.5 sm:text-sm"
+          className="soft-field relative z-20 min-h-11 w-full min-w-0 flex-1 rounded-2xl border-0 bg-[var(--surface)] px-3.5 py-2.5 text-base text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-sm"
         />
         <button
           type="button"

@@ -208,7 +208,7 @@ export function FocusTimerBadge({ onOpen } = {}) {
     <button
       type="button"
       onClick={onOpen}
-      className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 py-2 text-sm shadow-md backdrop-blur transition hover:scale-[1.02] sm:min-h-0 sm:gap-1.5 sm:px-3 sm:py-1.5 ${
+      className={`inline-flex h-10 items-center gap-1.5 rounded-full px-2.5 text-sm shadow-md backdrop-blur transition hover:scale-[1.02] sm:h-auto sm:min-h-0 sm:gap-1.5 sm:px-3 sm:py-1.5 ${
         running
           ? 'bg-[var(--accent-deep)] text-white'
           : 'bg-[var(--surface)] text-[var(--ink)] ring-1 ring-[var(--page-edge)]/50'

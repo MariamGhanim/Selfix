@@ -205,12 +205,12 @@ function PageFlipStage({
   return (
     <div
       ref={stageRef}
-      className="page-flip-stage relative h-full min-h-0 w-full flex-1"
+      className="page-flip-stage relative h-full min-h-0 w-full min-w-0 flex-1"
       onPointerDown={onPointerDown}
       style={{ perspective: '2200px', perspectiveOrigin: '50% 48%' }}
     >
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="paper-texture h-full w-full">
+      <div className="absolute inset-0 min-w-0 overflow-hidden">
+        <div className="paper-texture h-full w-full min-w-0">
           <Spread
             tracker={underTracker}
             selectedDay={selectedDay}

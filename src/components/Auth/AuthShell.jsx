@@ -10,29 +10,38 @@ function AuthTopNav() {
   const { pathname } = useLocation()
 
   return (
-    <nav
-      aria-label="Explore Selfix Life"
-      className="absolute left-0 right-0 top-0 z-30 flex items-center justify-end gap-1 px-3 py-2.5 pt-[max(0.625rem,env(safe-area-inset-top))] sm:px-5 sm:py-3 lg:px-7"
-    >
-      <div className="inline-flex items-center gap-0.5 rounded-full bg-[var(--surface)]/85 p-1 shadow-md ring-1 ring-[var(--page-edge)]/55 backdrop-blur-md">
+    <header className="auth-site-header relative z-20 flex items-center justify-between gap-3 border-b border-[var(--page-edge)]/55 px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-6 sm:py-3.5 lg:px-8">
+      <Link
+        to="/"
+        className="font-display text-[15px] font-semibold tracking-tight text-[var(--accent-deep)] transition hover:text-[var(--ink)] sm:text-base"
+      >
+        Selfix Life
+      </Link>
+      <nav aria-label="Explore Selfix Life" className="flex items-center gap-0.5 sm:gap-1">
         {AUTH_NAV.map((item) => {
           const active = pathname === item.to
           return (
             <Link
               key={item.to}
               to={item.to}
-              className={`inline-flex min-h-11 items-center rounded-full px-4 py-2 font-display text-xs font-semibold transition sm:min-h-0 sm:px-3.5 sm:py-1.5 sm:text-xs ${
+              className={`inline-flex min-h-10 items-center rounded-lg px-3 text-[13px] font-medium tracking-wide transition sm:min-h-9 sm:px-3.5 ${
                 active
-                  ? 'bg-[var(--accent-deep)] text-white shadow-sm'
-                  : 'text-[var(--ink-soft)] hover:bg-[var(--accent-glow)] hover:text-[var(--ink)]'
+                  ? 'text-[var(--accent-deep)]'
+                  : 'text-[var(--ink-soft)] hover:bg-[var(--accent-glow)]/70 hover:text-[var(--ink)]'
               }`}
             >
               {item.label}
+              {active ? (
+                <span
+                  className="ml-1.5 h-1 w-1 rounded-full bg-[var(--accent-deep)]"
+                  aria-hidden
+                />
+              ) : null}
             </Link>
           )
         })}
-      </div>
-    </nav>
+      </nav>
+    </header>
   )
 }
 
@@ -40,7 +49,7 @@ function CozyJournalArt() {
   return (
     <svg
       viewBox="0 0 420 360"
-      className="auth-brand-art mx-auto h-auto w-full max-w-[22rem]"
+      className="auth-brand-art mx-auto h-auto w-full max-w-[18rem] lg:max-w-[20rem]"
       aria-hidden
     >
       <defs>
@@ -54,7 +63,7 @@ function CozyJournalArt() {
         </linearGradient>
       </defs>
 
-      <ellipse cx="210" cy="318" rx="118" ry="18" fill="var(--accent)" opacity="0.18" />
+      <ellipse cx="210" cy="318" rx="118" ry="18" fill="var(--accent)" opacity="0.14" />
 
       <g className="auth-float-slow">
         <rect
@@ -83,10 +92,10 @@ function CozyJournalArt() {
           stroke="var(--accent)"
           strokeWidth="3.5"
           strokeLinecap="round"
-          opacity="0.45"
+          opacity="0.4"
         />
-        <circle cx="248" cy="236" r="10" fill="var(--gold)" opacity="0.7" />
-        <circle cx="228" cy="248" r="7" fill="var(--accent-deep)" opacity="0.55" />
+        <circle cx="248" cy="236" r="10" fill="var(--gold)" opacity="0.65" />
+        <circle cx="228" cy="248" r="7" fill="var(--accent-deep)" opacity="0.5" />
       </g>
 
       <g className="auth-float">
@@ -99,14 +108,14 @@ function CozyJournalArt() {
           fill="var(--gold-soft)"
           stroke="var(--gold)"
           strokeWidth="1.5"
-          opacity="0.9"
+          opacity="0.88"
         />
         <path
           d="M300 145h26M300 155h18"
           stroke="var(--gold)"
           strokeWidth="3"
           strokeLinecap="round"
-          opacity="0.7"
+          opacity="0.65"
         />
       </g>
 
@@ -122,7 +131,7 @@ function CozyJournalArt() {
         <path
           d="M86 168c4-10 16-10 20 0c-4 10-16 10-20 0z"
           fill="var(--accent)"
-          opacity="0.55"
+          opacity="0.5"
         />
       </g>
     </svg>
@@ -131,117 +140,98 @@ function CozyJournalArt() {
 
 function AuthBrandPanel() {
   return (
-    <section className="auth-brand-panel relative flex min-h-0 flex-col justify-between overflow-hidden px-5 py-6 sm:min-h-[200px] sm:px-10 sm:py-10 lg:min-h-0 lg:px-12 lg:py-14">
+    <section className="auth-brand-panel relative flex min-h-0 flex-col justify-between overflow-hidden px-4 py-3.5 sm:px-8 sm:py-8 lg:px-10 lg:py-12">
       <div className="auth-brand-glow pointer-events-none absolute inset-0" aria-hidden />
-      <div className="auth-brand-orb auth-brand-orb-a pointer-events-none absolute -left-10 top-8 h-40 w-40 rounded-full" />
-      <div className="auth-brand-orb auth-brand-orb-b pointer-events-none absolute -right-8 bottom-16 h-48 w-48 rounded-full" />
+      <div className="auth-brand-orb auth-brand-orb-a pointer-events-none absolute -left-10 top-8 h-40 w-40 rounded-full max-sm:hidden" />
+      <div className="auth-brand-orb auth-brand-orb-b pointer-events-none absolute -right-8 bottom-16 h-48 w-48 rounded-full max-sm:hidden" />
 
-      <div className="relative z-10">
+      <div className="relative z-10 mx-auto w-full max-w-sm sm:mx-0 sm:max-w-none">
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="font-display text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--accent-deep)]/75 sm:text-[11px]"
+        >
+          Year in pixels journal
+        </motion.p>
+        <motion.h2
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-1 max-w-sm font-display text-[1.05rem] font-semibold leading-[1.3] tracking-tight text-[var(--ink)] sm:mt-3 sm:text-[1.85rem] lg:text-[2rem]"
+        >
+          A calm place for the days that make your year
+        </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--accent-deep)]/80"
+          transition={{ duration: 0.45, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-2.5 hidden max-w-sm text-[13px] leading-relaxed text-[var(--ink-soft)] sm:mt-3 sm:block sm:text-[14px]"
         >
-          Selfix Life
+          Soft color for habits. Quiet notes beside each day. Private sync when you are ready.
         </motion.p>
-        <motion.h2
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-2 max-w-md font-display text-[1.45rem] font-semibold leading-tight tracking-tight text-[var(--ink)] sm:mt-3 sm:text-[2.15rem]"
-        >
-          A soft space for your day, thoughts, and habits
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-3 max-w-sm font-display text-[13px] leading-relaxed text-[var(--ink-soft)] sm:mt-4 sm:text-[14px]"
-        >
-          Paint your year in gentle pixels. Keep little notes beside each habit. Return to a journal
-          that feels calm, private, and yours.
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-4 flex flex-wrap gap-2"
-        >
-          <span className="rounded-full bg-[var(--surface)]/80 px-3 py-1 font-display text-[11px] font-semibold text-[var(--accent-deep)] shadow-sm ring-1 ring-[var(--page-edge)]/55">
-            Free for personal journaling
-          </span>
-          <span className="rounded-full bg-[var(--surface)]/80 px-3 py-1 font-display text-[11px] font-semibold text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/55">
-            Private cloud sync
-          </span>
-        </motion.div>
       </div>
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
+        initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 mt-4 hidden max-h-[200px] sm:mt-6 sm:block lg:mt-0 lg:max-h-none"
+        transition={{ duration: 0.6, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 mt-5 hidden sm:mt-6 sm:block lg:mt-auto lg:pt-6"
       >
         <CozyJournalArt />
       </motion.div>
 
-      <motion.ul
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.35 }}
-        className="relative z-10 mt-4 flex flex-wrap gap-2 sm:mt-6 lg:mt-8"
-      >
-        {['Year in pixels', 'Private notes', 'Soft insights'].map((item) => (
-          <li
-            key={item}
-            className="rounded-full bg-[var(--surface)]/70 px-3 py-1.5 font-display text-[11px] font-semibold text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 backdrop-blur-sm"
-          >
-            {item}
-          </li>
-        ))}
-      </motion.ul>
+      <p className="relative z-10 mt-4 hidden text-[12px] font-medium tracking-wide text-[var(--ink-soft)] sm:mt-5 sm:block">
+        Free personal journaling · Encrypted notes · Soft insights
+      </p>
     </section>
   )
 }
 
 export default function AuthShell({ title, subtitle, children, footer }) {
   return (
-    <div className="auth-split-shell relative flex min-h-[100dvh] h-[100dvh] w-full max-w-full items-stretch justify-center overflow-x-hidden overflow-y-auto p-0 pb-[env(safe-area-inset-bottom)] sm:items-center sm:p-5 lg:p-7">
-      <AuthTopNav />
-      <div className="auth-split-frame book-shadow paper-texture relative mt-[max(2.75rem,calc(env(safe-area-inset-top)+2.25rem))] grid min-h-0 h-auto max-h-none w-full max-w-6xl overflow-y-auto rounded-none border-0 border-[var(--page-edge)] sm:mt-0 sm:h-full sm:max-h-[min(920px,100%)] sm:overflow-y-auto sm:rounded-[28px] sm:border lg:grid-cols-12 lg:rounded-[32px]">
-        <div className="min-h-0 lg:col-span-5">
-          <AuthBrandPanel />
-        </div>
+    <div className="auth-split-shell relative flex min-h-[100dvh] w-full max-w-full items-stretch justify-center overflow-x-hidden overflow-y-auto px-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-0 sm:h-[100dvh] sm:items-center sm:p-5 lg:p-6">
+      <div className="auth-split-frame book-shadow paper-texture relative flex h-auto max-h-none min-h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-visible rounded-none border-0 border-[var(--page-edge)] sm:h-full sm:max-h-[min(860px,100%)] sm:min-h-0 sm:max-w-5xl sm:overflow-hidden sm:rounded-[24px] sm:border lg:rounded-[28px]">
+        <AuthTopNav />
 
-        <div className="relative flex min-h-0 flex-1 items-start justify-center overflow-y-auto border-t border-[var(--page-edge)]/60 bg-[var(--surface)]/55 px-4 py-5 backdrop-blur-md sm:items-center sm:px-8 sm:py-8 lg:col-span-7 lg:border-l lg:border-t-0">
-          <div
-            className="pointer-events-none absolute inset-0 opacity-60"
-            style={{
-              background:
-                'radial-gradient(ellipse at 80% 0%, var(--accent-glow), transparent 55%), radial-gradient(ellipse at 10% 100%, var(--paper-deep), transparent 50%)',
-            }}
-          />
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="auth-form-card relative w-full max-w-md rounded-[1.6rem] border border-[var(--page-edge)]/70 bg-[var(--surface)] px-4 py-5 shadow-[var(--panel-shadow)] sm:px-7 sm:py-7"
-          >
-            <div className="mb-6 text-center">
-              <p className="font-display text-2xl font-semibold tracking-tight text-[var(--accent-deep)] sm:text-3xl">
-                Selfix Life
-              </p>
-              <h1 className="mt-2 font-display text-xl font-semibold text-[var(--ink)]">{title}</h1>
-              {subtitle ? (
-                <p className="mt-1 text-sm leading-relaxed text-[var(--ink-soft)]">{subtitle}</p>
+        <div className="grid min-h-0 w-full flex-1 lg:grid-cols-12 lg:overflow-y-auto">
+          <div className="auth-brand-wrap min-h-0 w-full border-b border-[var(--page-edge)]/45 lg:col-span-5 lg:border-b-0 lg:border-r lg:overflow-y-auto">
+            <AuthBrandPanel />
+          </div>
+
+          <div className="auth-form-panel relative flex min-h-0 w-full flex-1 items-start justify-center px-4 py-5 sm:items-center sm:px-8 sm:py-8 lg:col-span-7 lg:overflow-y-auto">
+            <div
+              className="pointer-events-none absolute inset-0 opacity-50 max-sm:opacity-35"
+              style={{
+                background:
+                  'radial-gradient(ellipse at 85% 0%, var(--accent-glow), transparent 52%), radial-gradient(ellipse at 12% 100%, var(--paper-deep), transparent 48%)',
+              }}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="auth-form-card relative mx-auto w-full max-w-sm"
+            >
+              <div className="mb-4 sm:mb-6">
+                <p className="mb-1.5 font-display text-[11px] font-semibold tracking-[0.04em] text-[var(--accent-deep)] sm:hidden">
+                  Selfix Life
+                </p>
+                <h1 className="font-display text-[1.25rem] font-semibold tracking-tight text-[var(--ink)] sm:text-[1.5rem]">
+                  {title}
+                </h1>
+                {subtitle ? (
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--ink-soft)]">{subtitle}</p>
+                ) : null}
+              </div>
+              {children}
+              {footer ? (
+                <div className="mt-4 space-y-1.5 border-t border-[var(--page-edge)]/55 pt-3.5 text-[13px] leading-relaxed text-[var(--ink-soft)] sm:mt-5 sm:pt-4">
+                  {footer}
+                </div>
               ) : null}
-            </div>
-            {children}
-            {footer ? (
-              <div className="mt-5 text-center text-sm text-[var(--ink-soft)]">{footer}</div>
-            ) : null}
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>
@@ -250,15 +240,15 @@ export default function AuthShell({ title, subtitle, children, footer }) {
 
 export function AuthInput({ label, error, className = '', ...props }) {
   return (
-    <label className="mb-3 block">
-      <span className="mb-1 block text-[10px] font-bold uppercase tracking-wide text-[var(--ink-soft)]">
+    <label className="mb-3.5 block">
+      <span className="mb-1.5 block text-[12px] font-medium tracking-wide text-[var(--ink)]">
         {label}
       </span>
       <input
         {...props}
-        className={`min-h-11 w-full rounded-2xl border border-[var(--page-edge)] bg-[var(--surface)] px-3.5 py-3 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)] ${className}`}
+        className={`auth-field min-h-11 w-full rounded-xl border border-[var(--page-edge)]/80 bg-[var(--surface-strong)] px-3.5 py-2.5 text-base text-[var(--ink)] outline-none transition placeholder:text-[var(--ink-soft)]/55 focus:border-[var(--accent)] focus:bg-[var(--surface)] focus:ring-2 focus:ring-[var(--accent)]/25 ${className}`}
       />
-      {error && <span className="mt-1 block text-xs font-semibold text-[#b8385c]">{error}</span>}
+      {error && <span className="mt-1.5 block text-[12px] font-medium text-[#b8385c]">{error}</span>}
     </label>
   )
 }
@@ -273,14 +263,14 @@ export function AuthButton({
 }) {
   const styles =
     variant === 'primary'
-      ? 'bg-[var(--accent-deep)] text-white shadow-md hover:brightness-105'
+      ? 'auth-btn-primary text-white active:translate-y-px'
       : 'bg-[var(--surface)] text-[var(--ink)] border border-[var(--page-edge)] hover:bg-[var(--surface-strong)]'
 
   return (
     <button
       type={type}
       disabled={loading || props.disabled}
-      className={`inline-flex min-h-11 w-full items-center justify-center rounded-2xl px-4 py-3 text-base font-bold transition disabled:cursor-not-allowed disabled:opacity-60 ${styles} ${className}`}
+      className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl px-4 py-2.5 text-[15px] font-semibold tracking-wide transition disabled:cursor-not-allowed disabled:opacity-60 ${styles} ${className}`}
       {...props}
     >
       {loading ? 'Please wait…' : children}
@@ -293,7 +283,7 @@ export function AuthLinkButton({ children, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="font-bold text-[var(--accent-deep)] underline-offset-2 hover:underline"
+      className="font-medium text-[var(--accent-deep)] underline-offset-4 transition hover:text-[var(--ink)] hover:underline"
     >
       {children}
     </button>
@@ -303,9 +293,11 @@ export function AuthLinkButton({ children, onClick }) {
 export function AuthAlert({ tone = 'error', children }) {
   const bg =
     tone === 'success'
-      ? 'bg-[#e8f5e9] text-[#2e7d4f]'
-      : 'bg-[#fde8ee] text-[#b8385c]'
+      ? 'bg-[#eef6f0] text-[#3d6b4f] border-[#cfe0d4]'
+      : 'bg-[#faf0f2] text-[#9a4458] border-[#ead4da]'
   return (
-    <div className={`mb-3 rounded-2xl px-3 py-2 text-xs font-semibold ${bg}`}>{children}</div>
+    <div className={`mb-3.5 rounded-xl border px-3.5 py-2.5 text-[12px] font-medium leading-relaxed ${bg}`}>
+      {children}
+    </div>
   )
 }

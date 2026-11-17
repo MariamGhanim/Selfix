@@ -155,44 +155,44 @@ export default function Book() {
 
   return (
     <FocusTimerProvider>
-      <div className="safe-pt safe-px relative flex min-h-[100dvh] h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-auto px-2 py-2 sm:px-5 sm:py-3">
+      <div className="safe-pt safe-px relative flex h-[100dvh] min-h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-auto px-1.5 py-1.5 sm:px-5 sm:py-3">
         <AmbientGlow />
-        <header className="relative z-10 mb-1 flex shrink-0 items-center justify-between gap-1.5 sm:gap-2">
-          <div className="flex min-w-0 items-center gap-1 sm:gap-2">
+        <header className="relative z-10 mb-1 flex w-full max-w-full shrink-0 flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+          <div className="flex min-w-0 items-center justify-between gap-2 sm:justify-start">
             <motion.div
               whileHover={{ scale: 1.02 }}
-              className="soft-shimmer flex min-h-11 max-w-[42vw] shrink items-center truncate rounded-full bg-[var(--surface)] px-2.5 py-2 text-xs font-bold shadow-md backdrop-blur sm:max-w-none sm:min-h-0 sm:shrink-0 sm:px-3 sm:py-1.5 sm:text-xs"
+              className="soft-shimmer flex h-10 min-w-0 items-center truncate rounded-full bg-[var(--surface)] px-3 text-xs font-bold shadow-md backdrop-blur sm:h-auto sm:min-h-0 sm:px-3 sm:py-1.5"
             >
               <span className="truncate font-display text-[var(--accent-deep)]">Selfix Life</span>
               {profile.displayName && profile.displayName !== 'Selfix Life' ? (
                 <span className="hidden text-[var(--ink-soft)] sm:inline"> · {profile.displayName}</span>
               ) : null}
             </motion.div>
-            <div className="inline-flex min-h-11 shrink-0 items-center rounded-full bg-[var(--surface)] px-1 shadow-md backdrop-blur sm:min-h-0 sm:px-1.5 sm:py-0.5">
+            <div className="inline-flex h-10 shrink-0 items-center rounded-full bg-[var(--surface)] px-0.5 shadow-md backdrop-blur sm:h-auto sm:min-h-0 sm:px-1.5 sm:py-0.5">
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setYear(year - 1)}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-[var(--accent-glow)] sm:h-8 sm:w-8"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-[var(--accent-glow)] sm:h-8 sm:w-8"
                 aria-label="Previous year"
               >
                 <ChevronLeft size={18} />
               </motion.button>
-              <span className="min-w-[2.75rem] text-center font-display text-sm font-semibold sm:min-w-[3.5rem] sm:text-sm">
+              <span className="min-w-[2.6rem] text-center font-display text-sm font-semibold sm:min-w-[3.5rem]">
                 {year}
               </span>
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setYear(year + 1)}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full hover:bg-[var(--accent-glow)] sm:h-8 sm:w-8"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-[var(--accent-glow)] sm:h-8 sm:w-8"
                 aria-label="Next year"
               >
                 <ChevronRight size={18} />
               </motion.button>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <div className="flex min-w-0 items-center justify-between gap-1.5 sm:justify-end sm:gap-2">
             <FocusTimer
               onOpen={() => {
                 const focusIndex = trackers.findIndex((t) => t.id === 'focus')
@@ -204,7 +204,7 @@ export default function Book() {
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.94 }}
               onClick={toggleInsights}
-              className={`inline-flex min-h-11 items-center gap-1 rounded-full px-3 py-2 text-xs font-semibold shadow-md backdrop-blur transition sm:min-h-0 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-[11px] ${
+              className={`inline-flex h-10 items-center gap-1 rounded-full px-3 text-xs font-semibold shadow-md backdrop-blur transition sm:h-auto sm:min-h-0 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-[11px] ${
                 showInsights
                   ? 'bg-[var(--accent-deep)] text-white'
                   : 'bg-[var(--surface)] text-[var(--ink-soft)] hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]'
@@ -222,7 +222,7 @@ export default function Book() {
               whileHover={{ scale: 1.06, rotate: 18 }}
               whileTap={{ scale: 0.92, rotate: 40 }}
               onClick={() => setSettingsOpen(true)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--ink-soft)] shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)] sm:h-9 sm:w-9"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--ink-soft)] shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)] sm:h-9 sm:w-9"
               title="Settings"
               aria-label="Settings"
             >
@@ -237,11 +237,11 @@ export default function Book() {
 
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-7xl min-h-0 flex-1 flex-col overflow-x-hidden sm:max-h-[min(88vh,100%)] sm:w-[min(95%,72rem)]">
-          <div className="book-tabs-fade scroll-fade-x relative z-20 shrink-0">
+        <div className="relative z-10 mx-auto flex w-full max-w-full min-h-0 flex-1 flex-col overflow-x-hidden sm:max-h-[min(88vh,100%)] sm:w-[min(95%,72rem)] sm:max-w-7xl">
+          <div className="book-tabs-fade scroll-fade-x relative z-20 w-full max-w-full shrink-0">
             <div
               ref={tabsScrollRef}
-              className="book-tabs-scroll touch-scroll-x relative flex h-11 items-end justify-start gap-1.5 px-3 pb-0 sm:h-9 sm:justify-center sm:gap-1 sm:px-8"
+              className="book-tabs-scroll touch-scroll-x relative flex h-11 w-full items-end justify-start gap-1.5 px-2 pb-0 sm:h-9 sm:justify-center sm:gap-1 sm:px-8"
             >
               {trackers.map((t, i) => {
                 const TabIcon = ICONS[t.icon] || Star
@@ -273,7 +273,7 @@ export default function Book() {
           </div>
 
           <div
-            className="open-book book-shadow paper-texture relative flex min-h-0 flex-1 overflow-hidden rounded-[20px] border border-[var(--cover)]/40 sm:rounded-b-[30px] sm:rounded-t-[20px]"
+            className="open-book book-shadow paper-texture relative flex min-h-0 w-full min-w-0 flex-1 overflow-hidden rounded-[16px] border border-[var(--cover)]/40 sm:rounded-b-[30px] sm:rounded-t-[20px]"
           >
             {/* Hardcover rim, stacked paper edges, spine + ribbon */}
             <div className="open-book__cover-edge" aria-hidden />
@@ -286,9 +286,9 @@ export default function Book() {
               </>
             )}
 
-            <div className="relative z-10 flex min-h-0 w-full flex-1">
+            <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-1">
               {showInsights ? (
-                <div className="relative z-10 min-h-0 w-full flex-1 overflow-hidden">
+                <div className="relative z-10 min-h-0 w-full min-w-0 flex-1 overflow-hidden">
                   <InsightsDashboard />
                 </div>
               ) : (
@@ -303,7 +303,7 @@ export default function Book() {
             </div>
           </div>
 
-          <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 pb-[max(4.5rem,calc(env(safe-area-inset-bottom)+3.75rem))] sm:mt-1.5 sm:pb-0">
+          <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 pb-[max(3.4rem,calc(env(safe-area-inset-bottom)+2.6rem))] sm:mt-1.5 sm:pb-0">
             {showInsights ? (
               <>
                 <span className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:inline">

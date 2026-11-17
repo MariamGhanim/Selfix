@@ -58,7 +58,7 @@ function ThemedApp() {
   }
 
   return (
-    <main className="h-[100dvh] min-h-[100dvh] w-full max-w-full overflow-x-hidden overflow-y-auto">
+    <main className="h-[100dvh] min-h-[100dvh] w-full max-w-full min-w-0 overflow-x-hidden overflow-y-auto">
       {syncError && (
         <div className="absolute left-1/2 top-2 z-[60] max-w-[90vw] -translate-x-1/2 truncate rounded-full bg-[#fde8ee] px-3 py-1 text-[10px] font-bold text-[#b8385c] shadow">
           Firebase save issue — {syncError}

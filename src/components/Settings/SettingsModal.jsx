@@ -255,7 +255,7 @@ export default function SettingsModal({ open, onClose }) {
         initial={{ opacity: 0, y: 48 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-        className="settings-sheet book-shadow paper-texture relative z-10 flex max-h-[min(92dvh,calc(100dvh-env(safe-area-inset-top)-0.5rem))] w-full max-w-lg flex-col overflow-hidden rounded-t-[1.75rem] border border-b-0 border-[var(--page-edge)] sm:max-h-[min(88vh,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1.5rem))] sm:rounded-[28px] sm:border"
+        className="settings-sheet book-shadow paper-texture relative z-10 flex max-h-[min(92dvh,calc(100dvh-env(safe-area-inset-top)-0.5rem))] w-full max-w-full flex-col overflow-hidden rounded-t-[1.75rem] border border-b-0 border-[var(--page-edge)] sm:max-h-[min(88vh,calc(100dvh-env(safe-area-inset-top)-env(safe-area-inset-bottom)-1.5rem))] sm:max-w-lg sm:rounded-[28px] sm:border"
       >
         <div className="flex shrink-0 flex-col items-stretch border-b border-[var(--page-edge)]/70 px-4 pt-2.5 pb-3 sm:px-5 sm:pt-4 sm:pb-4">
           <div className="mx-auto mb-2 h-1.5 w-11 rounded-full bg-[var(--page-edge)] sm:hidden" aria-hidden />

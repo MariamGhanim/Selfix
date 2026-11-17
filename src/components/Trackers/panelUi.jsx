@@ -220,10 +220,16 @@ export function ReviewPanelFrame({
   notesPlaceholder = 'Quick note for today…',
   children,
 }) {
+  const { mode } = usePanelLayout()
+  const isSheet = mode === 'sheet'
+
   return (
-    <div data-no-flip className="relative z-10 space-y-3 pb-2">
-      <div className="space-y-3">{children}</div>
-      <section className="border-t border-[var(--page-edge)]/40 pt-3">
+    <div
+      data-no-flip
+      className={`relative z-10 pb-2 ${isSheet ? 'space-y-3.5' : 'space-y-3'}`}
+    >
+      <div className={isSheet ? 'space-y-3.5' : 'space-y-3'}>{children}</div>
+      <section className={`border-t border-[var(--page-edge)]/40 ${isSheet ? 'pt-3.5' : 'pt-3'}`}>
         <CompactDailyNotes
           trackerId={trackerId}
           month={month}
@@ -298,18 +304,18 @@ export function PanelShell({
       transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
       className={
         isSheet
-          ? 'flex min-h-0 flex-col overflow-visible rounded-[1.35rem] bg-[var(--surface)]/70 p-3.5 ring-1 ring-[var(--page-edge)]/35'
+          ? 'flex min-h-0 flex-col overflow-visible bg-transparent p-0'
           : 'panel-glass flex h-full min-h-0 flex-col overflow-hidden rounded-[1.25rem] p-2.5 ring-1 ring-[var(--page-edge)]/40 sm:rounded-[1.55rem] sm:p-4'
       }
     >
       <div
-        className={`flex shrink-0 items-start justify-between gap-2 ${
-          isSheet ? 'mb-3' : 'mb-2.5 sm:mb-3.5 sm:gap-3'
+        className={`flex shrink-0 items-center justify-between gap-2 ${
+          isSheet ? 'mb-3' : 'mb-2.5 items-start sm:mb-3.5 sm:gap-3'
         }`}
       >
         {isSheet ? (
-          <p className="pt-1 text-[11px] font-medium text-[var(--ink-soft)]">
-            Mini-quiz & notes
+          <p className="font-display text-[13px] font-semibold tracking-tight text-[var(--ink)]">
+            Today&apos;s log
           </p>
         ) : (
           <div className="min-w-0">
@@ -327,7 +333,7 @@ export function PanelShell({
           whileTap={{ scale: 0.94, rotate: -16 }}
           onClick={clearToday}
           aria-label="Clear today"
-          className="mt-0.5 inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-[var(--surface)] px-3.5 py-2 text-xs font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)] sm:min-h-0 sm:px-2.5 sm:py-1.5 sm:text-[10px]"
+          className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-[var(--surface)] px-3.5 py-2 text-xs font-medium text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/50 transition hover:text-[var(--ink)] sm:min-h-0 sm:px-2.5 sm:py-1.5 sm:text-[10px]"
         >
           <RotateCcw size={12} />
           Clear
@@ -337,7 +343,7 @@ export function PanelShell({
         data-no-flip
         className={
           isSheet
-            ? 'space-y-1 overflow-visible pr-0.5'
+            ? 'space-y-3 overflow-visible'
             : 'min-h-0 flex-1 space-y-0.5 overflow-y-auto overscroll-contain pr-1 [-webkit-overflow-scrolling:touch]'
         }
       >

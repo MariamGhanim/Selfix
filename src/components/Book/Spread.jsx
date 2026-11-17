@@ -131,10 +131,10 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
   )
 
   const feed = (
-    <section className="book-page--left flex min-h-0 flex-1 flex-col overflow-hidden md:border-0 md:px-6 md:pt-3 md:pb-2 lg:px-8">
+    <section className="book-page--left flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden md:border-0 md:px-6 md:pt-3 md:pb-2 lg:px-8">
       {/* Shared center-aligned header — same stack on every tracker tab */}
-      <header className="left-page-header mx-auto flex w-full max-w-xl shrink-0 flex-col items-center gap-2.5 px-3 pt-2 text-center md:gap-2 md:px-2 md:pt-1">
-        <div className="flex w-full flex-col items-center gap-1.5">
+      <header className="left-page-header mx-auto flex w-full max-w-full shrink-0 flex-col items-center gap-1 px-2 pt-1 text-center sm:max-w-xl sm:gap-2 sm:px-3 sm:pt-2 md:gap-2 md:px-2 md:pt-1">
+        <div className="flex w-full flex-col items-center gap-1">
           <div
             className="left-page-header__icon inline-flex h-8 w-8 items-center justify-center rounded-full md:h-7 md:w-7"
             style={{
@@ -146,49 +146,50 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
           >
             <Icon size={isMobile ? 15 : 13} strokeWidth={2.25} />
           </div>
-          <div className="min-w-0 max-w-full">
-            <h2 className="font-display text-[1.05rem] font-semibold leading-tight tracking-tight text-[var(--ink)] md:text-[0.95rem]">
+          <div className="min-w-0 max-w-full px-1">
+            <h2 className="font-display text-[1.02rem] font-semibold leading-tight tracking-tight text-[var(--ink)] md:text-[0.95rem]">
               {tracker.title}
             </h2>
-            <p className="mt-0.5 text-[11px] font-medium leading-snug text-[var(--ink-soft)] md:text-[10px]">
+            <p className="mt-0.5 line-clamp-1 text-[11px] font-medium leading-snug text-[var(--ink-soft)] md:text-[10px]">
               {tracker.subtitle}
             </p>
           </div>
         </div>
 
-        <div className="left-page-header__legend flex w-full min-h-[2rem] items-start justify-center">
-          <Legend trackerId={tracker.id} levels={tracker.levels} />
+        <div className="left-page-header__legend scroll-fade-x scroll-fade-x--paper w-full min-w-0">
+          <div className="touch-scroll-x flex w-full items-center justify-start gap-1.5 px-1 pb-0.5 sm:flex-wrap sm:justify-center sm:overflow-visible">
+            <Legend trackerId={tracker.id} levels={tracker.levels} />
+          </div>
         </div>
 
         <div className="flex w-full flex-col items-center gap-1.5">
           {selectedLabel ? (
-            <div className="date-anchor mb-2 w-fit max-w-full rounded-full px-3.5 py-1 md:px-3 md:py-0.5">
-              <p className="date-anchor__stamp text-center text-sm font-medium">
+            <div className="date-anchor w-fit max-w-full rounded-full px-3 py-1 md:px-3 md:py-0.5">
+              <p className="date-anchor__stamp text-center text-[13px] font-medium sm:text-sm">
                 {selectedLabel}
               </p>
             </div>
           ) : (
-            <div className="h-[1.5rem] w-1 shrink-0" aria-hidden />
+            <div className="h-[1.25rem] w-1 shrink-0 md:h-[1.5rem]" aria-hidden />
           )}
 
           {isMobile && selectedDay && (
-            <div className="flex w-full max-w-sm flex-col items-center gap-2">
-              <p className="text-[12px] font-medium leading-snug text-[var(--ink-soft)]">
-                {selectedLevel ? (
-                  <>
-                    Logged as{' '}
-                    <span className="font-semibold text-[var(--ink)]">{selectedLevel.label}</span>
-                  </>
-                ) : (
-                  'No pixel yet — open the log to fill this day'
-                )}
-              </p>
+            <div className="day-log-bar mx-1 flex w-full max-w-sm items-center gap-2.5 rounded-2xl px-2.5 py-2">
+              <div className="min-w-0 flex-1 text-left">
+                <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--ink-soft)]">
+                  {selectedLevel ? 'Logged' : 'Today'}
+                </p>
+                <p className="mt-0.5 truncate text-[12px] font-medium leading-snug text-[var(--ink)]">
+                  {selectedLevel ? selectedLevel.label : 'No entry yet'}
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={openLog}
-                className="inline-flex min-h-11 items-center rounded-full bg-[var(--accent-deep)] px-4 py-2.5 text-sm font-bold text-white shadow-md active:scale-[0.97]"
+                className="open-log-btn inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl px-3 text-[12px] font-semibold tracking-wide"
               >
-                Open log
+                <BookOpen size={14} strokeWidth={2.1} aria-hidden />
+                {selectedLevel ? 'Edit log' : 'Open log'}
               </button>
             </div>
           )}
@@ -199,14 +200,8 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
         <span className="page-section-divider__motif">✦ · ✦</span>
       </div>
 
-      {isMobile && (
-        <p className="mb-2 px-2 text-center text-[11px] font-medium leading-relaxed text-[var(--ink-soft)]">
-          Tap any day to open your soft log sheet.
-        </p>
-      )}
-
-      <div className="min-h-0 flex-1 overflow-hidden pb-1 md:pb-0.5">
-        <div className="flex h-full min-h-0 w-full items-center justify-center">
+      <div className="min-h-0 min-w-0 flex-1 overflow-hidden pb-1 md:pb-0.5">
+        <div className="h-full min-h-0 w-full min-w-0 md:flex md:items-center md:justify-center">
           <PixelGrid
             trackerId={tracker.id}
             levels={tracker.levels}
@@ -221,7 +216,7 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
 
   return (
     <>
-      <div className="flex h-full min-h-0 w-full flex-col overflow-hidden p-2.5 sm:p-3 md:grid md:grid-cols-2 md:gap-0 md:p-0 md:pt-1 md:pb-1">
+      <div className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden p-1.5 sm:p-3 md:grid md:grid-cols-2 md:gap-0 md:p-0 md:pt-1 md:pb-1">
         {feed}
 
         <section className="book-page--right hidden min-h-0 flex-col overflow-hidden md:flex md:h-full md:min-h-0 md:pl-6 md:pr-5">

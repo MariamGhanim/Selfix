@@ -39,7 +39,7 @@ export default function VerifyEmailBanner() {
 
   return (
     <div className="flex min-h-[100dvh] w-full items-center justify-center overflow-auto px-4 py-6">
-      <div className="book-shadow paper-texture w-full max-w-lg rounded-[28px] border border-[var(--page-edge)] px-6 py-8 text-center sm:px-8">
+      <div className="book-shadow paper-texture w-full max-w-full rounded-[1.5rem] border border-[var(--page-edge)] px-4 py-6 text-center sm:max-w-lg sm:rounded-[28px] sm:px-8 sm:py-8">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent-glow)] text-[var(--accent-deep)]">
           <MailWarning size={28} />
         </div>
