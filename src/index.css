@@ -1649,28 +1649,28 @@ h3,
     display: flex !important;
     flex: 0 0 auto !important;
     flex-direction: column;
-    align-items: center !important;
+    align-items: stretch !important;
     justify-content: flex-start !important;
     height: auto !important;
     min-height: 0 !important;
     margin-top: 0 !important;
-    padding-top: 0.35rem !important;
-    padding-left: max(0.85rem, env(safe-area-inset-left, 0px)) !important;
-    padding-right: max(0.85rem, env(safe-area-inset-right, 0px)) !important;
-    padding-bottom: 0.5rem;
+    padding-top: 0.5rem !important;
+    padding-left: max(0.75rem, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(0.75rem, env(safe-area-inset-right, 0px)) !important;
+    padding-bottom: 0.75rem;
   }
 
   .auth-form-card {
     width: 100% !important;
-    max-width: 26rem !important;
-    margin-top: 1.15rem !important;
-    margin-inline: auto;
-    padding: 1.45rem 1.2rem 1.35rem !important;
-    border-radius: 1.35rem !important;
+    max-width: none !important;
+    margin-top: 1.25rem !important;
+    margin-inline: 0 !important;
+    padding: 1.55rem 1.4rem 1.45rem !important;
+    border-radius: 1.4rem !important;
     box-sizing: border-box;
     box-shadow:
       0 1px 0 color-mix(in srgb, white 50%, transparent) inset,
-      0 10px 26px rgba(160, 110, 125, 0.12),
+      0 12px 28px rgba(160, 110, 125, 0.13),
       0 2px 8px rgba(160, 110, 125, 0.06);
   }
 

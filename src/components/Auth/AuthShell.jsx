@@ -206,7 +206,7 @@ export default function AuthShell({ title, subtitle, children, footer }) {
             <AuthBrandPanel />
           </div>
 
-          <div className="auth-form-panel relative flex w-full flex-col items-center justify-start px-3.5 pb-5 pt-0 sm:px-8 sm:py-8 lg:col-span-7 lg:min-h-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-y-auto">
+          <div className="auth-form-panel relative flex w-full flex-col items-center justify-start px-2.5 pb-5 pt-0 sm:px-8 sm:py-8 lg:col-span-7 lg:min-h-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-y-auto">
             <div
               className="pointer-events-none absolute inset-0 opacity-50 max-sm:opacity-35"
               style={{
