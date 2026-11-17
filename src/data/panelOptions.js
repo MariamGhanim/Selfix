@@ -252,31 +252,65 @@ export const WORKOUT_DURATIONS = [
 ]
 
 export const SLEEP_DURATIONS = [
-  { id: 'lt4', emoji: '🌙', label: 'Less than 4 hours', level: 1 },
-  { id: '4-5', emoji: '🛏️', label: '4 - 5 hours', level: 1 },
-  { id: '6-7', emoji: '🛌', label: '6 - 7 hours', level: 2 },
-  { id: '7-8', emoji: '💤', label: '7 - 8 hours (Recommended)', level: 3 },
-  { id: '8plus', emoji: '✨', label: '8 - 9+ hours (Deep rest)', level: 4 },
+  { id: 'severe', emoji: '🪫', label: '< 5h', hint: 'Severe debt', anchorHours: 4 },
+  { id: 'moderate', emoji: '🌙', label: '5 – 6.5h', hint: 'Moderate debt', anchorHours: 5.5 },
+  { id: 'optimal', emoji: '✨', label: '7 – 8.5h', hint: 'Optimal', anchorHours: 8 },
+  { id: 'oversleep', emoji: '😴', label: '9h+', hint: 'Possible fatigue', anchorHours: 9.5 },
+]
+
+export const SLEEP_FRAGMENTATION = [
+  { id: 'solid', emoji: '💤', label: 'Uninterrupted', short: 'Uninterrupted' },
+  { id: 'mild_waking', emoji: '🔄', label: '1–2 brief wakings', short: 'Brief wakings' },
+  {
+    id: 'frequent_awakenings',
+    emoji: '⚠️',
+    label: 'Frequent awakenings',
+    short: 'Fragmented night',
+  },
+]
+
+export const SLEEP_DISRUPTERS = [
+  { id: 'caffeine', emoji: '☕', label: 'Late caffeine' },
+  { id: 'screens', emoji: '📱', label: 'Screens' },
+  { id: 'meal', emoji: '🍽️', label: 'Late meal' },
+  { id: 'environment', emoji: '🌡️', label: 'Room / environment' },
+  { id: 'stress', emoji: '😰', label: 'Stress / racing thoughts' },
+]
+
+export const SLEEP_MORNING = [
+  {
+    id: 'alert',
+    emoji: '⚡',
+    label: 'Alert & energized',
+    short: 'Woke alert',
+  },
+  {
+    id: 'groggy',
+    emoji: '🌫️',
+    label: 'Groggy / slow to wake',
+    short: 'Sleep inertia',
+  },
+  {
+    id: 'exhausted',
+    emoji: '🧟',
+    label: 'Exhausted',
+    short: 'Exhausted wake-up',
+  },
+  {
+    id: 'aches',
+    emoji: '🤕',
+    label: 'Headache / body aches',
+    short: 'Aches on waking',
+  },
 ]
 
 export const SLEEP_LOCATIONS = [
-  { id: 'bed', emoji: '🛏️', label: 'My Bed (Comfortable)' },
-  { id: 'sofa', emoji: '🛋️', label: 'Living Room Sofa' },
-  { id: 'floor', emoji: '🪵', label: 'On the Floor / Mattress' },
-  { id: 'car', emoji: '🚗', label: 'In the Car' },
-  { id: 'hotel', emoji: '✈️', label: 'Traveling / Hotel Bed' },
-  { id: 'guest', emoji: '🛋️', label: 'Guest Room / Other' },
-]
-
-export const SLEEP_QUALITY = [
-  { id: 'deep', emoji: '😴', label: 'Deep & Peaceful Sleep' },
-  { id: 'restless', emoji: '🌀', label: 'Restless & Tossing' },
-  { id: 'dreams', emoji: '🧩', label: 'Vivid Dreams / Nightmares' },
-  { id: 'groggy', emoji: '⚡', label: 'Woke Up Tired & Groggy' },
-  { id: 'sore', emoji: '🤕', label: 'Headache / Body Soreness' },
-  { id: 'insomnia', emoji: '🌙', label: 'Frequent Awakenings (Insomnia)' },
-  { id: 'caffeine', emoji: '☕', label: 'Caffeine / Late Night Interference' },
-  { id: 'calm', emoji: '🌿', label: 'Calm & Relaxed Before Bed' },
+  { id: 'bed', emoji: '🛏️', label: 'My bed' },
+  { id: 'sofa', emoji: '🛋️', label: 'Sofa' },
+  { id: 'floor', emoji: '🪵', label: 'Floor / mattress' },
+  { id: 'car', emoji: '🚗', label: 'Car' },
+  { id: 'hotel', emoji: '✈️', label: 'Travel / hotel' },
+  { id: 'guest', emoji: '🛋️', label: 'Guest room' },
 ]
 
 export const FOCUS_QUICK_ADDS = [
@@ -404,10 +438,16 @@ export const PANEL_DEFAULTS = {
   water: { cups: 0, ml: 0, choices: [], q1: null, q2: null, q3: null },
   sleep: {
     duration: null,
+    durationSource: null,
     sleepTime: '',
     wakeTime: '',
     locations: [],
     quality: [],
+    fragmentationLevel: null,
+    sleepDisrupters: [],
+    morningInertia: null,
+    calculatedQualityScore: null,
+    qualityBadge: null,
     q1: null,
     q2: null,
     q3: null,

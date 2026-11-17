@@ -102,12 +102,14 @@ export function sleepHoursBetween(sleepStorage, wakeStorage) {
   return diff / 60
 }
 
-/** Map hours → Sleep duration pill id + pixel level. */
+/**
+ * Map hours onto the sleep-debt bands.
+ * Pixel color comes from the quality score, not from hours alone.
+ */
 export function sleepDurationFromHours(hours) {
-  if (hours == null || !Number.isFinite(hours)) return null
-  if (hours < 4) return { id: 'lt4', level: 1 }
-  if (hours < 6) return { id: '4-5', level: 1 }
-  if (hours < 7) return { id: '6-7', level: 2 }
-  if (hours < 8) return { id: '7-8', level: 3 }
-  return { id: '8plus', level: 4 }
+  if (hours == null || !Number.isFinite(hours) || hours <= 0) return null
+  if (hours < 5) return { id: 'severe', anchorHours: 4 }
+  if (hours < 7) return { id: 'moderate', anchorHours: 5.5 }
+  if (hours < 9) return { id: 'optimal', anchorHours: 8 }
+  return { id: 'oversleep', anchorHours: 9.5 }
 }

@@ -1,6 +1,7 @@
 import { Fragment, memo, useCallback, useMemo, useRef } from 'react'
 import { DAYS, MONTHS, MONTHS_FULL, cellKey, isValidDate } from '../../data/trackers'
 import { useJournal } from '../../context/JournalContext'
+import { scoreSleep } from '../../lib/sleepQuality'
 
 const EMPTY_BG = 'var(--empty-cell)'
 const INVALID_BG = 'var(--invalid-cell)'
@@ -39,6 +40,7 @@ function PixelGrid({
 }) {
   const { year, state, paintPixel } = useJournal()
   const pixels = state.pixels
+  const panels = state.panels
   const selectedPaint = state.selectedLevel?.[trackerId]
 
   const selectedDayRef = useRef(selectedDay)
@@ -112,9 +114,14 @@ function PixelGrid({
         {MONTHS.map((m) => {
           const key = `${m.id}-${day}`
           const valid = validityByCell.get(key)
-          const value = valid
-            ? (pixels?.[`${trackerId}:${cellKey(year, m.id, day)}`] ?? null)
-            : null
+          let value = valid ? (pixels?.[`${trackerId}:${cellKey(year, m.id, day)}`] ?? null) : null
+          if (trackerId === 'sleep' && valid) {
+            const panel = panels?.[`sleep:${cellKey(year, m.id, day)}`]
+            if (panel) {
+              const scored = scoreSleep(panel)
+              if (scored.pixelLevel != null) value = scored.pixelLevel
+            }
+          }
           const isSelected = selectedKey === key
           const background = !valid
             ? INVALID_BG
@@ -139,6 +146,7 @@ function PixelGrid({
     ))
   }, [
     pixels,
+    panels,
     trackerId,
     year,
     validityByCell,

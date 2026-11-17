@@ -1,3 +1,5 @@
+import { SLEEP_MORNING } from './panelOptions'
+
 export const QUIZ_DEFAULTS = { q1: null, q2: null, q3: null }
 
 export const SUPPORT_BY_ANSWER = {
@@ -174,53 +176,22 @@ export const WATER_QUIZ = [
   },
 ]
 
+const SLEEP_MORNING_SUPPORT = {
+  groggy: 'Give yourself a soft start — light and water help.',
+  exhausted: 'The night didn’t restore you. Soften today if you can.',
+  aches: 'Aches often mean incomplete recovery. Be gentle.',
+}
+
 export const SLEEP_QUIZ = [
   {
-    key: 'q1',
-    question: 'How did falling asleep go last night?',
-    options: [
-      { id: 'light', emoji: '😴', label: 'Out Like a Light' },
-      {
-        id: 'tossed',
-        emoji: '⏳',
-        label: 'Tossed & Turned a Bit',
-        support: 'Restless nights happen. Be kind to tomorrow-you.',
-      },
-      {
-        id: 'scrolling',
-        emoji: '📱',
-        label: 'Stayed Up Scrolling',
-        support: 'Screens steal sleep — no judgment. Rest is still available.',
-      },
-    ],
-  },
-  {
-    key: 'q2',
-    question: 'What was the first feeling when the alarm rang?',
-    options: [
-      { id: 'ready', emoji: '☀️', label: 'Refreshed & Ready' },
-      { id: 'fivemore', emoji: '🥱', label: 'Needed 5 More Mins' },
-      {
-        id: 'zombie',
-        emoji: '🧟',
-        label: 'Total Zombie Mode',
-        support: 'Rough mornings are valid. A soft start is still a start.',
-      },
-    ],
-  },
-  {
-    key: 'q3',
-    question: 'Did your sleep feel like it restored you?',
-    options: [
-      { id: 'deep', emoji: '🔋', label: 'Deep & Restful' },
-      { id: 'average', emoji: '⚖️', label: 'Average Night' },
-      {
-        id: 'nap',
-        emoji: '💤',
-        label: 'Need a Nap Today',
-        support: 'Your body is asking for recovery. Listening is strength.',
-      },
-    ],
+    key: 'morningInertia',
+    question: 'How did you wake up?',
+    options: SLEEP_MORNING.map((opt) => ({
+      id: opt.id,
+      emoji: opt.emoji,
+      label: opt.label,
+      support: SLEEP_MORNING_SUPPORT[opt.id],
+    })),
   },
 ]
 

@@ -21,9 +21,11 @@ import {
   SELF_DEV_DURATIONS,
   SELF_DEV_TOPICS,
   SHOWER_ROUTINE_GROUPS,
+  SLEEP_DISRUPTERS,
   SLEEP_DURATIONS,
+  SLEEP_FRAGMENTATION,
   SLEEP_LOCATIONS,
-  SLEEP_QUALITY,
+  SLEEP_MORNING,
   SWEET_TREATS,
   TEETH_ROUTINE,
   VITAMIN_LIST,
@@ -33,7 +35,8 @@ import {
   WORKOUT_DURATIONS,
 } from '../../data/panelOptions'
 import SoftTimePicker from './SoftTimePicker'
-import { sleepDurationFromHours, sleepHoursBetween } from '../../lib/timeParse'
+import { sleepHoursBetween } from '../../lib/timeParse'
+import { projectSleepLog, scoreSleep } from '../../lib/sleepQuality'
 import {
   Chip,
   ChipGroup,
@@ -1048,119 +1051,265 @@ export function FocusPanel({ month, day }) {
   )
 }
 
+const SLEEP_BADGE_COLOR = {
+  needs_attention: '#f28b82',
+  fair: '#f6d56a',
+  good: '#7dcea0',
+  optimal: '#a78bda',
+}
+
+function formatSleepHours(hours) {
+  if (hours == null || !Number.isFinite(hours)) return null
+  const rounded = Math.round(hours * 10) / 10
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)
+}
+
+function SleepSection({ title, hint, children }) {
+  return (
+    <section className="rounded-[1.2rem] bg-[var(--surface)]/75 p-3 ring-1 ring-[var(--page-edge)]/40 sm:p-3.5">
+      <div className="mb-2 flex items-baseline justify-between gap-2">
+        <ReviewHeading className="!mb-0">{title}</ReviewHeading>
+        {hint ? <span className="text-[10px] font-medium text-[var(--ink-soft)]">{hint}</span> : null}
+      </div>
+      {children}
+    </section>
+  )
+}
+
 export function SleepPanel({ month, day }) {
   const { data, patch } = usePanel('sleep', month, day)
   const [sleepTime, setSleepTime] = useState(data.sleepTime || '')
   const [wakeTime, setWakeTime] = useState(data.wakeTime || '')
+  const scored = scoreSleep(data)
 
   useEffect(() => {
     setSleepTime(data.sleepTime || '')
     setWakeTime(data.wakeTime || '')
   }, [month, day, data.sleepTime, data.wakeTime])
 
+  const commit = (partial) => {
+    const next = projectSleepLog(data, partial)
+    patch(
+      {
+        ...partial,
+        sleepModel: 2,
+        duration: next.durationHours,
+        durationSource: next.durationSource,
+        fragmentationLevel: next.fragmentationLevel,
+        sleepDisrupters: next.sleepDisrupters,
+        morningInertia: next.morningInertia,
+        calculatedQualityScore: next.score,
+        qualityBadge: next.badge,
+      },
+      next.pixelLevel,
+    )
+  }
+
   const setDuration = (id) => {
-    const next = data.duration === id ? null : id
-    const block = SLEEP_DURATIONS.find((d) => d.id === next)
-    patch({ duration: next }, block?.level ?? null)
+    if (scored.bandId === id) {
+      commit({ duration: null, durationSource: 'chip' })
+      return
+    }
+    const block = SLEEP_DURATIONS.find((d) => d.id === id)
+    commit({ duration: block?.anchorHours ?? null, durationSource: 'chip' })
   }
 
   const commitTimes = (nextSleep, nextWake) => {
     const sleep = nextSleep ?? sleepTime
     const wake = nextWake ?? wakeTime
     const hours = sleepHoursBetween(sleep, wake)
-    const auto = sleepDurationFromHours(hours)
-    if (auto) {
-      patch({ sleepTime: sleep, wakeTime: wake, duration: auto.id }, auto.level)
-    } else {
-      patch({ sleepTime: sleep, wakeTime: wake })
+    if (hours == null) {
+      commit({ sleepTime: sleep, wakeTime: wake })
+      return
     }
+    const rounded = Math.round(hours * 10) / 10
+    commit({
+      sleepTime: sleep,
+      wakeTime: wake,
+      duration: rounded,
+      durationSource: 'times',
+    })
   }
 
-  const computedHours = sleepHoursBetween(sleepTime, wakeTime)
-  const computedLabel =
-    computedHours == null
-      ? null
-      : `${computedHours % 1 === 0 ? computedHours : computedHours.toFixed(1)}h logged from times`
+  const hoursPretty = formatSleepHours(scored.durationHours)
+  const metaBits = [
+    hoursPretty ? `${hoursPretty}h` : null,
+    scored.fragmentationLabel,
+    scored.morningLabel,
+  ].filter(Boolean)
+  const badgeColor = SLEEP_BADGE_COLOR[scored.badge] || '#a78bda'
+  const morningSupport = SLEEP_QUIZ[0]?.options?.find((o) => o.id === scored.morningInertia)?.support
+  const chipGrid = 'grid grid-cols-2 gap-1.5'
+  const chipFill = 'w-full justify-center'
 
   return (
     <PanelShell month={month} day={day} title="Sleep & rest" trackerId="sleep" hideNotes>
       <ReviewPanelFrame trackerId="sleep" month={month} day={day} notesPlaceholder="Sleep dreams & notes…">
-        <section>
-          <ReviewHeading className="mb-1">Sleep duration</ReviewHeading>
-          <div className="mb-1.5 flex flex-wrap gap-1">
-            {SLEEP_DURATIONS.map((d) => (
-              <SelectChip
-                key={d.id}
-                compact
-                emoji={d.emoji}
-                label={d.label}
-                active={data.duration === d.id}
-                onClick={() => setDuration(d.id)}
-              />
-            ))}
-          </div>
-          <div className="mb-1.5 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-1.5">
-            <div>
-              <ReviewHeading className="mb-0.5 !text-[10px]">Sleep Time</ReviewHeading>
-              <SoftTimePicker
-                value={sleepTime}
-                title="Bedtime"
-                aria-label="Bedtime"
-                placeholder="e.g. 11:30 PM"
-                onChange={setSleepTime}
-                onCommit={(next) => {
-                  setSleepTime(next)
-                  commitTimes(next, wakeTime)
+        <div className="space-y-2.5">
+          <AnimatePresence mode="wait">
+            {scored.score != null ? (
+              <motion.div
+                key={`${scored.badge}-${scored.score}`}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ type: 'spring', stiffness: 340, damping: 28 }}
+                className="flex items-center justify-between gap-3 rounded-[1.25rem] px-3.5 py-3 ring-1 ring-[var(--page-edge)]/45"
+                style={{
+                  background: `color-mix(in srgb, ${badgeColor} 14%, var(--surface))`,
                 }}
-              />
+              >
+                <div className="min-w-0">
+                  <p className="text-[10px] font-medium tracking-[0.04em] text-[var(--ink-soft)]">
+                    Quality
+                  </p>
+                  <p className="mt-0.5 font-display text-[15px] font-semibold leading-none text-[var(--ink)] sm:text-base">
+                    {scored.badgeLabel}
+                  </p>
+                  {metaBits.length ? (
+                    <p className="mt-1 truncate text-[10px] font-medium text-[var(--ink-soft)]">
+                      {metaBits.join(' · ')}
+                    </p>
+                  ) : null}
+                </div>
+                <div
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ring-1 ring-[var(--page-edge)]/35"
+                  style={{
+                    background: `color-mix(in srgb, ${badgeColor} 22%, #fffaf7)`,
+                  }}
+                >
+                  <span className="font-display text-[1.15rem] font-semibold leading-none text-[var(--accent-deep)]">
+                    {scored.score}
+                  </span>
+                </div>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+
+          <SleepSection title="Duration">
+            <div className={chipGrid}>
+              {SLEEP_DURATIONS.map((d) => (
+                <SelectChip
+                  key={d.id}
+                  compact
+                  className={chipFill}
+                  emoji={d.emoji}
+                  label={d.label}
+                  active={scored.bandId === d.id}
+                  onClick={() => setDuration(d.id)}
+                />
+              ))}
             </div>
-            <div>
-              <ReviewHeading className="mb-0.5 !text-[10px]">Wake Up</ReviewHeading>
-              <SoftTimePicker
-                value={wakeTime}
-                title="Wake-up Time"
-                aria-label="Wake-up time"
-                placeholder="e.g. 7:00 AM"
-                onChange={setWakeTime}
-                onCommit={(next) => {
-                  setWakeTime(next)
-                  commitTimes(sleepTime, next)
-                }}
-              />
+            <div className="mt-2.5 grid grid-cols-2 gap-2">
+              <div>
+                <p className="mb-1 text-[10px] font-medium text-[var(--ink-soft)]">Sleep time</p>
+                <SoftTimePicker
+                  value={sleepTime}
+                  title="Bedtime"
+                  aria-label="Bedtime"
+                  placeholder="11:30 PM"
+                  onChange={setSleepTime}
+                  onCommit={(next) => {
+                    setSleepTime(next)
+                    commitTimes(next, wakeTime)
+                  }}
+                />
+              </div>
+              <div>
+                <p className="mb-1 text-[10px] font-medium text-[var(--ink-soft)]">Wake up</p>
+                <SoftTimePicker
+                  value={wakeTime}
+                  title="Wake-up Time"
+                  aria-label="Wake-up time"
+                  placeholder="7:00 AM"
+                  onChange={setWakeTime}
+                  onCommit={(next) => {
+                    setWakeTime(next)
+                    commitTimes(sleepTime, next)
+                  }}
+                />
+              </div>
             </div>
-          </div>
-          {computedLabel ? (
-            <p className="mb-1.5 text-[10px] font-semibold text-[var(--accent-deep)]">{computedLabel}</p>
-          ) : null}
-          <ReviewHeading className="mb-1">Location & quality</ReviewHeading>
-          <div className="flex flex-wrap gap-1">
-            {SLEEP_LOCATIONS.map((opt) => (
-              <SelectChip
-                key={opt.id}
-                compact
-                emoji={opt.emoji}
-                label={opt.label}
-                active={(data.locations || []).includes(opt.id)}
-                onClick={() => patch({ locations: toggleInList(data.locations, opt.id) })}
-              />
-            ))}
-            {SLEEP_QUALITY.map((opt) => (
-              <SelectChip
-                key={opt.id}
-                compact
-                emoji={opt.emoji}
-                label={opt.label}
-                active={(data.quality || []).includes(opt.id)}
-                onClick={() => patch({ quality: toggleInList(data.quality, opt.id) })}
-              />
-            ))}
-          </div>
-        </section>
-        <MiniQuiz
-          questions={SLEEP_QUIZ}
-          answers={quizAnswers(data)}
-          onAnswer={(key, value) => setQuizAnswer(patch, key, value)}
-        />
+          </SleepSection>
+
+          <SleepSection title="Night wakings">
+            <div className="flex flex-wrap gap-1.5">
+              {SLEEP_FRAGMENTATION.map((opt) => (
+                <SelectChip
+                  key={opt.id}
+                  compact
+                  emoji={opt.emoji}
+                  label={opt.label}
+                  active={scored.fragmentationLevel === opt.id}
+                  onClick={() =>
+                    commit({
+                      fragmentationLevel: scored.fragmentationLevel === opt.id ? null : opt.id,
+                    })
+                  }
+                />
+              ))}
+            </div>
+          </SleepSection>
+
+          <SleepSection title="Disrupters" hint="Select any">
+            <div className="flex flex-wrap gap-1.5">
+              {SLEEP_DISRUPTERS.map((opt) => (
+                <SelectChip
+                  key={opt.id}
+                  compact
+                  emoji={opt.emoji}
+                  label={opt.label}
+                  active={scored.sleepDisrupters.includes(opt.id)}
+                  onClick={() =>
+                    commit({
+                      sleepDisrupters: toggleInList(scored.sleepDisrupters, opt.id),
+                    })
+                  }
+                />
+              ))}
+            </div>
+          </SleepSection>
+
+          <SleepSection title="Location">
+            <div className="flex flex-wrap gap-1.5">
+              {SLEEP_LOCATIONS.map((opt) => (
+                <SelectChip
+                  key={opt.id}
+                  compact
+                  emoji={opt.emoji}
+                  label={opt.label}
+                  active={(data.locations || []).includes(opt.id)}
+                  onClick={() => commit({ locations: toggleInList(data.locations, opt.id) })}
+                />
+              ))}
+            </div>
+          </SleepSection>
+
+          <SleepSection title="Morning">
+            <div className={chipGrid}>
+              {SLEEP_MORNING.map((opt) => (
+                <SelectChip
+                  key={opt.id}
+                  compact
+                  className={chipFill}
+                  emoji={opt.emoji}
+                  label={opt.label}
+                  active={scored.morningInertia === opt.id}
+                  onClick={() =>
+                    commit({
+                      morningInertia: scored.morningInertia === opt.id ? null : opt.id,
+                    })
+                  }
+                />
+              ))}
+            </div>
+            <AnimatePresence mode="wait">
+              {morningSupport ? (
+                <SupportNote key={scored.morningInertia}>{morningSupport}</SupportNote>
+              ) : null}
+            </AnimatePresence>
+          </SleepSection>
+        </div>
       </ReviewPanelFrame>
     </PanelShell>
   )

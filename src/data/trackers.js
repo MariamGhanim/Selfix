@@ -33,16 +33,16 @@ export const TRACKERS = [
   {
     id: 'sleep',
     title: 'Sleep & Rest Tracker',
-    subtitle: 'How last night carried into today',
+    subtitle: 'Quality, continuity, and sleep debt',
     tab: 'Sleep',
     icon: 'Moon',
     tabColor: '#9fa8da',
     panel: 'sleep',
     levels: [
-      { value: 1, label: 'Bad (<5h)', color: '#f28b82' },
-      { value: 2, label: 'Fair (5–6h)', color: '#f6d56a' },
-      { value: 3, label: 'Good (7–8h)', color: '#7dcea0' },
-      { value: 4, label: 'Excellent (8h+)', color: '#a78bda' },
+      { value: 1, label: 'Needs attention', color: '#f28b82' },
+      { value: 2, label: 'Fair', color: '#f6d56a' },
+      { value: 3, label: 'Good', color: '#7dcea0' },
+      { value: 4, label: 'Optimal', color: '#a78bda' },
     ],
   },
   {

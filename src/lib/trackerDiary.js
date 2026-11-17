@@ -1,5 +1,6 @@
 import { cellKey, TRACKERS } from '../data/trackers'
 import { FOCUS_ENVIRONMENTS, SALAH_PRAYERS } from '../data/panelOptions'
+import { scoreSleep, SLEEP_LEVEL_FALLBACK_SCORE } from './sleepQuality'
 
 export const DIARY_RANGES = [
   { id: 'weekly', label: 'Weekly' },
@@ -207,10 +208,7 @@ function describeGenericDay(tracker, value, panel) {
   const bits = []
 
   if (tracker.id === 'sleep') {
-    if (value === 1) bits.push('Under 5 hours')
-    else if (value === 2) bits.push('5 to 6 hours')
-    else if (value === 3) bits.push('7 to 8 hours')
-    else if (value === 4) bits.push('8+ hours')
+    return describeSleepDay(value, panel)
   } else if (tracker.id === 'water') {
     if (value != null && value > 0) bits.push(`${value === 8 ? '8+' : value} cups`)
     else return { headline: null, details: [], empty: true }
@@ -251,6 +249,31 @@ function describeGenericDay(tracker, value, panel) {
   return { headline: bits[0], details: bits.slice(1), empty: false }
 }
 
+function describeSleepDay(value, panel) {
+  const scored = scoreSleep(panel || {})
+  if (scored.score != null) {
+    const bits = []
+    if (scored.durationHours != null) {
+      const hours = Number.isInteger(scored.durationHours)
+        ? String(scored.durationHours)
+        : scored.durationHours.toFixed(1)
+      bits.push(`${hours}h sleep`)
+    }
+    if (scored.fragmentationLabel) bits.push(scored.fragmentationLabel)
+    if (scored.morningLabel) bits.push(scored.morningLabel)
+    bits.push(`Quality ${scored.score}`)
+    return { headline: scored.badgeLabel, details: bits, empty: false }
+  }
+
+  if (value == null) return { headline: null, details: [], empty: true }
+  const fallback = { 1: 'Needs attention', 2: 'Fair', 3: 'Good', 4: 'Optimal' }
+  return {
+    headline: fallback[value] || 'Sleep logged',
+    details: [],
+    empty: false,
+  }
+}
+
 function describeDay(tracker, value, panel, todos) {
   if (tracker.id === 'salah') return describeSalahDay(value, panel)
   if (tracker.id === 'focus') return describeFocusDay(value, panel, levelLabel(tracker, value))
@@ -283,14 +306,23 @@ export function buildTrackerDiary(state, trackerId, rangeId, year, anchor = new 
 
   const entries = days
     .map((d) => {
-      const value = pixelIndex[d.key] ?? null
       const panel = panelIndex[d.key] || {}
+      const sleepScored = tracker.id === 'sleep' ? scoreSleep(panel) : null
+      const value =
+        sleepScored?.pixelLevel != null ? sleepScored.pixelLevel : (pixelIndex[d.key] ?? null)
       const todos = state?.todos?.[d.key] || []
       const trackerNote = state?.dailyNotes?.[`${tracker.id}:${d.key}`] || ''
       const writtenNotes = collectWrittenNotes(panel, trackerNote)
       const described = describeDay(tracker, value, panel, todos)
       const mins = Number(panel?.minutes) || 0
       const empty = described.empty && !writtenNotes.length
+      const qualityScore =
+        sleepScored?.score ??
+        (tracker.id === 'sleep' && value != null ? SLEEP_LEVEL_FALLBACK_SCORE[value] ?? null : null)
+      const qualityDetail =
+        tracker.id === 'sleep' && !empty
+          ? [described.headline, ...(described.details || [])].filter(Boolean).join(' · ')
+          : null
       return {
         ...d,
         value,
@@ -302,6 +334,9 @@ export function buildTrackerDiary(state, trackerId, rangeId, year, anchor = new 
         minutes: mins,
         tasksDone: todos.filter((t) => t.done || t.completed).length,
         tasksTotal: todos.length,
+        qualityScore,
+        qualityDetail,
+        sleepHours: sleepScored?.durationHours ?? null,
       }
     })
     .reverse()

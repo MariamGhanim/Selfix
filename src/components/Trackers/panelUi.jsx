@@ -49,7 +49,15 @@ export function Chip({ active, onClick, emoji, label, colorIndex = 0, compact = 
   )
 }
 
-export function SelectChip({ active, onClick, emoji, label, compact = false }) {
+export function SelectChip({
+  active,
+  onClick,
+  emoji,
+  label,
+  compact = false,
+  wrap = false,
+  className = '',
+}) {
   return (
     <motion.button
       type="button"
@@ -61,6 +69,8 @@ export function SelectChip({ active, onClick, emoji, label, compact = false }) {
       whileTap={{ scale: 0.94 }}
       transition={{ type: 'spring', stiffness: 420, damping: 24 }}
       className={`relative z-10 inline-flex min-h-11 max-w-full cursor-pointer items-center overflow-visible rounded-full text-left font-medium leading-tight transition-colors duration-200 sm:min-h-0 ${
+        wrap ? 'whitespace-normal' : ''
+      } ${
         compact
           ? 'gap-1.5 px-3.5 py-2.5 text-xs sm:gap-1 sm:px-2.5 sm:py-1 sm:text-[11px]'
           : 'gap-1.5 px-3.5 py-2.5 text-xs sm:px-3 sm:py-1.5 sm:text-xs'
@@ -68,7 +78,7 @@ export function SelectChip({ active, onClick, emoji, label, compact = false }) {
         active
           ? 'bg-[var(--accent-deep)] text-white shadow-md ring-2 ring-[var(--accent-soft)]'
           : 'bg-[var(--surface)] text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/70 hover:bg-[var(--surface-strong)] hover:text-[var(--ink)] hover:ring-[var(--accent)]/40'
-      }`}
+      } ${className}`}
     >
       <AnimatePresence initial={false}>
         {active && (
@@ -102,7 +112,7 @@ export function SelectChip({ active, onClick, emoji, label, compact = false }) {
           {emoji}
         </motion.span>
       )}
-      <span className="truncate">{label}</span>
+      <span className={wrap ? 'whitespace-normal text-left' : 'truncate'}>{label}</span>
     </motion.button>
   )
 }
@@ -170,7 +180,7 @@ export function toggleSingle(current, id) {
   return current === id ? null : id
 }
 
-export function MiniQuiz({ questions, answers, onAnswer, title = 'Daily Mini-Quiz' }) {
+export function MiniQuiz({ questions, answers, onAnswer, title = 'Daily Mini-Quiz', wrap = false }) {
   const note = supportNoteForAnswers(answers, questions)
 
   return (
@@ -188,6 +198,7 @@ export function MiniQuiz({ questions, answers, onAnswer, title = 'Daily Mini-Qui
                 <SelectChip
                   key={opt.id}
                   compact
+                  wrap={wrap}
                   emoji={opt.emoji}
                   label={opt.label}
                   active={answers?.[q.key] === opt.id}

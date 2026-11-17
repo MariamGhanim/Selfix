@@ -1,4 +1,5 @@
 import { cellKey, TRACKERS } from '../data/trackers'
+import { overlaySleepQuality } from './sleepQuality'
 import { FOCUS_ENVIRONMENTS } from '../data/panelOptions'
 
 export const INSIGHT_RANGES = [
@@ -284,6 +285,7 @@ function buildWindowSnapshot(state, days, from, to) {
   const todos = state?.todos || {}
   const pixelIndex = indexPixels(pixels, from.getFullYear(), from, to)
   const panelIndex = indexPanels(panels, from, to)
+  overlaySleepQuality(pixelIndex, panelIndex)
   const habitStats = buildHabitStats(days, pixelIndex)
 
   const moodSeries = days.map((d) => ({
@@ -499,7 +501,7 @@ function buildSmartMatrix({ days, pixelIndex, moodSeries, habitStats, rangeId })
         emoji: '🧠',
         tone: 'mint',
         title: 'Pattern detected',
-        message: `Your focus output is about ${lift}% stronger on days with 7+ hours of sleep${morningSalahBoost.length ? ' — especially when morning prayers stay on track' : ''}.`,
+        message: `Your focus output is about ${lift}% stronger on days with good or optimal sleep quality${morningSalahBoost.length ? ' — especially when morning prayers stay on track' : ''}.`,
       })
     }
   }

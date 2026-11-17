@@ -24,8 +24,6 @@ import {
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-const SLEEP_HOURS = { 1: 4.5, 2: 5.5, 3: 7.5, 4: 8.5 }
-
 /** Trackers where a lower level value means a better outcome (Taken=1, Skipped=3). */
 const INVERTED_LEVEL_TRACKERS = new Set(['vitamins', 'shower'])
 
@@ -162,22 +160,17 @@ function chartModel(diary) {
   if (tracker.id === 'sleep') {
     return {
       kind: 'area',
-      title: 'Hours of rest',
+      title: 'Sleep quality',
       color,
-      domain: [0, 10],
-      ticks: [0, 4.5, 5.5, 7.5, 8.5],
-      tickFormat: (v) => {
-        if (v === 4.5) return '<5h'
-        if (v === 5.5) return '5–6h'
-        if (v === 7.5) return '7–8h'
-        if (v === 8.5) return '8h+'
-        return v === 0 ? '0' : ''
-      },
-      tipFormat: (v) => (v ? `About ${v} hours` : '—'),
+      domain: [0, 100],
+      ticks: [0, 50, 70, 85, 100],
+      tickFormat: (v) => (v === 0 ? '0' : String(v)),
+      tipFormat: (v) => (v ? `Quality ${Math.round(v)}` : '—'),
       data: chronological.map((e) => ({
         day: shortDay(e),
-        value: e.empty || e.value == null ? 0 : SLEEP_HOURS[e.value] ?? 0,
+        value: e.empty || e.qualityScore == null ? 0 : e.qualityScore,
         full: e.label,
+        detail: e.qualityDetail || null,
       })),
     }
   }
@@ -254,7 +247,7 @@ function SoftTooltip({ active, payload, tipFormat }) {
   return (
     <div className="rounded-2xl border border-[var(--page-edge)]/60 bg-[var(--surface-strong)] px-3 py-2 shadow-lg">
       <p className="font-display text-[11px] font-semibold text-[var(--accent-deep)]">{row?.full}</p>
-      <p className="mt-0.5 text-[12px] text-[var(--ink)]">{tipFormat(value)}</p>
+      <p className="mt-0.5 text-[12px] leading-snug text-[var(--ink)]">{row?.detail || tipFormat(value)}</p>
     </div>
   )
 }
