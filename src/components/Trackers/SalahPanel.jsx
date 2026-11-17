@@ -11,7 +11,6 @@ import {
   PanelShell,
   ReviewHeading,
   ReviewPanelFrame,
-  SelectChip,
   SoftTextarea,
 } from './panelUi'
 
@@ -90,8 +89,25 @@ export default function SalahPanel({ month, day }) {
     )
   }
 
+  const isCleanCount = (value) => {
+    if (excused || value == null) return false
+    const plus = value === 6
+    if (paintedPlus !== plus) return false
+    if (level !== value) return false
+    const onTimeN = value <= 0 ? 0 : Math.min(5, value)
+    return SALAH_PRAYERS.every((p, i) => {
+      const expected = value <= 0 ? 'missed' : i < onTimeN ? 'onTime' : 'missed'
+      return (prayers[p.id] ?? null) === expected
+    })
+  }
+
   const setCount = (value) => {
     if (value == null) {
+      patch({ prayers: emptyPrayers(), paintedPlus: false, excused: false }, null)
+      return
+    }
+    // Toggle off only when this exact clean quick-paint is already applied
+    if (isCleanCount(value)) {
       patch({ prayers: emptyPrayers(), paintedPlus: false, excused: false }, null)
       return
     }
@@ -110,6 +126,13 @@ export default function SalahPanel({ month, day }) {
 
   const onTimeCount = SALAH_PRAYERS.filter((p) => prayers[p.id] === 'onTime').length
 
+  const countChipClass = (active) =>
+    `relative z-20 inline-flex min-h-9 shrink-0 cursor-pointer items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold transition sm:min-h-0 ${
+      active
+        ? 'bg-[var(--accent-deep)] text-white shadow-md ring-2 ring-[var(--accent-soft)]'
+        : 'bg-[var(--surface)] text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/70 hover:bg-[var(--surface-strong)] hover:text-[var(--ink)] hover:ring-[var(--accent)]/40'
+    }`
+
   return (
     <PanelShell month={month} day={day} title="Salah & spiritual" trackerId="salah" hideNotes>
       <ReviewPanelFrame
@@ -118,27 +141,50 @@ export default function SalahPanel({ month, day }) {
         day={day}
         notesPlaceholder="Quran notes, duas, or a soft reflection…"
       >
-        <section>
+        <section className="relative z-20">
           <ReviewHeading className="mb-1">Prayers on time</ReviewHeading>
           <p className="mb-2 text-[10px] leading-snug text-[var(--ink-soft)]">
             Quick paint for the year grid — or fine-tune each salah below.
           </p>
-          <div className="mb-1.5 flex flex-wrap gap-1">
-            {SALAH_COUNT_OPTIONS.map((opt) => (
-              <SelectChip
-                key={opt.value}
-                compact
-                label={opt.label}
-                active={!excused && level === opt.value}
-                onClick={() => setCount(!excused && level === opt.value ? null : opt.value)}
-              />
-            ))}
-            <SelectChip
-              compact
-              label="Excused"
-              active={excused}
-              onClick={toggleExcused}
-            />
+          <div className="relative z-20 mb-1.5 flex flex-wrap gap-1" data-no-flip>
+            {SALAH_COUNT_OPTIONS.map((opt) => {
+              const active = !excused && level === opt.value
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  data-no-flip
+                  aria-pressed={active}
+                  aria-label={opt.label}
+                  className={countChipClass(active)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setCount(opt.value)
+                  }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                >
+                  {active ? <span className="mr-1 text-[10px] leading-none">✓</span> : null}
+                  {opt.label}
+                </button>
+              )
+            })}
+            <button
+              type="button"
+              data-no-flip
+              aria-pressed={excused}
+              aria-label="Excused"
+              className={countChipClass(excused)}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                toggleExcused()
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              {excused ? <span className="mr-1 text-[10px] leading-none">✓</span> : null}
+              Excused
+            </button>
           </div>
           {excused ? (
             <p className="text-[10px] font-medium text-[#9a7aa8]">Rest day · no prayer count</p>

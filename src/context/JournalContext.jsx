@@ -206,11 +206,20 @@ export function JournalProvider({ children }) {
       }))
     }
 
-    const getPixel = (trackerId, month, day) =>
-      state.pixels?.[`${trackerId}:${cellKey(year, month, day)}`] ?? null
+    const getPixel = (trackerId, month, day) => {
+      const y = Math.min(
+        stateRef.current.profile?.year ?? currentMaxYear,
+        currentMaxYear,
+      )
+      return stateRef.current.pixels?.[`${trackerId}:${cellKey(y, month, day)}`] ?? null
+    }
 
     const setPixel = (trackerId, month, day, value) => {
-      const key = `${trackerId}:${cellKey(year, month, day)}`
+      const y = Math.min(
+        stateRef.current.profile?.year ?? currentMaxYear,
+        currentMaxYear,
+      )
+      const key = `${trackerId}:${cellKey(y, month, day)}`
       setState((s) => {
         const next = { ...s.pixels }
         if (value == null) delete next[key]
@@ -227,8 +236,9 @@ export function JournalProvider({ children }) {
       setPixel(trackerId, month, day, next)
     }
 
+    // Brush from legend pills — works for every tracker that shares PixelGrid.
     const paintPixel = (trackerId, month, day, levels) => {
-      const selected = state.selectedLevel?.[trackerId]
+      const selected = stateRef.current.selectedLevel?.[trackerId]
       if (selected != null) {
         const current = getPixel(trackerId, month, day)
         setPixel(trackerId, month, day, current === selected ? null : selected)

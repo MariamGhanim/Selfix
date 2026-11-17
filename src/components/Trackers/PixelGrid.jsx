@@ -179,10 +179,12 @@ function MobileYearBoard({
   )
 }
 
-function ViewModeToggle({ mode, onChange }) {
+export function ViewModeToggle({ mode, onChange, compact = false }) {
   return (
     <div
-      className="pixel-view-toggle inline-flex shrink-0 rounded-full border border-[var(--page-edge)]/65 bg-[var(--surface)] p-0.5"
+      className={`pixel-view-toggle inline-flex shrink-0 rounded-full border border-[var(--page-edge)]/65 bg-[var(--surface)] p-0.5${
+        compact ? ' pixel-view-toggle--compact' : ''
+      }`}
       role="group"
       aria-label="Pixel grid view"
     >
@@ -197,7 +199,11 @@ function ViewModeToggle({ mode, onChange }) {
             type="button"
             aria-pressed={active}
             onClick={() => onChange(opt.id)}
-            className={`rounded-full px-3 py-1.5 text-[11px] font-semibold tracking-wide transition ${
+            className={`rounded-full font-semibold tracking-wide transition ${
+              compact
+                ? 'h-[26px] px-3 text-[12px] leading-none'
+                : 'px-3 py-1.5 text-[11px]'
+            } ${
               active
                 ? 'bg-[var(--accent-deep)] text-white shadow-sm'
                 : 'text-[var(--ink-soft)] hover:bg-[var(--accent-glow)]/70 hover:text-[var(--ink)]'
@@ -346,13 +352,18 @@ function PixelGrid({
   onSelectDay,
   selectedDay,
   tapOpensLog = false,
+  desktopView: desktopViewProp,
+  onDesktopViewChange,
+  onYearStats,
 }) {
   const { year, state, paintPixel } = useJournal()
   const pixels = state.pixels
   const panels = state.panels
   const selectedPaint = state.selectedLevel?.[trackerId]
 
-  const [desktopView, setDesktopView] = useState('month')
+  const [desktopViewInternal, setDesktopViewInternal] = useState('month')
+  const desktopView = desktopViewProp ?? desktopViewInternal
+  const setDesktopView = onDesktopViewChange ?? setDesktopViewInternal
   const [desktopMonth, setDesktopMonth] = useState(
     () => selectedDay?.month ?? new Date().getMonth(),
   )
@@ -420,17 +431,23 @@ function PixelGrid({
       const day = Number(btn.dataset.day)
       const sel = selectedDayRef.current
       const isSelected = sel != null && sel.month === month && sel.day === day
+      const brush = selectedPaintRef.current != null
 
-      // Mobile (tapOpensLog): one tap paints when a color is selected, and
-      // always updates the selected day — without opening the log sheet.
-      if (tapOpensLogRef.current) {
-        if (selectedPaintRef.current != null) {
-          paintPixel(trackerId, month, day, levels)
-        }
+      // Brush mode (legend pill selected): one click paints that color and
+      // selects the day — same on desktop Month/Year and mobile.
+      if (brush) {
+        paintPixel(trackerId, month, day, levels)
         onSelectDay?.({ month, day })
         return
       }
 
+      // Mobile Cycle mode: select only (no auto-open log).
+      if (tapOpensLogRef.current) {
+        onSelectDay?.({ month, day })
+        return
+      }
+
+      // Desktop Cycle mode: first click selects, second click on same cell cycles.
       if (isSelected) {
         paintPixel(trackerId, month, day, levels)
       } else {
@@ -440,15 +457,49 @@ function PixelGrid({
     [trackerId, levels, paintPixel, onSelectDay],
   )
 
+  const currentMonthId =
+    todayParts.year === year ? todayParts.month : -1
+
   const monthLabels = useMemo(
     () =>
       MONTHS.map((m) => (
-        <div key={m.id} className="pixel-month-label" title={MONTHS_FULL[m.id]}>
-          <span>{m.short}</span>
+        <div
+          key={m.id}
+          className={`pixel-month-label${
+            m.id === currentMonthId ? ' is-current-month' : ''
+          }`}
+          title={m.label}
+        >
+          <span>{MONTHS_FULL[m.id]}</span>
         </div>
       )),
-    [],
+    [currentMonthId],
   )
+
+  const yearStats = useMemo(() => {
+    let logged = 0
+    let total = 0
+    for (const m of MONTHS) {
+      for (const day of DAYS) {
+        if (!validityByCell.get(`${m.id}-${day}`)) continue
+        total += 1
+        let value = pixels?.[`${trackerId}:${cellKey(year, m.id, day)}`] ?? null
+        if (trackerId === 'sleep') {
+          const panel = panels?.[`sleep:${cellKey(year, m.id, day)}`]
+          if (panel) {
+            const scored = scoreSleep(panel)
+            if (scored.pixelLevel != null) value = scored.pixelLevel
+          }
+        }
+        if (value != null) logged += 1
+      }
+    }
+    return { logged, total }
+  }, [validityByCell, pixels, panels, trackerId, year])
+
+  useEffect(() => {
+    onYearStats?.(yearStats)
+  }, [yearStats, onYearStats])
 
   const rows = useMemo(() => {
     return DAYS.map((day) => (
@@ -467,16 +518,23 @@ function PixelGrid({
               if (scored.pixelLevel != null) value = scored.pixelLevel
             }
           }
+          const level =
+            value != null ? levels.find((l) => l.value === value) : null
           const isSelected = selectedKey === key
           const isToday =
             todayParts.year === year &&
             todayParts.month === m.id &&
             todayParts.day === day
-          const background = !valid
-            ? INVALID_BG
-            : value == null
-              ? EMPTY_BG
-              : (colorByValue.get(value) ?? EMPTY_BG)
+          const isCurrentMonth = m.id === currentMonthId
+          const filled = valid && value != null
+          const background = filled
+            ? (colorByValue.get(value) ?? EMPTY_BG)
+            : 'transparent'
+          const tip = !valid
+            ? undefined
+            : level
+              ? `${MONTHS_FULL[m.id]} ${day} · ${level.label}`
+              : `${MONTHS_FULL[m.id]} ${day}`
 
           return (
             <PixelCell
@@ -485,10 +543,19 @@ function PixelGrid({
               background={background}
               isSelected={isSelected}
               isToday={isToday}
-              title={valid ? `${MONTHS_FULL[m.id]} ${day}` : 'Invalid'}
+              title={tip}
               month={m.id}
               day={day}
               onActivate={onActivate}
+              className={[
+                'h-full w-full',
+                filled ? 'is-filled' : '',
+                valid && !filled ? 'is-empty' : '',
+                !valid ? 'is-invalid-day' : '',
+                isCurrentMonth ? 'is-current-month' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
             />
           )
         })}
@@ -499,15 +566,23 @@ function PixelGrid({
     panels,
     trackerId,
     year,
+    levels,
     validityByCell,
     colorByValue,
     selectedKey,
     onActivate,
     todayParts,
+    currentMonthId,
   ])
 
+  const brushActive = selectedPaint != null
+
   return (
-    <div className="h-full min-h-0 w-full min-w-0" data-no-flip>
+    <div
+      className={`h-full min-h-0 w-full min-w-0${brushActive ? ' is-brush-mode' : ''}`}
+      data-no-flip
+      data-brush={brushActive ? String(selectedPaint) : undefined}
+    >
       <div className="h-full min-h-0 md:hidden">
         <MobileYearBoard
           year={year}
@@ -536,18 +611,13 @@ function PixelGrid({
             />
           </div>
         ) : (
-          <>
-            <div className="flex shrink-0 items-center justify-end px-3 pb-1.5 pt-0.5 lg:px-4">
-              <ViewModeToggle mode={desktopView} onChange={setDesktopView} />
+          <div className="pixel-matrix-stage pixel-matrix-stage--year min-h-0 flex-1">
+            <div className="pixel-year-grid" role="grid" aria-label="Year in pixels">
+              <div aria-hidden />
+              {monthLabels}
+              {rows}
             </div>
-            <div className="pixel-matrix-stage min-h-0 flex-1">
-              <div className="pixel-year-grid" role="grid" aria-label="Year in pixels">
-                <div aria-hidden />
-                {monthLabels}
-                {rows}
-              </div>
-            </div>
-          </>
+          </div>
         )}
       </div>
     </div>
