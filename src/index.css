@@ -207,6 +207,16 @@ body,
   text-size-adjust: 100%;
 }
 
+/* Mobile root: allow auth/journal to own viewport height */
+@media (max-width: 640px) {
+  html,
+  body,
+  #root {
+    height: 100%;
+    min-height: 100%;
+  }
+}
+
 /* Touch-friendly helpers (mobile-first) */
 .touch-target {
   min-height: 44px;
@@ -1547,23 +1557,19 @@ h3,
     top: auto !important;
   }
 
-  /* Auth mobile: content-sized height — no min-h-screen dead space */
-  html:has(.auth-split-shell),
-  body:has(.auth-split-shell),
-  body:has(.auth-split-shell) #root {
-    height: auto !important;
-    min-height: 100%;
-  }
-
+  /*
+   * Auth mobile redesign:
+   * - Large elegant hero above the card
+   * - Wider, roomier login card
+   * - Top-weighted stack; desktop unchanged
+   */
   .auth-split-shell {
-    align-items: flex-start !important;
-    justify-content: flex-start !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px)) !important;
+    display: flex !important;
+    flex-direction: column;
+    min-height: 100dvh !important;
     overflow-x: hidden;
-    overflow-y: visible;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .auth-split-frame.book-shadow,
@@ -1574,43 +1580,36 @@ h3,
     border-radius: 0 !important;
     background: transparent !important;
     background-image: none !important;
-    display: flex;
+    display: flex !important;
     flex-direction: column;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
     width: 100%;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: visible !important;
-  }
-
-  .auth-split-frame {
-    min-height: 0 !important;
+    min-height: 100dvh !important;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .auth-site-header {
     flex: 0 0 auto;
-    padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+    padding-top: max(0.45rem, env(safe-area-inset-top, 0px));
     padding-bottom: 0.5rem;
     padding-left: max(1rem, env(safe-area-inset-left, 0px));
     padding-right: max(1rem, env(safe-area-inset-right, 0px));
     background: color-mix(in srgb, var(--surface) 88%, transparent);
-    border-bottom-color: color-mix(in srgb, var(--page-edge) 35%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--page-edge) 30%, transparent);
   }
 
   .auth-split-body {
     display: flex !important;
-    flex: 0 0 auto !important;
+    flex: 1 1 auto !important;
     flex-direction: column;
     justify-content: flex-start !important;
-    align-content: flex-start !important;
-    align-items: stretch;
-    gap: 0.2rem;
+    align-items: stretch !important;
+    gap: 0;
     width: 100%;
-    height: auto !important;
-    min-height: 0 !important;
-    padding-top: 1rem; /* pt-4 */
-    padding-bottom: 1.5rem;
+    min-height: 0;
+    padding-top: 1.35rem;
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
   }
 
   .auth-brand-wrap {
@@ -1622,46 +1621,76 @@ h3,
   .auth-brand-panel {
     height: auto !important;
     min-height: 0 !important;
-    padding-top: 0;
-    padding-bottom: 0.15rem;
-    padding-left: max(1rem, env(safe-area-inset-left, 0px));
-    padding-right: max(1rem, env(safe-area-inset-right, 0px));
+    padding-top: 0.35rem;
+    padding-bottom: 0.5rem;
+    padding-left: max(1.1rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.1rem, env(safe-area-inset-right, 0px));
     background: transparent;
   }
 
+  .auth-hero-copy {
+    max-width: none;
+    width: 100%;
+  }
+
+  .auth-hero-heading {
+    font-size: clamp(1.65rem, 7.2vw, 2rem) !important;
+    line-height: 1.18 !important;
+    letter-spacing: -0.02em;
+    max-width: 18.5rem;
+  }
+
   .auth-brand-glow {
-    opacity: 0.28;
+    opacity: 0.4;
   }
 
   .auth-form-panel {
-    display: flex;
+    display: flex !important;
     flex: 0 0 auto !important;
-    align-items: flex-start !important;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: flex-start !important;
     height: auto !important;
     min-height: 0 !important;
-    padding-top: 0.5rem;
-    padding-left: max(1rem, env(safe-area-inset-left, 0px));
-    padding-right: max(1rem, env(safe-area-inset-right, 0px));
-    padding-bottom: 0.75rem;
+    margin-top: 0 !important;
+    padding-top: 0.35rem !important;
+    padding-left: max(0.85rem, env(safe-area-inset-left, 0px)) !important;
+    padding-right: max(0.85rem, env(safe-area-inset-right, 0px)) !important;
+    padding-bottom: 0.5rem;
   }
 
   .auth-form-card {
-    width: 100%;
-    max-width: 24rem;
+    width: 100% !important;
+    max-width: 26rem !important;
+    margin-top: 1.15rem !important;
     margin-inline: auto;
-    padding: 1.15rem 1rem 1.1rem;
-    border-radius: 1.15rem;
+    padding: 1.45rem 1.2rem 1.35rem !important;
+    border-radius: 1.35rem !important;
     box-sizing: border-box;
     box-shadow:
       0 1px 0 color-mix(in srgb, white 50%, transparent) inset,
-      0 8px 22px rgba(160, 110, 125, 0.1),
-      0 1px 4px rgba(160, 110, 125, 0.05);
+      0 10px 26px rgba(160, 110, 125, 0.12),
+      0 2px 8px rgba(160, 110, 125, 0.06);
   }
 
-  .auth-form-card .auth-field,
+  .auth-input-label {
+    margin-bottom: 1rem !important;
+  }
+
+  .auth-form-card .auth-field {
+    min-height: 3.05rem !important;
+    padding-inline: 0.95rem !important;
+    padding-block: 0.7rem !important;
+    border-radius: 0.85rem !important;
+    font-size: 16px !important;
+  }
+
+  .auth-form-card .auth-submit-btn,
   .auth-form-card .auth-btn-primary {
-    min-height: 2.75rem;
+    min-height: 3.15rem !important;
+    margin-top: 0.15rem;
+    border-radius: 0.9rem !important;
+    font-size: 1rem !important;
   }
 
   .ambient-music-player {

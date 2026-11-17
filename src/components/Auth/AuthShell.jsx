@@ -10,7 +10,7 @@ function AuthTopNav() {
   const { pathname } = useLocation()
 
   return (
-    <header className="auth-site-header relative z-20 flex items-center justify-between gap-3 border-b border-[var(--page-edge)]/45 px-4 py-2.5 pt-[max(0.55rem,env(safe-area-inset-top))] sm:px-6 sm:py-3.5 sm:pt-[max(0.75rem,env(safe-area-inset-top))] lg:px-8">
+    <header className="auth-site-header relative z-20 flex items-center justify-between gap-3 border-b border-[var(--page-edge)]/45 px-4 py-2 pt-[max(0.35rem,env(safe-area-inset-top))] sm:px-6 sm:py-3.5 sm:pt-[max(0.75rem,env(safe-area-inset-top))] lg:px-8">
       <Link
         to="/"
         className="font-display text-[14px] font-semibold tracking-tight text-[var(--accent-deep)] transition hover:text-[var(--ink)] sm:text-base"
@@ -140,17 +140,17 @@ function CozyJournalArt() {
 
 function AuthBrandPanel() {
   return (
-    <section className="auth-brand-panel relative flex min-h-0 flex-col justify-start overflow-hidden px-4 py-1.5 sm:justify-between sm:px-8 sm:py-8 lg:px-10 lg:py-12 lg:h-full">
-      <div className="auth-brand-glow pointer-events-none absolute inset-0 max-sm:opacity-40" aria-hidden />
+    <section className="auth-brand-panel relative flex min-h-0 flex-col justify-start overflow-hidden px-4 py-0 sm:justify-between sm:px-8 sm:py-8 lg:px-10 lg:py-12 lg:h-full">
+      <div className="auth-brand-glow pointer-events-none absolute inset-0 max-sm:opacity-45" aria-hidden />
       <div className="auth-brand-orb auth-brand-orb-a pointer-events-none absolute -left-10 top-8 h-40 w-40 rounded-full max-sm:hidden" />
       <div className="auth-brand-orb auth-brand-orb-b pointer-events-none absolute -right-8 bottom-16 h-48 w-48 rounded-full max-sm:hidden" />
 
-      <div className="relative z-10 mx-auto w-full max-w-sm sm:mx-0 sm:max-w-none">
+      <div className="auth-hero-copy relative z-10 mx-auto w-full sm:mx-0">
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display text-[9px] font-medium uppercase tracking-[0.13em] text-[var(--accent-deep)]/70 sm:text-[11px] sm:tracking-[0.16em]"
+          className="font-display text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--accent-deep)]/80 sm:text-[11px] sm:tracking-[0.16em]"
         >
           Year in pixels journal
         </motion.p>
@@ -158,9 +158,11 @@ function AuthBrandPanel() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-0.5 max-w-[19.5rem] font-display text-[0.92rem] font-semibold leading-snug tracking-tight text-[var(--ink)] sm:mt-3 sm:max-w-sm sm:text-[1.85rem] sm:leading-[1.25] lg:text-[2rem]"
+          className="auth-hero-heading mt-3 font-display text-[1.7rem] font-semibold leading-[1.2] tracking-tight text-[var(--ink)] sm:mt-3 sm:max-w-sm sm:text-[1.85rem] sm:leading-[1.25] lg:text-[2rem]"
         >
-          A calm place for the days that make your year
+          A calm place for the days
+          <br className="sm:hidden" />
+          that make your year
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -190,16 +192,16 @@ function AuthBrandPanel() {
 
 export default function AuthShell({ title, subtitle, children, footer }) {
   return (
-    <div className="auth-split-shell relative flex h-auto min-h-0 w-full max-w-full items-start justify-center overflow-x-hidden overflow-y-auto px-0 pb-10 pt-0 sm:h-[100dvh] sm:min-h-[100dvh] sm:items-center sm:p-5 sm:pb-5 lg:p-6">
-      <div className="auth-split-frame book-shadow paper-texture relative flex h-auto max-h-none min-h-0 w-full max-w-full flex-col overflow-x-hidden overflow-y-visible rounded-none border-0 border-[var(--page-edge)] sm:h-full sm:min-h-[100%] sm:max-h-[min(860px,100%)] sm:max-w-5xl sm:overflow-hidden sm:rounded-[24px] sm:border lg:rounded-[28px]">
+    <div className="auth-split-shell relative flex min-h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-auto px-0 sm:h-[100dvh] sm:items-center sm:justify-center sm:p-5 lg:p-6">
+      <div className="auth-split-frame book-shadow paper-texture relative flex min-h-[100dvh] w-full max-w-full flex-1 flex-col overflow-x-hidden overflow-y-auto rounded-none border-0 border-[var(--page-edge)] sm:h-full sm:min-h-0 sm:max-h-[min(860px,100%)] sm:max-w-5xl sm:flex-none sm:overflow-hidden sm:rounded-[24px] sm:border lg:rounded-[28px]">
         <AuthTopNav />
 
-        <div className="auth-split-body grid w-full content-start lg:min-h-0 lg:flex-1 lg:grid-cols-12 lg:content-stretch lg:overflow-y-auto">
+        <div className="auth-split-body grid w-full flex-1 content-start lg:min-h-0 lg:grid-cols-12 lg:content-stretch lg:overflow-y-auto">
           <div className="auth-brand-wrap w-full lg:col-span-5 lg:min-h-0 lg:border-r lg:border-[var(--page-edge)]/45 lg:overflow-y-auto">
             <AuthBrandPanel />
           </div>
 
-          <div className="auth-form-panel relative flex w-full items-start justify-center px-4 pb-5 pt-0 sm:px-8 sm:py-8 lg:col-span-7 lg:min-h-0 lg:flex-1 lg:items-center lg:overflow-y-auto">
+          <div className="auth-form-panel relative flex w-full flex-col items-center justify-start px-3.5 pb-5 pt-0 sm:px-8 sm:py-8 lg:col-span-7 lg:min-h-0 lg:flex-1 lg:items-center lg:justify-center lg:overflow-y-auto">
             <div
               className="pointer-events-none absolute inset-0 opacity-50 max-sm:opacity-35"
               style={{
@@ -211,14 +213,14 @@ export default function AuthShell({ title, subtitle, children, footer }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className="auth-form-card relative mx-auto w-full max-w-sm"
+              className="auth-form-card relative mx-auto mt-5 w-full max-w-none sm:mt-0 sm:max-w-sm"
             >
-              <div className="mb-3.5 sm:mb-6">
-                <h1 className="font-display text-[1.2rem] font-semibold tracking-tight text-[var(--ink)] sm:text-[1.5rem]">
+              <div className="mb-4 sm:mb-6">
+                <h1 className="font-display text-[1.35rem] font-semibold tracking-tight text-[var(--ink)] sm:text-[1.5rem]">
                   {title}
                 </h1>
                 {subtitle ? (
-                  <p className="mt-1 text-[12.5px] leading-relaxed text-[var(--ink-soft)] sm:mt-1.5 sm:text-[13px]">
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--ink-soft)] sm:text-[13px]">
                     {subtitle}
                   </p>
                 ) : null}
@@ -239,8 +241,8 @@ export default function AuthShell({ title, subtitle, children, footer }) {
 
 export function AuthInput({ label, error, className = '', ...props }) {
   return (
-    <label className="mb-3.5 block">
-      <span className="mb-1.5 block text-[12px] font-medium tracking-wide text-[var(--ink)]">
+    <label className="auth-input-label mb-3.5 block sm:mb-3.5">
+      <span className="mb-1.5 block text-[12px] font-medium tracking-wide text-[var(--ink)] sm:mb-1.5">
         {label}
       </span>
       <input
@@ -269,7 +271,7 @@ export function AuthButton({
     <button
       type={type}
       disabled={loading || props.disabled}
-      className={`inline-flex min-h-11 w-full items-center justify-center rounded-xl px-4 py-2.5 text-[15px] font-semibold tracking-wide transition disabled:cursor-not-allowed disabled:opacity-60 ${styles} ${className}`}
+      className={`auth-submit-btn inline-flex min-h-11 w-full items-center justify-center rounded-xl px-4 py-2.5 text-[15px] font-semibold tracking-wide transition disabled:cursor-not-allowed disabled:opacity-60 ${styles} ${className}`}
       {...props}
     >
       {loading ? 'Please wait…' : children}
