@@ -178,7 +178,11 @@ export function JournalProvider({ children }) {
   }, [uid, emailVerified])
 
   const api = useMemo(() => {
-    const year = state.profile?.year ?? new Date().getFullYear()
+    const currentMaxYear = new Date().getFullYear()
+    const year = Math.min(
+      state.profile?.year ?? currentMaxYear,
+      currentMaxYear,
+    )
     const profile = {
       ...DEFAULT_PROFILE,
       ...state.profile,
@@ -193,11 +197,14 @@ export function JournalProvider({ children }) {
     const setProfile = (patch) =>
       setState((s) => ({ ...s, profile: { ...s.profile, ...patch } }))
 
-    const setYear = (nextYear) =>
+    const setYear = (nextYear) => {
+      const currentMax = new Date().getFullYear()
+      const capped = Math.min(Number(nextYear) || currentMax, currentMax)
       setState((s) => ({
         ...s,
-        profile: { ...s.profile, year: nextYear },
+        profile: { ...s.profile, year: capped },
       }))
+    }
 
     const getPixel = (trackerId, month, day) =>
       state.pixels?.[`${trackerId}:${cellKey(year, month, day)}`] ?? null

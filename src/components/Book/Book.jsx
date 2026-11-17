@@ -85,6 +85,7 @@ export default function Book() {
     const d = new Date()
     return { month: d.getMonth(), day: d.getDate() }
   }, [])
+  const maxYear = useMemo(() => new Date().getFullYear(), [])
   const [selectedDay, setSelectedDay] = useState(today)
 
   useEffect(() => {
@@ -183,10 +184,16 @@ export default function Book() {
               </span>
               <motion.button
                 type="button"
-                whileTap={{ scale: 0.9 }}
+                whileTap={year < maxYear ? { scale: 0.9 } : undefined}
                 onClick={() => setYear(year + 1)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-[var(--accent-glow)] sm:h-8 sm:w-8"
+                disabled={year >= maxYear}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-[var(--accent-glow)] disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent sm:h-8 sm:w-8"
                 aria-label="Next year"
+                title={
+                  year >= maxYear
+                    ? 'Future years unlock when they begin'
+                    : 'Next year'
+                }
               >
                 <ChevronRight size={18} />
               </motion.button>

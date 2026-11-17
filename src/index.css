@@ -870,6 +870,37 @@ h3,
   overflow: hidden;
 }
 
+.pixel-matrix-stage--month {
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0.25rem 0.85rem 0.55rem 0.55rem;
+  overflow: hidden;
+}
+
+.pixel-month-board {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.pixel-month-grid {
+  scrollbar-width: thin;
+}
+
+.pixel-view-toggle {
+  box-shadow: 0 1px 0 color-mix(in srgb, white 45%, transparent) inset;
+}
+
+.pixel-month-dropdown__menu {
+  scrollbar-width: thin;
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--surface-strong) 92%, white),
+      color-mix(in srgb, var(--accent-glow) 35%, var(--surface-strong))
+    );
+}
+
 .pixel-year-grid {
   display: grid;
   width: 100%;
@@ -1030,6 +1061,27 @@ h3,
   box-shadow:
     0 0 0 2px color-mix(in srgb, var(--accent-deep) 45%, transparent),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* Today = calendar date only (no clock time) */
+.pixel-btn.is-today {
+  z-index: 4;
+  border: 2px solid color-mix(in srgb, var(--accent) 78%, var(--accent-deep));
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent-glow) 90%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.pixel-btn.is-today.is-selected {
+  border-color: color-mix(in srgb, var(--accent-deep) 75%, var(--accent));
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent) 55%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.pixel-day-num {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+  z-index: 5;
 }
 
 .pixel-btn:active:not(:disabled) {

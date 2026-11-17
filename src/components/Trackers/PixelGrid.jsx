@@ -11,6 +11,7 @@ const PixelCell = memo(function PixelCell({
   valid,
   background,
   isSelected,
+  isToday = false,
   title,
   month,
   day,
@@ -25,13 +26,24 @@ const PixelCell = memo(function PixelCell({
       data-month={month}
       data-day={day}
       onClick={onActivate}
+      aria-current={isToday ? 'date' : undefined}
       className={`pixel-btn ${className} ${
         !valid ? 'cursor-not-allowed opacity-25' : 'cursor-pointer'
-      } ${isSelected ? 'is-selected' : ''}`}
+      } ${isSelected ? 'is-selected' : ''} ${isToday ? 'is-today' : ''}`}
       style={{ background }}
     />
   )
 })
+
+/** Calendar day only — no clock time. */
+function getTodayParts() {
+  const d = new Date()
+  return {
+    year: d.getFullYear(),
+    month: d.getMonth(),
+    day: d.getDate(),
+  }
+}
 
 function MobileMonthSelect({ month, onChange, year }) {
   const [open, setOpen] = useState(false)
@@ -116,6 +128,7 @@ function MobileYearBoard({
   selectedKey,
   onActivate,
   cellVisual,
+  todayParts,
 }) {
   const [month, setMonth] = useState(
     () => selectedDay?.month ?? new Date().getMonth(),
@@ -134,19 +147,189 @@ function MobileYearBoard({
           const visual = cellVisual(month, day)
           if (!visual.valid) return null
           const key = `${month}-${day}`
+          const isToday =
+            todayParts.year === year &&
+            todayParts.month === month &&
+            todayParts.day === day
           return (
             <div key={key} className="relative aspect-square min-h-10">
               <PixelCell
                 valid
                 background={visual.background}
                 isSelected={selectedKey === key}
+                isToday={isToday}
                 title={`${MONTHS_FULL[month]} ${day}`}
                 month={month}
                 day={day}
                 onActivate={onActivate}
                 className="absolute inset-0 h-full w-full !rounded-[0.55rem]"
               />
-              <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-[11px] font-semibold text-[var(--ink)]/75">
+              <span
+                className={`pixel-day-num pointer-events-none absolute inset-0 flex items-center justify-center text-[11px] font-bold leading-none ${
+                  isToday ? 'text-[var(--accent-deep)]' : 'text-[var(--ink)]/80'
+                }`}
+              >
+                {day}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function ViewModeToggle({ mode, onChange }) {
+  return (
+    <div
+      className="pixel-view-toggle inline-flex shrink-0 rounded-full border border-[var(--page-edge)]/65 bg-[var(--surface)] p-0.5"
+      role="group"
+      aria-label="Pixel grid view"
+    >
+      {[
+        { id: 'month', label: 'Month' },
+        { id: 'year', label: 'Year' },
+      ].map((opt) => {
+        const active = mode === opt.id
+        return (
+          <button
+            key={opt.id}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onChange(opt.id)}
+            className={`rounded-full px-3 py-1.5 text-[11px] font-semibold tracking-wide transition ${
+              active
+                ? 'bg-[var(--accent-deep)] text-white shadow-sm'
+                : 'text-[var(--ink-soft)] hover:bg-[var(--accent-glow)]/70 hover:text-[var(--ink)]'
+            }`}
+          >
+            {opt.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function DesktopMonthBoard({
+  year,
+  month,
+  onMonthChange,
+  selectedKey,
+  onActivate,
+  cellVisual,
+  viewToggle,
+  todayParts,
+}) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef(null)
+  const monthMeta = MONTHS[month]
+
+  useEffect(() => {
+    if (!open) return undefined
+    const onPointerDown = (e) => {
+      if (!rootRef.current?.contains(e.target)) setOpen(false)
+    }
+    const onKey = (e) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  return (
+    <div className="pixel-month-board flex h-full min-h-0 w-full min-w-0 flex-col gap-2.5">
+      <div className="flex shrink-0 flex-wrap items-start justify-between gap-2 px-0.5">
+        <div ref={rootRef} className="pixel-month-dropdown relative z-20 min-w-0">
+          <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--ink-soft)]">
+            Month in pixels
+          </p>
+          <button
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            aria-label={`Select month, ${monthMeta?.label || MONTHS_FULL[month]} ${year}`}
+            onClick={() => setOpen((v) => !v)}
+            className="pixel-month-dropdown__trigger group mt-0.5 inline-flex max-w-full items-center gap-1.5 rounded-xl py-0.5 text-left transition hover:bg-[var(--accent-glow)]/55 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
+          >
+            <h3 className="font-display text-[1.15rem] font-semibold tracking-tight text-[var(--ink)]">
+              {monthMeta?.label || MONTHS_FULL[month]}{' '}
+              <span className="font-medium text-[var(--ink-soft)]">{year}</span>
+            </h3>
+            <ChevronDown
+              size={16}
+              className={`mt-0.5 shrink-0 text-[var(--accent-deep)] transition-transform duration-200 group-hover:text-[var(--accent-deep)] ${
+                open ? 'rotate-180' : ''
+              }`}
+              aria-hidden
+            />
+          </button>
+
+          {open ? (
+            <ul
+              role="listbox"
+              aria-label="Months"
+              className="pixel-month-dropdown__menu absolute left-0 top-[calc(100%+0.35rem)] z-30 max-h-64 w-[min(13.5rem,calc(100vw-4rem))] overflow-y-auto overscroll-contain rounded-2xl border border-[var(--page-edge)]/70 py-1.5 shadow-[0_14px_32px_rgba(160,110,125,0.16)]"
+            >
+              {MONTHS.map((m) => {
+                const active = m.id === month
+                return (
+                  <li key={m.id} role="option" aria-selected={active}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onMonthChange(m.id)
+                        setOpen(false)
+                      }}
+                      className={`flex min-h-9 w-full items-center px-3.5 text-left text-[13px] font-medium transition ${
+                        active
+                          ? 'bg-[var(--accent-glow)] font-semibold text-[var(--accent-deep)]'
+                          : 'text-[var(--ink)] hover:bg-[var(--accent-glow)]/75 hover:text-[var(--accent-deep)]'
+                      }`}
+                    >
+                      {m.label}
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          ) : null}
+        </div>
+
+        {viewToggle}
+      </div>
+
+      <div className="pixel-month-grid grid min-h-0 flex-1 grid-cols-7 content-start gap-2 overflow-y-auto overscroll-contain pb-1 pr-0.5">
+        {DAYS.map((day) => {
+          const visual = cellVisual(month, day)
+          if (!visual.valid) return null
+          const key = `${month}-${day}`
+          const isToday =
+            todayParts.year === year &&
+            todayParts.month === month &&
+            todayParts.day === day
+          return (
+            <div key={key} className="relative aspect-square min-h-[2.35rem]">
+              <PixelCell
+                valid
+                background={visual.background}
+                isSelected={selectedKey === key}
+                isToday={isToday}
+                title={`${MONTHS_FULL[month]} ${day}, ${year}`}
+                month={month}
+                day={day}
+                onActivate={onActivate}
+                className="absolute inset-0 h-full w-full !rounded-[0.65rem]"
+              />
+              <span
+                className={`pixel-day-num pointer-events-none absolute inset-0 flex items-center justify-center text-[12px] font-bold leading-none ${
+                  isToday ? 'text-[var(--accent-deep)]' : 'text-[var(--ink)]/85'
+                }`}
+              >
                 {day}
               </span>
             </div>
@@ -168,6 +351,21 @@ function PixelGrid({
   const pixels = state.pixels
   const panels = state.panels
   const selectedPaint = state.selectedLevel?.[trackerId]
+
+  const [desktopView, setDesktopView] = useState('month')
+  const [desktopMonth, setDesktopMonth] = useState(
+    () => selectedDay?.month ?? new Date().getMonth(),
+  )
+  const todayParts = useMemo(() => getTodayParts(), [])
+
+  useEffect(() => {
+    if (selectedDay?.month != null) setDesktopMonth(selectedDay.month)
+  }, [selectedDay?.month])
+
+  // Keep month selection when the year changes (e.g. November 2025 ↔ 2026)
+  useEffect(() => {
+    setDesktopMonth((m) => (m >= 0 && m <= 11 ? m : new Date().getMonth()))
+  }, [year])
 
   const selectedDayRef = useRef(selectedDay)
   selectedDayRef.current = selectedDay
@@ -270,6 +468,10 @@ function PixelGrid({
             }
           }
           const isSelected = selectedKey === key
+          const isToday =
+            todayParts.year === year &&
+            todayParts.month === m.id &&
+            todayParts.day === day
           const background = !valid
             ? INVALID_BG
             : value == null
@@ -282,6 +484,7 @@ function PixelGrid({
               valid={!!valid}
               background={background}
               isSelected={isSelected}
+              isToday={isToday}
               title={valid ? `${MONTHS_FULL[m.id]} ${day}` : 'Invalid'}
               month={m.id}
               day={day}
@@ -300,6 +503,7 @@ function PixelGrid({
     colorByValue,
     selectedKey,
     onActivate,
+    todayParts,
   ])
 
   return (
@@ -311,14 +515,40 @@ function PixelGrid({
           selectedKey={selectedKey}
           onActivate={onActivate}
           cellVisual={cellVisual}
+          todayParts={todayParts}
         />
       </div>
-      <div className="pixel-matrix-stage hidden h-full w-full min-w-0 md:flex">
-        <div className="pixel-year-grid" role="grid" aria-label="Year in pixels">
-          <div aria-hidden />
-          {monthLabels}
-          {rows}
-        </div>
+
+      <div className="hidden h-full min-h-0 w-full min-w-0 flex-col md:flex">
+        {desktopView === 'month' ? (
+          <div className="pixel-matrix-stage pixel-matrix-stage--month min-h-0 flex-1">
+            <DesktopMonthBoard
+              year={year}
+              month={desktopMonth}
+              onMonthChange={setDesktopMonth}
+              selectedKey={selectedKey}
+              onActivate={onActivate}
+              cellVisual={cellVisual}
+              todayParts={todayParts}
+              viewToggle={
+                <ViewModeToggle mode={desktopView} onChange={setDesktopView} />
+              }
+            />
+          </div>
+        ) : (
+          <>
+            <div className="flex shrink-0 items-center justify-end px-3 pb-1.5 pt-0.5 lg:px-4">
+              <ViewModeToggle mode={desktopView} onChange={setDesktopView} />
+            </div>
+            <div className="pixel-matrix-stage min-h-0 flex-1">
+              <div className="pixel-year-grid" role="grid" aria-label="Year in pixels">
+                <div aria-hidden />
+                {monthLabels}
+                {rows}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )
