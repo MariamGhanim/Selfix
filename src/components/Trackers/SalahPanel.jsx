@@ -232,7 +232,7 @@ export default function SalahPanel({ month, day }) {
         ) : (
           <section
             className="rounded-[1.2rem] px-4 py-3.5 ring-1 ring-[#e0c4e0]/55"
-            style={{ background: 'color-mix(in srgb, #e0c4e0 28%, #fffaf7)' }}
+            style={{ background: 'color-mix(in srgb, #e0c4e0 28%, var(--legend-chip-base))' }}
           >
             <p className="text-[12px] font-semibold text-[#7a5f88]">Excused / rest day</p>
             <p className="mt-1 text-[11px] leading-relaxed text-[var(--ink-soft)]">

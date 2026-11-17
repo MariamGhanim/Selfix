@@ -229,10 +229,10 @@ export default function Legend({ trackerId, levels, compact = false }) {
           className={`${chipBase} ${
             selected == null
               ? 'bg-[var(--accent-soft)]/80 text-[var(--accent-deep)] ring-1 ring-[var(--accent)]/35 shadow-sm'
-              : 'bg-[#fffaf7] text-[var(--ink-soft)] ring-1 ring-[var(--page-edge)]/45'
+              : 'bg-[var(--legend-chip-base)] text-[var(--legend-chip-text)] ring-1 ring-[var(--page-edge)]/45'
           }`}
         >
-          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--accent)]" />
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--status-cycle)]" />
           Cycle
         </button>
         {levels.map((level) => {
@@ -244,12 +244,13 @@ export default function Legend({ trackerId, levels, compact = false }) {
               type="button"
               className={`${chipBase} ${
                 active
-                  ? 'ring-1 ring-[var(--accent-deep)]/40 shadow-sm'
-                  : 'ring-1 ring-[var(--page-edge)]/35'
+                  ? 'ring-1 shadow-sm'
+                  : 'ring-1'
               }`}
               style={{
-                background: `color-mix(in srgb, ${level.color} ${active ? 28 : 14}%, #fffaf7)`,
-                color: '#6a5560',
+                background: `color-mix(in srgb, ${level.color} ${active ? 28 : 18}%, var(--legend-chip-base))`,
+                color: 'var(--legend-chip-text)',
+                boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${level.color} 35%, transparent)`,
               }}
               title={level.label}
             >

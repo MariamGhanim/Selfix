@@ -208,7 +208,7 @@ export function FocusTimerBadge({ onOpen } = {}) {
     <button
       type="button"
       onClick={onOpen}
-      className={`inline-flex h-10 items-center gap-1.5 rounded-full px-2.5 text-sm shadow-md backdrop-blur transition hover:scale-[1.02] sm:h-auto sm:min-h-0 sm:gap-1.5 sm:px-3 sm:py-1.5 ${
+      className={`inline-flex h-9 items-center gap-1 rounded-full px-2 text-sm shadow-md backdrop-blur transition hover:scale-[1.02] sm:h-auto sm:min-h-0 sm:gap-1.5 sm:px-3 sm:py-1.5 ${
         running
           ? 'bg-[var(--accent-deep)] text-white'
           : 'bg-[var(--surface)] text-[var(--ink)] ring-1 ring-[var(--page-edge)]/50'
@@ -217,7 +217,7 @@ export function FocusTimerBadge({ onOpen } = {}) {
       title="Open Focus timer"
     >
       <Timer size={16} className={running ? 'animate-pulse' : ''} />
-      <span className="font-display text-xs font-semibold tabular-nums tracking-wide sm:text-[13px]">
+      <span className="font-display text-[11px] font-semibold tabular-nums tracking-wide sm:text-[13px]">
         {fmt(remaining)}
       </span>
     </button>

@@ -1166,13 +1166,14 @@ export function SleepPanel({ month, day }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ type: 'spring', stiffness: 340, damping: 28 }}
-                className={`flex items-center justify-between gap-3 ring-1 ring-[var(--page-edge)]/45 ${
+                className={`sleep-quality-card flex items-center justify-between gap-3 ring-1 ring-[var(--page-edge)]/45 ${
                   isSheet
                     ? 'rounded-[1.35rem] px-4 py-3.5'
                     : 'rounded-[1.25rem] px-3.5 py-3'
                 }`}
                 style={{
                   background: `color-mix(in srgb, ${badgeColor} 14%, var(--surface))`,
+                  '--sleep-badge': badgeColor,
                 }}
               >
                 <div className="min-w-0">
@@ -1189,9 +1190,10 @@ export function SleepPanel({ month, day }) {
                   ) : null}
                 </div>
                 <div
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ring-1 ring-[var(--page-edge)]/35"
+                  className="sleep-quality-score flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ring-1 ring-[var(--page-edge)]/35"
                   style={{
-                    background: `color-mix(in srgb, ${badgeColor} 22%, #fffaf7)`,
+                    background: `color-mix(in srgb, ${badgeColor} 22%, var(--legend-chip-base))`,
+                    '--sleep-badge': badgeColor,
                   }}
                 >
                   <span className="font-display text-[1.15rem] font-semibold leading-none text-[var(--accent-deep)]">

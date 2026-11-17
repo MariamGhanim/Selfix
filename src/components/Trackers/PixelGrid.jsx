@@ -7,6 +7,17 @@ import { scoreSleep } from '../../lib/sleepQuality'
 const EMPTY_BG = 'var(--empty-cell)'
 const INVALID_BG = 'var(--invalid-cell)'
 
+/** Relative luminance of a #rrggbb fill — used only for Night number contrast. */
+function isLightFillColor(color) {
+  if (!color || typeof color !== 'string' || color[0] !== '#' || color.length < 7) return false
+  const r = parseInt(color.slice(1, 3), 16) / 255
+  const g = parseInt(color.slice(3, 5), 16) / 255
+  const b = parseInt(color.slice(5, 7), 16) / 255
+  const lin = (c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
+  const L = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
+  return L > 0.45
+}
+
 const PixelCell = memo(function PixelCell({
   valid,
   background,
@@ -162,12 +173,18 @@ function MobileYearBoard({
                 month={month}
                 day={day}
                 onActivate={onActivate}
-                className="absolute inset-0 h-full w-full !rounded-[0.55rem]"
+                className={`absolute inset-0 h-full w-full !rounded-[0.55rem] ${
+                  visual.value != null
+                    ? `is-filled${isLightFillColor(visual.background) ? ' is-light-fill' : ''}`
+                    : 'is-empty'
+                }`}
               />
               <span
                 className={`pixel-day-num pointer-events-none absolute inset-0 flex items-center justify-center text-[11px] font-bold leading-none ${
-                  isToday ? 'text-[var(--accent-deep)]' : 'text-[var(--ink)]/80'
-                }`}
+                  visual.value != null
+                    ? `is-on-fill${isLightFillColor(visual.background) ? ' is-on-light-fill' : ''}`
+                    : ''
+                } ${isToday ? 'text-[var(--accent-deep)]' : 'text-[var(--ink)]/80'}`}
               >
                 {day}
               </span>
@@ -205,7 +222,7 @@ export function ViewModeToggle({ mode, onChange, compact = false }) {
                 : 'px-3 py-1.5 text-[11px]'
             } ${
               active
-                ? 'bg-[var(--accent-deep)] text-white shadow-sm'
+                ? 'bg-[var(--toggle-active)] text-white shadow-sm'
                 : 'text-[var(--ink-soft)] hover:bg-[var(--accent-glow)]/70 hover:text-[var(--ink)]'
             }`}
           >
@@ -329,12 +346,18 @@ function DesktopMonthBoard({
                 month={month}
                 day={day}
                 onActivate={onActivate}
-                className="absolute inset-0 h-full w-full !rounded-[0.65rem]"
+                className={`absolute inset-0 h-full w-full !rounded-[0.65rem] ${
+                  visual.value != null
+                    ? `is-filled${isLightFillColor(visual.background) ? ' is-light-fill' : ''}`
+                    : 'is-empty'
+                }`}
               />
               <span
                 className={`pixel-day-num pointer-events-none absolute inset-0 flex items-center justify-center text-[12px] font-bold leading-none ${
-                  isToday ? 'text-[var(--accent-deep)]' : 'text-[var(--ink)]/85'
-                }`}
+                  visual.value != null
+                    ? `is-on-fill${isLightFillColor(visual.background) ? ' is-on-light-fill' : ''}`
+                    : ''
+                } ${isToday ? 'text-[var(--accent-deep)]' : 'text-[var(--ink)]/85'}`}
               >
                 {day}
               </span>
@@ -550,6 +573,7 @@ function PixelGrid({
               className={[
                 'h-full w-full',
                 filled ? 'is-filled' : '',
+                filled && isLightFillColor(background) ? 'is-light-fill' : '',
                 valid && !filled ? 'is-empty' : '',
                 !valid ? 'is-invalid-day' : '',
                 isCurrentMonth ? 'is-current-month' : '',

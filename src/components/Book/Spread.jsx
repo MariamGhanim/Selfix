@@ -203,7 +203,7 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
               <div
                 className="left-page-header__icon inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
                 style={{
-                  background: `color-mix(in srgb, ${tracker.tabColor} 28%, #fffaf7)`,
+                  background: `color-mix(in srgb, ${tracker.tabColor} 28%, var(--legend-chip-base))`,
                   color: tracker.tabColor,
                   boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${tracker.tabColor} 35%, transparent)`,
                 }}
@@ -272,7 +272,7 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
               <div
                 className="left-page-header__icon inline-flex h-8 w-8 items-center justify-center rounded-full md:h-7 md:w-7"
                 style={{
-                  background: `color-mix(in srgb, ${tracker.tabColor} 28%, #fffaf7)`,
+                  background: `color-mix(in srgb, ${tracker.tabColor} 28%, var(--legend-chip-base))`,
                   color: tracker.tabColor,
                   boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${tracker.tabColor} 35%, transparent)`,
                 }}

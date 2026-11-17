@@ -21,7 +21,7 @@ function FlipGhost({ tracker }) {
       </div>
       <div
         className="h-24 w-40 rounded-xl opacity-40"
-        style={{ background: `color-mix(in srgb, ${tracker.tabColor} 35%, #fffdfb)` }}
+        style={{ background: `color-mix(in srgb, ${tracker.tabColor} 35%, var(--legend-chip-base))` }}
         aria-hidden
       />
     </div>

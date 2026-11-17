@@ -76,7 +76,7 @@ export function SelectChip({
           : 'gap-1.5 px-3.5 py-2.5 text-xs sm:px-3 sm:py-1.5 sm:text-xs'
       } ${
         active
-          ? 'bg-[var(--accent-deep)] text-white shadow-md ring-2 ring-[var(--accent-soft)]'
+          ? 'bg-[var(--toggle-active-deep)] text-white shadow-md ring-2 ring-[var(--accent-soft)]'
           : 'bg-[var(--surface)] text-[var(--ink-soft)] shadow-sm ring-1 ring-[var(--page-edge)]/70 hover:bg-[var(--surface-strong)] hover:text-[var(--ink)] hover:ring-[var(--accent)]/40'
       } ${className}`}
     >

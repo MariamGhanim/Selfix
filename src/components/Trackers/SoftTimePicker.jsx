@@ -165,7 +165,7 @@ export default function SoftTimePicker({
         className="mb-3 rounded-[1.1rem] px-3 py-2.5 text-center"
         style={{
           background:
-            'linear-gradient(135deg, color-mix(in srgb, var(--accent-glow) 85%, white), color-mix(in srgb, var(--accent-soft) 35%, var(--surface)))',
+            'linear-gradient(135deg, color-mix(in srgb, var(--accent-glow) 85%, var(--legend-chip-base)), color-mix(in srgb, var(--accent-soft) 35%, var(--surface)))',
         }}
       >
         {isSheet ? (
