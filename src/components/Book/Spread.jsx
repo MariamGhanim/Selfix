@@ -44,6 +44,27 @@ function formatSelectedDate(year, month, day) {
   })
 }
 
+function formatSelectedDateParts(year, month, day) {
+  const date = new Date(year, month, day)
+  return {
+    primary: date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    }),
+    year: date.toLocaleDateString('en-US', { year: 'numeric' }),
+  }
+}
+
+function isCalendarToday(year, month, day) {
+  const today = new Date()
+  return (
+    today.getFullYear() === year &&
+    today.getMonth() === month &&
+    today.getDate() === day
+  )
+}
+
 const ICONS = {
   Star,
   Zap,
@@ -103,6 +124,15 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
       ? formatSelectedDate(year, selectedDay.month, selectedDay.day)
       : null
 
+  const selectedDateParts =
+    selectedDay != null
+      ? formatSelectedDateParts(year, selectedDay.month, selectedDay.day)
+      : null
+
+  const selectedIsToday =
+    selectedDay != null &&
+    isCalendarToday(year, selectedDay.month, selectedDay.day)
+
   const selectedValue =
     selectedDay != null ? getPixel(tracker.id, selectedDay.month, selectedDay.day) : null
   const selectedLevel =
@@ -111,6 +141,10 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
       : null
 
   const yearHeader = !isMobile && desktopView === 'year'
+  const yearLoggedPct =
+    yearStats.total > 0
+      ? Math.min(100, Math.round((yearStats.logged / yearStats.total) * 100))
+      : 0
 
   useEffect(() => {
     setSheetOpen(false)
@@ -137,58 +171,100 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
     setYearStats(stats)
   }, [])
 
+  const gridBlock = (
+    <div className="min-h-0 min-w-0 flex-1 overflow-hidden pb-1 md:pb-0">
+      <div className="h-full min-h-0 w-full min-w-0 md:flex md:items-stretch md:justify-center">
+        <PixelGrid
+          trackerId={tracker.id}
+          levels={tracker.levels}
+          selectedDay={selectedDay}
+          onSelectDay={handleSelectDay}
+          tapOpensLog={isMobile}
+          desktopView={desktopView}
+          onDesktopViewChange={setDesktopView}
+          onYearStats={handleYearStats}
+        />
+      </div>
+    </div>
+  )
+
   const feed = (
     <section
-      className={`book-page--left flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden md:border-0 lg:px-8 ${
-        yearHeader ? 'md:px-5 md:pt-4 md:pb-3' : 'md:px-6 md:pt-3 md:pb-2'
+      className={`book-page--left flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden md:border-0 ${
+        yearHeader
+          ? 'book-page--left--year md:pt-4 md:pb-3'
+          : 'md:px-6 md:pt-3 md:pb-2 lg:px-8'
       }`}
     >
       {yearHeader ? (
-        <header className="left-page-header left-page-header--compact mx-auto flex w-full max-w-full shrink-0 flex-col gap-1.5 px-1">
-          <div className="flex w-full items-center gap-2.5">
-            <div
-              className="left-page-header__icon inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
-              style={{
-                background: `color-mix(in srgb, ${tracker.tabColor} 28%, #fffaf7)`,
-                color: tracker.tabColor,
-                boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${tracker.tabColor} 35%, transparent)`,
-              }}
-              aria-hidden
-            >
-              <Icon size={13} strokeWidth={2.25} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h2 className="truncate font-display text-[16px] font-bold leading-tight tracking-tight text-[var(--ink)]">
-                {tracker.title}
-              </h2>
-              <p className="mt-0.5 truncate text-[11px] font-medium leading-snug text-[var(--ink-soft)]">
-                {tracker.subtitle}
-              </p>
-            </div>
-            <ViewModeToggle mode={desktopView} onChange={setDesktopView} compact />
-          </div>
-
-          <div className="left-page-header__legend w-full min-w-0">
-            <Legend trackerId={tracker.id} levels={tracker.levels} compact />
-          </div>
-
-          <div className="flex w-full items-center justify-between gap-2">
-            {selectedLabel ? (
-              <div className="date-anchor date-anchor--compact w-fit max-w-[70%] rounded-full px-2.5">
-                <p className="date-anchor__stamp text-[12px] font-medium leading-none">
-                  {selectedLabel}
+        <div className="left-page-year-inner">
+          <header className="left-page-header left-page-header--compact flex w-full min-w-0 shrink-0 flex-col gap-1.5">
+            <div className="flex w-full min-w-0 items-center gap-2.5">
+              <div
+                className="left-page-header__icon inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+                style={{
+                  background: `color-mix(in srgb, ${tracker.tabColor} 28%, #fffaf7)`,
+                  color: tracker.tabColor,
+                  boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${tracker.tabColor} 35%, transparent)`,
+                }}
+                aria-hidden
+              >
+                <Icon size={13} strokeWidth={2.25} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h2 className="truncate font-display text-[16px] font-bold leading-tight tracking-tight text-[var(--ink)]">
+                  {tracker.title}
+                </h2>
+                <p className="mt-0.5 truncate text-[11px] font-medium leading-snug text-[var(--ink-soft)]">
+                  {tracker.subtitle}
                 </p>
               </div>
-            ) : (
-              <div className="h-6 w-1 shrink-0" aria-hidden />
-            )}
-            <p className="pixel-year-legend shrink-0 text-right">
-              {yearStats.logged} / {yearStats.total} days logged
-            </p>
-          </div>
+              <ViewModeToggle mode={desktopView} onChange={setDesktopView} compact />
+            </div>
 
-          <div className="page-section-divider page-section-divider--thin" aria-hidden />
-        </header>
+            <div className="left-page-header__legend w-full min-w-0">
+              <Legend trackerId={tracker.id} levels={tracker.levels} compact />
+            </div>
+
+            <div className="year-date-row">
+              <div className="year-date-row__main">
+                {selectedDateParts ? (
+                  <p className="year-date-row__date" dir="auto">
+                    {selectedIsToday ? (
+                      <span className="year-date-row__today" aria-label="Today">
+                        Today
+                      </span>
+                    ) : null}
+                    <span className="year-date-row__primary">{selectedDateParts.primary}</span>
+                    <span className="year-date-row__year">{selectedDateParts.year}</span>
+                  </p>
+                ) : (
+                  <span className="year-date-row__placeholder" aria-hidden />
+                )}
+                <p className="year-date-row__counter">
+                  <span className="year-date-row__logged">{yearStats.logged}</span>
+                  <span className="year-date-row__rest">
+                    {' '}
+                    / {yearStats.total}
+                    <span className="year-date-row__suffix"> days logged</span>
+                  </span>
+                </p>
+              </div>
+              <div
+                className="year-date-row__progress"
+                role="presentation"
+                aria-hidden
+              >
+                <span
+                  className="year-date-row__progress-fill"
+                  style={{ width: `${yearLoggedPct}%` }}
+                />
+              </div>
+            </div>
+          </header>
+
+          {gridBlock}
+        </div>
       ) : (
         <>
           <header className="left-page-header mx-auto flex w-full max-w-full shrink-0 flex-col items-center gap-1 px-2 pt-1 text-center sm:max-w-xl sm:gap-2 sm:px-3 sm:pt-2 md:gap-2 md:px-2 md:pt-1">
@@ -255,23 +331,10 @@ function Spread({ tracker, selectedDay, onSelectDay }) {
           <div className="page-section-divider shrink-0" aria-hidden>
             <span className="page-section-divider__motif">✦ · ✦</span>
           </div>
+
+          {gridBlock}
         </>
       )}
-
-      <div className="min-h-0 min-w-0 flex-1 overflow-hidden pb-1 md:pb-0">
-        <div className="h-full min-h-0 w-full min-w-0 md:flex md:items-stretch md:justify-center">
-          <PixelGrid
-            trackerId={tracker.id}
-            levels={tracker.levels}
-            selectedDay={selectedDay}
-            onSelectDay={handleSelectDay}
-            tapOpensLog={isMobile}
-            desktopView={desktopView}
-            onDesktopViewChange={setDesktopView}
-            onYearStats={handleYearStats}
-          />
-        </div>
-      </div>
     </section>
   )
 

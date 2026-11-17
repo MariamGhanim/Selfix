@@ -741,6 +741,35 @@ h3,
   min-height: 0;
 }
 
+/* Year view: center content optically between page edge and spine shadow */
+.book-page--left--year {
+  --left-page-pad: clamp(24px, 3vw, 40px);
+  --left-page-spine: 28px;
+  padding-left: var(--left-page-pad);
+  padding-right: calc(var(--left-page-pad) + var(--left-page-spine));
+  box-sizing: border-box;
+}
+
+@media (max-width: 899px) {
+  .book-page--left--year {
+    --left-page-pad: clamp(16px, 2.5vw, 28px);
+    --left-page-spine: 22px;
+  }
+}
+
+.left-page-year-inner {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
 /* Pages curve into the gutter */
 .book-page--left::after,
 .book-page--right::before {
@@ -997,12 +1026,131 @@ h3,
   margin: 4px 0 0;
   gap: 0;
   height: 1px;
-  border-top: 1px dotted color-mix(in srgb, var(--accent) 35%, var(--page-edge));
+  border-top: 1px solid color-mix(in srgb, var(--page-edge) 40%, transparent);
 }
 
 .page-section-divider--thin::before,
 .page-section-divider--thin::after {
   display: none;
+}
+
+.year-date-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+  margin: 2px 0 4px;
+}
+
+.year-date-row__main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  height: 22px;
+}
+
+.year-date-row__date {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+  line-height: 1;
+}
+
+.year-date-row__today {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  margin-right: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent-deep);
+  background: color-mix(in srgb, var(--accent-glow) 70%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.year-date-row__primary {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--accent-deep);
+  white-space: nowrap;
+}
+
+.year-date-row__year {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  opacity: 0.65;
+  white-space: nowrap;
+}
+
+.year-date-row__placeholder {
+  display: inline-block;
+  height: 1px;
+  width: 1px;
+}
+
+.year-date-row__counter {
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.year-date-row__logged {
+  font-weight: 700;
+  color: var(--accent-deep);
+}
+
+.year-date-row__rest {
+  font-weight: 500;
+  color: color-mix(in srgb, var(--ink-soft) 88%, var(--accent-deep));
+}
+
+.year-date-row__progress {
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--page-edge) 40%, transparent);
+}
+
+.year-date-row__progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+@media (max-width: 899px) {
+  .year-date-row__primary {
+    font-size: 12px;
+  }
+
+  .year-date-row__year {
+    font-size: 11px;
+  }
+
+  .year-date-row__counter {
+    font-size: 10px;
+  }
+
+  .year-date-row__suffix {
+    display: none;
+  }
 }
 
 @media (max-width: 767px) {
@@ -1090,7 +1238,7 @@ h3,
   align-items: stretch;
   justify-content: stretch;
   gap: 0;
-  padding: 0 0.35rem 0.15rem;
+  padding: 0 0 0.15rem;
   overflow: hidden;
 }
 
