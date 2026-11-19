@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
 import LegalFooter from './LegalFooter'
+import PublicNav from './PublicNav'
 
 export default function SiteLayout({ title, subtitle, children }) {
   useEffect(() => {
@@ -14,21 +13,9 @@ export default function SiteLayout({ title, subtitle, children }) {
 
   return (
     <div className="flex min-h-[100dvh] w-full max-w-full flex-col overflow-x-hidden overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
-      <header className="mx-auto mb-4 flex w-full max-w-4xl shrink-0 flex-wrap items-center justify-between gap-3">
-        <Link
-          to="/"
-          className="rounded-full bg-[var(--surface)] px-3.5 py-1.5 text-xs font-bold shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)]"
-        >
-          <span className="font-display text-[var(--accent-deep)]">Selfix Life</span>
-        </Link>
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)] px-3 py-1.5 text-xs font-bold text-[var(--ink-soft)] shadow-sm transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]"
-        >
-          <ArrowLeft size={13} />
-          Back to Journal
-        </Link>
-      </header>
+      <div className="mx-auto mb-4 w-full max-w-4xl shrink-0">
+        <PublicNav homeLabel="Back to Journal" />
+      </div>
 
       <main className="mx-auto w-full max-w-4xl flex-1 pb-6">
         <div className="book-shadow paper-texture overflow-hidden rounded-[28px] border border-[var(--page-edge)]">
@@ -50,7 +37,7 @@ export default function SiteLayout({ title, subtitle, children }) {
       </main>
 
       <div className="mx-auto w-full max-w-4xl">
-        <LegalFooter />
+        <LegalFooter alwaysShow />
       </div>
     </div>
   )

@@ -2,7 +2,6 @@
 import { Link } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import {
-  ArrowLeft,
   BookHeart,
   BookOpen,
   CloudMoon,
@@ -12,6 +11,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import LegalFooter from '../components/Legal/LegalFooter'
+import PublicNav from '../components/Legal/PublicNav'
 import PixelBloomPreview from '../components/About/PixelBloomPreview'
 import HowItWorks from '../components/About/HowItWorks'
 import { useAuth } from '../context/AuthContext'
@@ -189,21 +189,9 @@ export default function AboutPage() {
       <div className="about-atmosphere pointer-events-none absolute inset-0 min-h-full" aria-hidden />
       <div className="about-breath pointer-events-none fixed inset-0" aria-hidden />
 
-      <header className="relative z-20 mx-auto flex w-full max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6 sm:py-5">
-        <Link
-          to="/"
-          className="rounded-full bg-[var(--surface)]/90 px-3.5 py-1.5 text-xs font-bold shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)]"
-        >
-          <span className="font-display text-[var(--accent-deep)]">Selfix Life</span>
-        </Link>
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 rounded-full border border-[var(--page-edge)] bg-[var(--surface)]/90 px-3 py-1.5 text-xs font-bold text-[var(--ink-soft)] shadow-sm backdrop-blur transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)]"
-        >
-          <ArrowLeft size={13} />
-          {signedIn ? 'Open journal' : 'Back to Journal'}
-        </Link>
-      </header>
+      <div className="relative z-20 px-4 py-4 sm:px-6 sm:py-5">
+        <PublicNav homeLabel={signedIn ? 'Open journal' : 'Sign in'} />
+      </div>
 
       <main className="relative z-10">
         {/* Hero — one composition: brand, headline, line, CTA, visual plane */}
@@ -251,6 +239,12 @@ export default function AboutPage() {
               >
                 <Sparkles size={15} />
                 Open your journal
+              </Link>
+              <Link
+                to="/blog"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--surface)]/90 px-4 py-2.5 font-display text-sm font-semibold text-[var(--ink-soft)] shadow-md ring-1 ring-[var(--page-edge)]/60 backdrop-blur transition hover:text-[var(--ink)]"
+              >
+                Read the blog
               </Link>
               <a
                 href="#story"

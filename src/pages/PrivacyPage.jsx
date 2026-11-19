@@ -5,7 +5,7 @@ export default function PrivacyPage() {
   return (
     <SiteLayout
       title="Privacy Policy"
-      subtitle="Last updated: November 15, 2026. This policy explains how Selfix Life handles information in a way intended to support transparency, user privacy, and Google AdSense compliance."
+      subtitle="Last updated: November 19, 2026. This policy explains how Selfix Life handles information in a way intended to support transparency, user privacy, and Google AdSense compliance."
     >
       <Section title="1. Introduction">
         <p>
@@ -77,14 +77,15 @@ export default function PrivacyPage() {
 
       <Section title="5. Third-party advertising (Google AdSense)">
         <p>
-          Selfix Life may display advertisements served by Google AdSense or similar networks. Google,
-          as a third-party vendor, uses cookies to serve ads based on a user’s prior visits to this
-          website or other websites.
+          Selfix Life may display advertisements served by third-party vendors, including Google,
+          through Google AdSense or similar advertising networks. These third-party vendors use
+          cookies (including the DoubleClick cookie) to serve ads based on a user’s prior visits to
+          this website or other websites on the Internet.
         </p>
         <p>
-          Google’s use of advertising cookies enables it and its partners to serve ads based on
-          your visits to Selfix Life and/or other sites on the Internet. Users may opt out of
-          personalized advertising by visiting{' '}
+          Google’s use of advertising cookies enables it and its partners to serve ads to you based
+          on your visits to Selfix Life and/or other sites. Users may opt out of personalized
+          advertising by visiting{' '}
           <a
             className="font-bold text-[var(--accent-deep)] underline-offset-2 hover:underline"
             href="https://www.google.com/settings/ads"
@@ -93,14 +94,25 @@ export default function PrivacyPage() {
           >
             Google Ads Settings
           </a>
+          . Alternatively, you can opt out of a third-party vendor’s use of cookies for personalized
+          advertising by visiting{' '}
+          <a
+            className="font-bold text-[var(--accent-deep)] underline-offset-2 hover:underline"
+            href="https://www.aboutads.info/choices/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            www.aboutads.info
+          </a>
           .
         </p>
         <SoftCard>
-          <p className="font-bold text-[var(--ink)]">DoubleClick DART cookie</p>
+          <p className="font-bold text-[var(--ink)]">DoubleClick / advertising cookies</p>
           <p className="mt-1">
-            Third-party vendors, including Google, may use the DoubleClick DART cookie. The DART
-            cookie enables Google to serve ads based on a user’s visit to Selfix Life and other sites
-            that use AdSense. Users may opt out of the use of the DART cookie by visiting the{' '}
+            Third-party vendors, including Google, may use the DoubleClick DART cookie (and similar
+            advertising cookies). The DART cookie enables Google and its partners to serve ads based
+            on a user’s visit to Selfix Life and other sites that use AdSense. Users may opt out of
+            the use of the DART cookie for personalized advertising by visiting the{' '}
             <a
               className="font-bold text-[var(--accent-deep)] underline-offset-2 hover:underline"
               href="https://policies.google.com/technologies/ads"
@@ -115,7 +127,8 @@ export default function PrivacyPage() {
         <p>
           Selfix Life has no direct access to or control over cookies used by advertisers. This Privacy
           Policy covers Selfix Life’s own practices; third-party policies apply to their cookies and
-          data processing.
+          data processing. Continuing to use Selfix Life after AdSense or similar ads are enabled
+          means you acknowledge that advertising cookies may be used as described above.
         </p>
       </Section>
 

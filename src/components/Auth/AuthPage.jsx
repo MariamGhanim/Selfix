@@ -26,7 +26,7 @@ const MODES = {
 }
 
 export default function AuthPage() {
-  const { signIn, signUp, resetPassword, configured } = useAuth()
+  const { signIn, signUp, resetPassword, configured, enterGuestMode } = useAuth()
   const [mode, setMode] = useState('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -183,7 +183,30 @@ export default function AuthPage() {
           </AuthButton>
 
           {(mode === 'login' || mode === 'signup') && (
-            <p className="mt-4 text-center text-[11px] leading-relaxed text-[var(--ink-soft)]/75">
+            <>
+              <div className="my-2.5 flex items-center gap-3 sm:my-3" aria-hidden>
+                <span className="h-px flex-1 bg-[var(--page-edge)]/70" />
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-soft)]">
+                  or
+                </span>
+                <span className="h-px flex-1 bg-[var(--page-edge)]/70" />
+              </div>
+              <AuthButton
+                type="button"
+                variant="secondary"
+                onClick={enterGuestMode}
+                className="border-[var(--accent)]/35 text-[var(--accent-deep)] hover:bg-[var(--accent-glow)]/60"
+              >
+                Try as Guest
+              </AuthButton>
+              <p className="mt-1.5 text-center text-[11px] leading-snug text-[var(--ink-soft)]">
+                Full journal on this device — no account needed.
+              </p>
+            </>
+          )}
+
+          {(mode === 'login' || mode === 'signup') && (
+            <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--ink-soft)]/75 sm:mt-3.5">
               By continuing, you agree to our{' '}
               <Link
                 to="/terms"
@@ -202,7 +225,7 @@ export default function AuthPage() {
           )}
 
           {mode === 'signup' && (
-            <p className="mt-3 text-center text-[12px] leading-relaxed text-[var(--ink-soft)]">
+            <p className="mt-2.5 text-center text-[12px] leading-relaxed text-[var(--ink-soft)]">
               We will send a verification email after you register. Your journal unlocks once your
               email is verified.
             </p>

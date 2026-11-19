@@ -84,7 +84,7 @@ function HEX_OR_FALLBACK(value) {
 }
 
 export default function SettingsModal({ open, onClose }) {
-  const { user, changePassword, logOut } = useAuth()
+  const { user, changePassword, logOut, isGuest, exitGuestMode } = useAuth()
   const {
     trackerPrefs,
     setTrackerHidden,
@@ -588,70 +588,106 @@ export default function SettingsModal({ open, onClose }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
               >
-                <div className="mb-4 flex items-start gap-3 rounded-2xl bg-[var(--surface)] px-3.5 py-3">
-                  <div className="mt-0.5 rounded-full bg-[var(--accent-glow)] p-2 text-[var(--accent-deep)]">
-                    <Mail size={15} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--ink-soft)]">
-                      Registered email
-                    </p>
-                    <p className="truncate text-sm font-bold text-[var(--ink)]">{user?.email}</p>
-                    <p className="mt-0.5 text-[11px] text-[var(--ink-soft)]">
-                      {user?.emailVerified ? 'Email verified' : 'Email not verified yet'}
-                    </p>
-                  </div>
-                </div>
+                {isGuest ? (
+                  <>
+                    <div className="mb-4 rounded-2xl bg-[var(--accent-glow)]/60 px-3.5 py-3 ring-1 ring-[var(--page-edge)]/45">
+                      <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--accent-deep)]">
+                        Guest mode
+                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-[var(--ink)]">
+                        You are exploring Selfix Life without an account. Entries stay in this
+                        browser for now. Sign in to save your journal to the cloud and sync across
+                        devices.
+                      </p>
+                    </div>
+                    <AuthButton
+                      type="button"
+                      onClick={() => {
+                        exitGuestMode()
+                        onClose()
+                      }}
+                    >
+                      Sign In to Save
+                    </AuthButton>
+                    <div className="my-4 h-px bg-[var(--page-edge)]/80" />
+                    <AuthButton
+                      variant="secondary"
+                      loading={loggingOut}
+                      onClick={handleLogout}
+                      className="gap-2"
+                    >
+                      <LogOut size={14} />
+                      Exit guest mode
+                    </AuthButton>
+                  </>
+                ) : (
+                  <>
+                    <div className="mb-4 flex items-start gap-3 rounded-2xl bg-[var(--surface)] px-3.5 py-3">
+                      <div className="mt-0.5 rounded-full bg-[var(--accent-glow)] p-2 text-[var(--accent-deep)]">
+                        <Mail size={15} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--ink-soft)]">
+                          Registered email
+                        </p>
+                        <p className="truncate text-sm font-bold text-[var(--ink)]">{user?.email}</p>
+                        <p className="mt-0.5 text-[11px] text-[var(--ink-soft)]">
+                          {user?.emailVerified ? 'Email verified' : 'Email not verified yet'}
+                        </p>
+                      </div>
+                    </div>
 
-                <div className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-[var(--ink-soft)]">
-                  <KeyRound size={12} />
-                  Change password
-                </div>
+                    <div className="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wide text-[var(--ink-soft)]">
+                      <KeyRound size={12} />
+                      Change password
+                    </div>
 
-                {error && <AuthAlert>{error}</AuthAlert>}
-                {success && <AuthAlert tone="success">{success}</AuthAlert>}
+                    {error && <AuthAlert>{error}</AuthAlert>}
+                    {success && <AuthAlert tone="success">{success}</AuthAlert>}
 
-                <form onSubmit={submitPassword}>
-                  <AuthInput
-                    label="Current password"
-                    type="password"
-                    autoComplete="current-password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Confirm your current password"
-                  />
-                  <AuthInput
-                    label="New password"
-                    type="password"
-                    autoComplete="new-password"
-                    value={nextPassword}
-                    onChange={(e) => setNextPassword(e.target.value)}
-                    placeholder="Min. 8 chars + special character"
-                  />
-                  <AuthInput
-                    label="Confirm new password"
-                    type="password"
-                    autoComplete="new-password"
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
-                    placeholder="Re-enter new password"
-                  />
-                  <AuthButton type="submit" loading={loading}>
-                    Update password
-                  </AuthButton>
-                </form>
+                    <form onSubmit={submitPassword}>
+                      <AuthInput
+                        label="Current password"
+                        type="password"
+                        autoComplete="current-password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        placeholder="Confirm your current password"
+                      />
+                      <AuthInput
+                        label="New password"
+                        type="password"
+                        autoComplete="new-password"
+                        value={nextPassword}
+                        onChange={(e) => setNextPassword(e.target.value)}
+                        placeholder="Min. 8 chars + special character"
+                      />
+                      <AuthInput
+                        label="Confirm new password"
+                        type="password"
+                        autoComplete="new-password"
+                        value={confirm}
+                        onChange={(e) => setConfirm(e.target.value)}
+                        placeholder="Re-enter new password"
+                      />
+                      <AuthButton type="submit" loading={loading}>
+                        Update password
+                      </AuthButton>
+                    </form>
 
-                <div className="my-4 h-px bg-[var(--page-edge)]/80" />
+                    <div className="my-4 h-px bg-[var(--page-edge)]/80" />
 
-                <AuthButton
-                  variant="secondary"
-                  loading={loggingOut}
-                  onClick={handleLogout}
-                  className="gap-2"
-                >
-                  <LogOut size={14} />
-                  Log out
-                </AuthButton>
+                    <AuthButton
+                      variant="secondary"
+                      loading={loggingOut}
+                      onClick={handleLogout}
+                      className="gap-2"
+                    >
+                      <LogOut size={14} />
+                      Log out
+                    </AuthButton>
+                  </>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

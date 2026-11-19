@@ -20,7 +20,7 @@ import {
   DEFAULT_CUSTOM_NOTES_LEVELS,
   normalizeCustomLevels,
 } from '../data/trackerIcons'
-import { useAuth } from './AuthContext'
+import { GUEST_JOURNAL_KEY, useAuth } from './AuthContext'
 import { loadJournalFromCloud, saveJournalToCloud } from '../lib/journalCloud'
 
 const JournalContext = createContext(null)
@@ -67,9 +67,29 @@ function normalizeState(raw) {
   }
 }
 
+function loadGuestJournal(fallback) {
+  try {
+    const raw = localStorage.getItem(GUEST_JOURNAL_KEY)
+    if (!raw) return fallback
+    return normalizeState(JSON.parse(raw))
+  } catch {
+    return fallback
+  }
+}
+
+function saveGuestJournal(state) {
+  try {
+    localStorage.setItem(GUEST_JOURNAL_KEY, JSON.stringify(state))
+  } catch {
+    /* quota / private mode */
+  }
+}
+
 export function JournalProvider({ children }) {
-  const { user, emailVerified } = useAuth()
+  const { user, emailVerified, isGuest } = useAuth()
   const uid = user?.uid || null
+  const cloudMode = Boolean(uid && emailVerified)
+  const guestMode = Boolean(isGuest && !cloudMode)
   const [state, setState] = useState(defaultState)
   const [ready, setReady] = useState(false)
   const [syncError, setSyncError] = useState('')
@@ -98,7 +118,18 @@ export function JournalProvider({ children }) {
       skipNextSave.current = true
       dirtyRef.current = false
 
-      if (!uid || !emailVerified) {
+      if (guestMode) {
+        if (cancelled) return
+        setState(loadGuestJournal(defaultState))
+        skipNextSave.current = true
+        dirtyRef.current = false
+        setReady(true)
+        setSyncError('')
+        setSyncing(false)
+        return
+      }
+
+      if (!cloudMode) {
         setState(defaultState)
         setReady(false)
         setSyncing(false)
@@ -126,10 +157,11 @@ export function JournalProvider({ children }) {
     return () => {
       cancelled = true
     }
-  }, [uid, emailVerified, retryTick])
+  }, [uid, emailVerified, guestMode, cloudMode, retryTick])
 
   useEffect(() => {
-    if (!uid || !emailVerified || !ready) return undefined
+    if (!ready) return undefined
+    if (!cloudMode && !guestMode) return undefined
     if (skipNextSave.current) {
       skipNextSave.current = false
       return undefined
@@ -138,6 +170,12 @@ export function JournalProvider({ children }) {
     dirtyRef.current = true
     if (saveTimer.current) window.clearTimeout(saveTimer.current)
     saveTimer.current = window.setTimeout(async () => {
+      if (guestMode) {
+        saveGuestJournal(stateRef.current)
+        dirtyRef.current = false
+        setSyncError('')
+        return
+      }
       try {
         await saveJournalToCloud(uid, stateRef.current)
         dirtyRef.current = false
@@ -150,10 +188,10 @@ export function JournalProvider({ children }) {
     return () => {
       if (saveTimer.current) window.clearTimeout(saveTimer.current)
     }
-  }, [state, uid, emailVerified, ready])
+  }, [state, uid, cloudMode, guestMode, ready])
 
   useEffect(() => {
-    if (!uid || !emailVerified) return undefined
+    if (!cloudMode && !guestMode) return undefined
 
     const flush = () => {
       if (!readyRef.current || !dirtyRef.current) return
@@ -162,6 +200,10 @@ export function JournalProvider({ children }) {
         saveTimer.current = null
       }
       dirtyRef.current = false
+      if (guestMode) {
+        saveGuestJournal(stateRef.current)
+        return
+      }
       void saveJournalToCloud(uid, stateRef.current).catch(() => {})
     }
 
@@ -175,7 +217,7 @@ export function JournalProvider({ children }) {
       window.removeEventListener('pagehide', flush)
       document.removeEventListener('visibilitychange', onVisibility)
     }
-  }, [uid, emailVerified])
+  }, [uid, cloudMode, guestMode])
 
   const api = useMemo(() => {
     const currentMaxYear = new Date().getFullYear()
@@ -427,6 +469,7 @@ export function JournalProvider({ children }) {
       syncing,
       syncError,
       retrySync,
+      isGuest: guestMode,
       year,
       theme: state.theme === 'midnight' ? 'midnight' : 'pinky',
       profile,
@@ -452,7 +495,7 @@ export function JournalProvider({ children }) {
       removeCustomTracker,
       resetTrackerPrefs,
     }
-  }, [state, ready, syncing, syncError, retrySync])
+  }, [state, ready, syncing, syncError, retrySync, guestMode])
 
   return <JournalContext.Provider value={api}>{children}</JournalContext.Provider>
 }

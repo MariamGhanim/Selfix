@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { JournalProvider, useJournal } from './context/JournalContext'
 import AuthPage from './components/Auth/AuthPage'
+import GuestBanner from './components/Auth/GuestBanner'
 import VerifyEmailBanner from './components/Auth/VerifyEmailBanner'
 import SyncErrorScreen from './components/Auth/SyncErrorScreen'
 import Book from './components/Book/Book'
@@ -11,6 +12,8 @@ import AboutPage from './pages/AboutPage'
 import PrivacyPage from './pages/PrivacyPage'
 import TermsPage from './pages/TermsPage'
 import ContactPage from './pages/ContactPage'
+import BlogIndexPage from './pages/BlogIndexPage'
+import BlogPostPage from './pages/BlogPostPage'
 
 function LoadingScreen({ label = 'Opening Selfix Life…' }) {
   return (
@@ -23,26 +26,35 @@ function LoadingScreen({ label = 'Opening Selfix Life…' }) {
 }
 
 function Gate() {
-  const { user, loading, emailVerified, configured } = useAuth()
+  const { user, loading, emailVerified, configured, isGuest } = useAuth()
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'pinky')
   }, [])
 
-  if (!configured) return <AuthPage />
+  if (!configured && !isGuest) return <AuthPage />
   if (loading) return <LoadingScreen />
-  if (!user) return <AuthPage />
-  if (!emailVerified) return <VerifyEmailBanner />
+  if (user && !emailVerified) return <VerifyEmailBanner />
+  if (user && emailVerified) {
+    return (
+      <JournalProvider>
+        <ThemedApp />
+      </JournalProvider>
+    )
+  }
+  if (isGuest) {
+    return (
+      <JournalProvider>
+        <ThemedApp />
+      </JournalProvider>
+    )
+  }
 
-  return (
-    <JournalProvider>
-      <ThemedApp />
-    </JournalProvider>
-  )
+  return <AuthPage />
 }
 
 function ThemedApp() {
-  const { theme, ready, syncing, syncError, retrySync } = useJournal()
+  const { theme, ready, syncing, syncError, retrySync, isGuest } = useJournal()
 
   useEffect(() => {
     const safeTheme = theme === 'midnight' ? 'midnight' : 'pinky'
@@ -59,6 +71,7 @@ function ThemedApp() {
 
   return (
     <main className="h-[100dvh] min-h-[100dvh] w-full max-w-full min-w-0 overflow-x-hidden overflow-y-auto">
+      {isGuest && <GuestBanner />}
       {syncError && (
         <div className="absolute left-1/2 top-2 z-[60] max-w-[90vw] -translate-x-1/2 truncate rounded-full bg-[#fde8ee] px-3 py-1 text-[10px] font-bold text-[#b8385c] shadow">
           Firebase save issue — {syncError}
@@ -76,6 +89,8 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Gate />} />
+          <Route path="/blog" element={<BlogIndexPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />

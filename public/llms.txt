@@ -1,17 +1,41 @@
 ﻿# Selfix Life
 
-> Selfix Life is a free cozy Year in Pixels journal at https://www.myselfix.me — a soft pastel web app for tracking sleep, mood, habits, and daily notes without feeling like a spreadsheet. Sign-in enables private Firebase cloud sync; notes are AES-encrypted on-device before cloud save; LocalStorage holds temporary browser state only.
+> Selfix Life is a free cozy Year in Pixels journal at https://www.myselfix.me — a soft pastel web app for tracking sleep, mood, habits, and daily notes without feeling like a spreadsheet. Sign-in enables private Firebase cloud sync; notes are AES-encrypted on-device before cloud save; LocalStorage holds temporary browser state and guest-mode journals. Visitors can try the full journal as a guest without an account. SEO journal guides live under /blog.
 
 Selfix Life wraps the classic Year in Pixels method in an open-book experience: binder tabs, gentle page flips, pastel color levels, mini-quizzes, and private notes. The product philosophy is slowing down and painting honest days — not optimizing a streak.
 
 ## Site
 
 - Home / Journal: https://www.myselfix.me/
+- Blog / Journal Guides: https://www.myselfix.me/blog
 - About: https://www.myselfix.me/about
 - Contact: https://www.myselfix.me/contact
 - Privacy: https://www.myselfix.me/privacy
 - Terms: https://www.myselfix.me/terms
 - Sitemap: https://www.myselfix.me/sitemap.xml
+
+## Guest mode
+
+Visitors can choose “Try as Guest” on the landing page to enter the full journal interface. Guest data is stored in browser localStorage only and is not written to Firebase until the visitor creates an account and signs in.
+
+## Blog guides
+
+- What is a Year in Pixels: https://www.myselfix.me/blog/what-is-a-year-in-pixels
+- 5 Science-Backed Habits for Daily Energy: https://www.myselfix.me/blog/science-backed-habits-for-daily-energy
+- Tracking Sleep Patterns & Morning Routine: https://www.myselfix.me/blog/tracking-sleep-patterns-morning-routine
+- Digital vs Paper Journaling: https://www.myselfix.me/blog/digital-journaling-vs-paper-journaling
+- Mindful Mood Tracking: https://www.myselfix.me/blog/mindful-mood-tracking-without-judgment
+- Expressive Writing & Emotional Health: https://www.myselfix.me/blog/expressive-writing-and-emotional-health
+- Gentle Evening Wind-Down: https://www.myselfix.me/blog/gentle-evening-wind-down
+- Why Blank Days Are Okay: https://www.myselfix.me/blog/why-blank-days-in-a-tracker-are-okay
+- Habit Stacking with Soft Trackers: https://www.myselfix.me/blog/habit-stacking-with-soft-trackers
+- Seasonal Light & Color Journals: https://www.myselfix.me/blog/seasonal-light-and-color-journals
+- Hydration & Focus: https://www.myselfix.me/blog/hydration-and-focus-without-perfectionism
+- Reading Your Month Mosaic: https://www.myselfix.me/blog/reading-your-month-mosaic
+- Mood Tracking Privacy: https://www.myselfix.me/blog/mood-tracking-privacy-and-consent
+- Gratitude Without Forced Cheer: https://www.myselfix.me/blog/gratitude-pixels-without-forced-cheer
+- Weekend Sleep & Monday Mornings: https://www.myselfix.me/blog/weekend-sleep-and-monday-mornings
+- Caffeine & the Afternoon Dip: https://www.myselfix.me/blog/caffeine-and-the-afternoon-dip
 
 ## What Selfix Life is for
 
@@ -27,9 +51,9 @@ Selfix Life wraps the classic Year in Pixels method in an open-book experience: 
 - **Sleep tracking** — rest and overnight patterns as visual levels
 - **Mood & energy tracking** — soft color levels plus optional emoji chips
 - **Habit trackers** — water, focus, gym, reading, vitamins, routines, tasks, and custom pages
-- **Daily notes** — per-tracker, per-day reflections (client-side encrypted notes when configured)
-- **Insights logbook** — human-readable charts of real logged entries (not generic AI fluff)
-- **Focus timer** — soft sessions that can log into today's pixel
+- **Daily notes** — per-tracker, per-day reflections (client-side encrypted notes when signed in)
+- **Insights logbook** — human-readable charts of real logged entries
+- **Guest mode** — full journal experience with local-only temporary storage
 - **Cloud sync** — secure account access so the journal follows you across devices
 
 ## How it works

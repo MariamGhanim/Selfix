@@ -2,9 +2,10 @@ import { Fragment } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 const LINKS = [
+  { to: '/blog', label: 'Blog' },
   { to: '/about', label: 'About' },
-  { to: '/privacy', label: 'Privacy Policy' },
-  { to: '/terms', label: 'Terms of Service' },
+  { to: '/privacy', label: 'Privacy' },
+  { to: '/terms', label: 'Terms' },
   { to: '/contact', label: 'Contact' },
 ]
 
@@ -18,7 +19,9 @@ export default function LegalFooter({ alwaysShow = false }) {
       }`}
     >
       {LINKS.map((link, i) => {
-        const active = pathname === link.to
+        const active =
+          pathname === link.to ||
+          (link.to !== '/' && pathname.startsWith(`${link.to}/`))
         return (
           <Fragment key={link.to}>
             {i > 0 && <span className="opacity-35" aria-hidden>·</span>}

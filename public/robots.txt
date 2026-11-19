@@ -1,5 +1,14 @@
 # Selfix Life — https://www.myselfix.me
 User-agent: *
 Allow: /
+Allow: /blog
+Allow: /blog/
+Allow: /about
+Allow: /privacy
+Allow: /terms
+Allow: /contact
+
+# Authenticated journal UI shares / — guest mode is client-side only.
+# There are no separate private dashboard URL paths to disallow.
 
 Sitemap: https://www.myselfix.me/sitemap.xml

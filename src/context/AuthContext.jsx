@@ -23,6 +23,17 @@ import { mapAuthError, passwordsMatch, validatePassword } from '../lib/password'
 
 const AuthContext = createContext(null)
 
+export const GUEST_MODE_KEY = 'selfix-guest-mode'
+export const GUEST_JOURNAL_KEY = 'selfix-guest-journal'
+
+function readGuestFlag() {
+  try {
+    return localStorage.getItem(GUEST_MODE_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
 function snapshotUser(firebaseUser) {
   if (!firebaseUser) return null
   return {
@@ -36,6 +47,7 @@ function snapshotUser(firebaseUser) {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [isGuest, setIsGuest] = useState(() => readGuestFlag())
   const configured = isFirebaseConfigured()
 
   useEffect(() => {
@@ -44,11 +56,38 @@ export function AuthProvider({ children }) {
       return undefined
     }
     const unsub = onAuthStateChanged(auth, (next) => {
-      setUser(snapshotUser(next))
+      const snap = snapshotUser(next)
+      setUser(snap)
+      if (snap) {
+        try {
+          localStorage.setItem(GUEST_MODE_KEY, '0')
+        } catch {
+          /* ignore */
+        }
+        setIsGuest(false)
+      }
       setLoading(false)
     })
     return unsub
   }, [configured])
+
+  const enterGuestMode = useCallback(() => {
+    try {
+      localStorage.setItem(GUEST_MODE_KEY, '1')
+    } catch {
+      /* ignore */
+    }
+    setIsGuest(true)
+  }, [])
+
+  const exitGuestMode = useCallback(() => {
+    try {
+      localStorage.setItem(GUEST_MODE_KEY, '0')
+    } catch {
+      /* ignore */
+    }
+    setIsGuest(false)
+  }, [])
 
   const refreshUser = useCallback(async () => {
     if (!auth.currentUser) return null
@@ -88,8 +127,14 @@ export function AuthProvider({ children }) {
 
   const logOut = useCallback(async () => {
     try {
-      await signOut(auth)
+      if (auth.currentUser) await signOut(auth)
       setUser(null)
+      try {
+        localStorage.setItem(GUEST_MODE_KEY, '0')
+      } catch {
+        /* ignore */
+      }
+      setIsGuest(false)
     } catch (err) {
       throw new Error(mapAuthError(err))
     }
@@ -136,6 +181,9 @@ export function AuthProvider({ children }) {
       loading,
       configured,
       emailVerified,
+      isGuest: Boolean(isGuest && !user),
+      enterGuestMode,
+      exitGuestMode,
       signUp,
       signIn,
       logOut,
@@ -149,6 +197,9 @@ export function AuthProvider({ children }) {
       loading,
       configured,
       emailVerified,
+      isGuest,
+      enterGuestMode,
+      exitGuestMode,
       signUp,
       signIn,
       logOut,
