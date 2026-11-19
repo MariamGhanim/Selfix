@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Apple,
@@ -227,6 +228,17 @@ export default function Book() {
               <Sparkles size={16} />
               <span className="hidden sm:inline">Logbook</span>
             </motion.button>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.94 }}>
+              <Link
+                to="/blog"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--ink-soft)] shadow-md backdrop-blur transition hover:bg-[var(--surface-strong)] hover:text-[var(--ink)] sm:h-auto sm:w-auto sm:min-h-0 sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-[11px] sm:font-semibold"
+                title="Journal Guides · Blog"
+                aria-label="Open journal guides blog"
+              >
+                <BookOpen size={16} />
+                <span className="hidden sm:inline">Guides</span>
+              </Link>
+            </motion.div>
             <ThemeToggle />
             <motion.button
               type="button"
