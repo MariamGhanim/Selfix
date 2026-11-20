@@ -224,8 +224,21 @@
   color: var(--ink-soft, #8a707a);
 }
 
+/*
+ * Keep html/body overflow visible so Adsterra Social Bar (position:fixed on <body>)
+ * is not clipped on desktop. Horizontal clip lives on #root instead.
+ */
 html,
-body,
+body {
+  min-height: 100%;
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 #root {
   min-height: 100%;
   height: 100%;
@@ -3050,8 +3063,23 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 }
 
 /*
- * Adsterra Social Bar — do NOT force position/size/display on injected widgets.
- * Forcing bottom/right/max-width broke Adsterra’s own templates (empty/hidden bar).
- * Header stays above via .app-topbar { z-index: 80 }.
- * Script: index.html + ensureAdsterraSocialBar() → bauval.org/14/fd13023e93fd3c0628c132081e0febde
+ * Adsterra Social Bar — tagged by watchAdsterraSocialBarFloats() as [data-adsterra-float].
+ * Do NOT set width/height/left/right (that crushed templates before).
+ * Desktop: nudge out of the header strip so the bar is visible on laptop/desktop.
+ * Header controls stay clickable via .app-topbar { z-index: 80 }.
+ * Script: index.html + ensureAdsterraSocialBar() → bauval.org/14/fd13023e…
  */
+[data-adsterra-float='1'] {
+  z-index: 70 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  max-width: min(100vw, 420px);
+}
+
+@media (min-width: 768px) {
+  [data-adsterra-float='1'] {
+    top: auto !important;
+    bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
