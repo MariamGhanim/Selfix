@@ -3064,22 +3064,19 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 
 /*
  * Adsterra Social Bar — tagged by watchAdsterraSocialBarFloats() as [data-adsterra-float].
- * Do NOT set width/height/left/right (that crushed templates before).
- * Desktop: nudge out of the header strip so the bar is visible on laptop/desktop.
- * Header controls stay clickable via .app-topbar { z-index: 80 }.
+ * Pin bottom-right on all viewports. Do NOT set width/height (that crushed templates).
+ * Music player stays bottom-left; header stays clickable (z-index 80).
  * Script: index.html + ensureAdsterraSocialBar() → bauval.org/14/fd13023e…
  */
 [data-adsterra-float='1'] {
+  position: fixed !important;
+  top: auto !important;
+  left: auto !important;
+  right: max(12px, env(safe-area-inset-right, 0px)) !important;
+  bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
   z-index: 70 !important;
   visibility: visible !important;
   opacity: 1 !important;
   pointer-events: auto !important;
-  max-width: min(100vw, 420px);
-}
-
-@media (min-width: 768px) {
-  [data-adsterra-float='1'] {
-    top: auto !important;
-    bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
-  }
+  max-width: min(100vw - 24px, 420px);
 }

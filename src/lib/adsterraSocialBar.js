@@ -5,10 +5,14 @@ const FLOAT_ATTR = 'data-adsterra-float'
 
 function isOurChrome(el) {
   if (!(el instanceof HTMLElement)) return true
-  if (el.id === 'root') return true
-  if (el.classList.contains('ambient-music-player')) return true
-  if (el.classList.contains('journal-ad-sidebar')) return true
-  if (el.hasAttribute('data-journal-ads')) return true
+  if (el.id === 'root' || el.closest?.('#root')) return true
+  if (el.classList?.contains('ambient-music-player') || el.closest?.('.ambient-music-player')) {
+    return true
+  }
+  if (el.classList?.contains('journal-ad-sidebar') || el.closest?.('.journal-ad-sidebar')) {
+    return true
+  }
+  if (el.hasAttribute?.('data-journal-ads') || el.closest?.('[data-journal-ads]')) return true
   return false
 }
 
@@ -22,12 +26,21 @@ function isFixedLike(el) {
   }
 }
 
-/** Tag Adsterra (and similar) body-level fixed hosts so CSS can keep them visible on desktop. */
+/** Tag Adsterra Social Bar hosts (body-level fixed widgets) for bottom-right CSS. */
 function tagFloatHosts() {
   if (typeof document === 'undefined' || !document.body) return
+
+  // Direct body children first (most common Adsterra inject path)
   for (const el of document.body.children) {
     if (isOurChrome(el)) continue
     if (el.tagName !== 'DIV' && el.tagName !== 'ASIDE' && el.tagName !== 'IFRAME') continue
+    if (!isFixedLike(el)) continue
+    el.setAttribute(FLOAT_ATTR, '1')
+  }
+
+  // Nested fixed hosts Adsterra sometimes wraps under a plain body child
+  for (const el of document.body.querySelectorAll(':scope > div div, :scope > div iframe, :scope > aside')) {
+    if (isOurChrome(el)) continue
     if (!isFixedLike(el)) continue
     el.setAttribute(FLOAT_ATTR, '1')
   }
@@ -64,15 +77,19 @@ export function ensureAdsterraSocialBar() {
 
 let floatWatcherStarted = false
 
-/** Observe body for Social Bar hosts; do not touch creative HTML inside. */
+/** Observe body for Social Bar hosts; do not rewrite creative HTML inside. */
 export function watchAdsterraSocialBarFloats() {
   if (typeof document === 'undefined' || !document.body || floatWatcherStarted) return
   floatWatcherStarted = true
 
   tagFloatHosts()
   const mo = new MutationObserver(() => tagFloatHosts())
-  mo.observe(document.body, { childList: true, subtree: false })
-  // Adsterra sometimes injects slightly after script load
+  mo.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['style', 'class'],
+  })
   window.setTimeout(tagFloatHosts, 800)
   window.setTimeout(tagFloatHosts, 2500)
   window.setTimeout(tagFloatHosts, 5000)
