@@ -2908,7 +2908,7 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   border: 1px solid color-mix(in srgb, var(--page-edge) 50%, transparent);
 }
 
-/* ——— Adsterra layout chrome (styling only — do not alter scripts/IDs) ——— */
+/* ——— Adsterra chrome (outer sidebars only — do not restyle ad internals) ——— */
 
 .app-topbar {
   z-index: 80;
@@ -2916,90 +2916,58 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 }
 
 /*
- * Journal stage: Native (left) | Notebook (center) | Display 300×250 (right)
- * <1280px → notebook full width, ad rails in a centered row under Prev/Next
+ * Fixed outer-margin sidebars — desktop only.
+ * Never inside the book layout; never push/squeeze the notebook.
  */
-.book-with-ads {
-  display: grid;
-  width: 100%;
-  min-width: 0;
-  min-height: 0;
-  gap: 12px;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  grid-template-areas:
-    'center center'
-    'left right';
-  align-items: start;
+.journal-ad-sidebars {
+  display: none;
 }
 
-.book-stage-center {
-  grid-area: center;
-  min-width: 0;
-  min-height: 0;
+.journal-ad-sidebar {
+  display: none;
+  pointer-events: auto;
 }
 
-.book-ad-rail--left {
-  grid-area: left;
-}
-
-.book-ad-rail--right {
-  grid-area: right;
-}
-
-.book-ad-rail {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  justify-self: center;
-}
-
-@media (max-width: 1279px) {
-  .book-ad-rail {
-    max-height: 360px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+@media (min-width: 1360px) {
+  .journal-ad-sidebars {
+    display: block;
   }
 
-  .book-with-ads {
-    justify-items: center;
+  .journal-ad-sidebar {
+    display: block;
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 160px;
+    z-index: 10;
+    box-sizing: border-box;
   }
 
-  .book-ad-rail--left,
-  .book-ad-rail--right {
-    width: min(100%, 280px);
-  }
-}
-
-@media (min-width: 1280px) {
-  .book-with-ads {
-    grid-template-columns: minmax(160px, 200px) minmax(0, 1fr) minmax(160px, 200px);
-    grid-template-areas: 'left center right';
-    gap: 16px;
-    align-items: start;
+  .journal-ad-sidebar--left {
+    left: 16px;
+    max-height: 520px;
+    overflow: hidden;
+    border-radius: 16px;
   }
 
-  .book-ad-rail {
-    width: 100%;
-    max-width: 200px;
-    max-height: none;
-    overflow: visible;
-    position: sticky;
-    top: 8px;
-    align-self: start;
+  .journal-ad-sidebar--right {
+    right: 16px;
+    max-height: 520px;
+    overflow: hidden;
+    border-radius: 16px;
   }
 }
 
 .adsterra-sponsored-label {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   padding-inline: 2px;
   font-family: var(--font-body), Nunito, system-ui, sans-serif;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  opacity: 0.72;
+  opacity: 0.7;
   text-align: start;
 }
 
@@ -3012,24 +2980,22 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   box-sizing: border-box;
 }
 
+/* Outer chrome only — no rules targeting Adsterra injected children */
 .adsterra-native-card,
 .adsterra-display-card {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  min-height: 120px;
   height: auto;
-  padding: 12px;
+  padding: 8px;
   border-radius: 16px;
   border: 1px solid rgba(255, 182, 193, 0.3);
   background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  box-shadow:
-    0 8px 22px color-mix(in srgb, var(--shadow) 28%, transparent),
-    0 1px 0 rgba(255, 255, 255, 0.4) inset;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--shadow) 24%, transparent);
   box-sizing: border-box;
-  overflow-x: clip;
+  overflow: hidden;
 }
 
 [data-theme='midnight'] .adsterra-native-card,
@@ -3044,146 +3010,10 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  /* Let Adsterra render its own layout inside the 160px shell */
 }
 
-/*
- * Native Banner — vertical stack (no multi-column grid).
- * Handles Adsterra’s inner wrapper via :has(> :only-child).
- */
-#container-c3285e03e15c00c634fafe432d75bdb3 {
-  box-sizing: border-box !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 12px !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  min-height: 120px;
-  height: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-#container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) {
-  display: block !important;
-}
-
-#container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 12px !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
-  float: none !important;
-}
-
-#container-c3285e03e15c00c634fafe432d75bdb3 > *:not(:only-child),
-#container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * > * {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  float: none !important;
-  display: block !important;
-  flex: none !important;
-  box-sizing: border-box !important;
-  margin: 0 !important;
-}
-
-#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__bn']:not([class*='__bn-container']),
-#container-c3285e03e15c00c634fafe432d75bdb3 > [class*='__bn-container'],
-#container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * > [class*='__bn-container'] {
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  float: none !important;
-  flex: none !important;
-}
-
-#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__link'],
-#container-c3285e03e15c00c634fafe432d75bdb3 a {
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  text-decoration: none !important;
-  color: var(--ink-soft) !important;
-  font-family: var(--font-body), Nunito, system-ui, sans-serif !important;
-  font-size: 12px !important;
-  font-weight: 400 !important;
-  line-height: 1.4 !important;
-  text-align: left !important;
-  white-space: normal !important;
-  word-break: normal !important;
-  overflow-wrap: break-word !important;
-  border-radius: 12px;
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
-}
-
-#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__link']:hover,
-#container-c3285e03e15c00c634fafe432d75bdb3 a:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px color-mix(in srgb, var(--shadow) 35%, transparent);
-}
-
-#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__img-container'] {
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  overflow: hidden !important;
-  border-radius: 12px !important;
-}
-
-#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__img']:not([class*='__img-container']),
-#container-c3285e03e15c00c634fafe432d75bdb3 img {
-  display: block !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  height: auto !important;
-  aspect-ratio: 16 / 10 !important;
-  object-fit: cover !important;
-  border-radius: 12px !important;
-  margin: 0 !important;
-  background: color-mix(in srgb, var(--accent-glow) 70%, transparent);
-}
-
-#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__title'] {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  margin: 6px 0 0 !important;
-  padding: 0 !important;
-  font-family: var(--font-body), Nunito, system-ui, sans-serif !important;
-  font-size: 12px !important;
-  font-weight: 400 !important;
-  line-height: 1.4 !important;
-  color: var(--ink-soft) !important;
-  text-align: left !important;
-  white-space: normal !important;
-  word-break: normal !important;
-  overflow-wrap: break-word !important;
-  writing-mode: horizontal-tb !important;
-  display: -webkit-box !important;
-  -webkit-box-orient: vertical !important;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  overflow: hidden !important;
-}
-
-.adsterra-footer-gap {
-  margin-top: 40px;
-}
-
-/* Display 300×250 — blog full size; rail scales to fit 160–200px */
+/* Blog / sidebar display host */
 .adsterra-display-section {
   width: 100%;
   max-width: 100%;
@@ -3197,27 +3027,36 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-x: clip;
+  overflow: hidden;
 }
 
 .adsterra-display__host iframe,
 .adsterra-display__host img {
-  max-width: 100% !important;
+  max-width: 100%;
 }
 
-.book-ad-rail .adsterra-display-card {
+/* Scale 300×250 into the fixed 160px right margin */
+.journal-ad-sidebar--right .adsterra-display-card {
   display: flex;
   justify-content: center;
   overflow: hidden;
-  min-height: 0;
+  padding: 6px;
 }
 
-.book-ad-rail .adsterra-display__host {
+.journal-ad-sidebar--right .adsterra-display__host {
   width: 300px;
   min-height: 250px;
-  transform: scale(0.58);
+  transform: scale(0.5);
   transform-origin: top center;
-  margin-bottom: calc(250px * -0.42);
+  margin-bottom: calc(250px * -0.5);
+}
+
+.journal-ad-sidebar--left .adsterra-native-section,
+.journal-ad-sidebar--left .adsterra-native-card,
+.journal-ad-sidebar--left .adsterra-native__host,
+.journal-ad-sidebar--left .adsterra-native__slot {
+  width: 160px;
+  max-width: 160px;
 }
 
 /*
