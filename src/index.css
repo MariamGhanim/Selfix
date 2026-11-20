@@ -2945,7 +2945,7 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   box-sizing: border-box;
   pointer-events: auto;
   z-index: 5;
-  contain: layout paint;
+  /* Do not use contain:paint — it can blank Adsterra iframes */
 }
 
 .journal-ad-sidebar--left {
@@ -3010,27 +3010,39 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   min-width: 0;
 }
 
-/* 160×300 vertical banner — exact fit, no scale/clip hacks */
+/* 160×300 vertical banner — exact fit for Adsterra iframe */
 .adsterra-display-card--160x300 {
   width: 160px;
   height: 300px;
   padding: 0;
   overflow: hidden;
   border-radius: 16px;
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .adsterra-display__host--160x300 {
   width: 160px;
   height: 300px;
+  min-width: 160px;
   min-height: 300px;
   margin: 0;
   display: block;
   overflow: hidden;
+  position: relative;
+}
+
+.adsterra-display__host--160x300 iframe {
+  display: block !important;
+  width: 160px !important;
+  height: 300px !important;
+  border: 0 !important;
+  max-width: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .journal-ad-sidebar--right {
   width: 160px;
-  height: auto;
   max-height: none;
   overflow: visible;
 }
