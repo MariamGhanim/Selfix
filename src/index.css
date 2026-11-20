@@ -2908,54 +2908,54 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   border: 1px solid color-mix(in srgb, var(--page-edge) 50%, transparent);
 }
 
-/* ——— Adsterra chrome (outer sidebars only — do not restyle ad internals) ——— */
+/* ——— Adsterra chrome (outer sidebars only — never touch notebook layout) ——— */
 
 .app-topbar {
   z-index: 80;
   isolation: isolate;
 }
 
+/* Guarantee the open book never collapses to a hairline */
+.open-book {
+  min-height: min(58vh, 28rem);
+}
+
+@media (min-width: 640px) {
+  .open-book {
+    min-height: 0; /* flex height from sm:h book shell takes over */
+  }
+}
+
 /*
- * Fixed outer-margin sidebars — desktop only.
- * Never inside the book layout; never push/squeeze the notebook.
+ * Fixed outer-margin sidebars — only mounted at ≥1360px (see JournalAdSidebars).
+ * z-index below the notebook (z-20) so ads can never cover the book.
  */
 .journal-ad-sidebars {
-  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
 }
 
 .journal-ad-sidebar {
-  display: none;
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 160px;
+  max-height: 520px;
+  overflow: hidden;
+  border-radius: 16px;
+  box-sizing: border-box;
   pointer-events: auto;
+  contain: layout paint;
 }
 
-@media (min-width: 1360px) {
-  .journal-ad-sidebars {
-    display: block;
-  }
+.journal-ad-sidebar--left {
+  left: max(12px, env(safe-area-inset-left, 0px));
+}
 
-  .journal-ad-sidebar {
-    display: block;
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 160px;
-    z-index: 10;
-    box-sizing: border-box;
-  }
-
-  .journal-ad-sidebar--left {
-    left: 16px;
-    max-height: 520px;
-    overflow: hidden;
-    border-radius: 16px;
-  }
-
-  .journal-ad-sidebar--right {
-    right: 16px;
-    max-height: 520px;
-    overflow: hidden;
-    border-radius: 16px;
-  }
+.journal-ad-sidebar--right {
+  right: max(12px, env(safe-area-inset-right, 0px));
 }
 
 .adsterra-sponsored-label {
@@ -2980,7 +2980,7 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   box-sizing: border-box;
 }
 
-/* Outer chrome only — no rules targeting Adsterra injected children */
+/* Outer chrome only — no selectors against Adsterra's injected children */
 .adsterra-native-card,
 .adsterra-display-card {
   width: 100%;
@@ -3010,14 +3010,6 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  /* Let Adsterra render its own layout inside the 160px shell */
-}
-
-/* Blog / sidebar display host */
-.adsterra-display-section {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
 }
 
 .adsterra-display__host {
@@ -3035,7 +3027,6 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   max-width: 100%;
 }
 
-/* Scale 300×250 into the fixed 160px right margin */
 .journal-ad-sidebar--right .adsterra-display-card {
   display: flex;
   justify-content: center;
@@ -3057,32 +3048,4 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 .journal-ad-sidebar--left .adsterra-native__slot {
   width: 160px;
   max-width: 160px;
-}
-
-/*
- * Social Bar / floating Adsterra widgets:
- * keep below header controls; park in bottom-end corner.
- * Does not hide close/"Hide" controls or ad labels.
- */
-body > div[style*='position: fixed']:not(.ambient-music-player):not(#root),
-body > div[style*='position:fixed']:not(.ambient-music-player):not(#root),
-body > aside[style*='position: fixed']:not(#root),
-body > aside[style*='position:fixed']:not(#root) {
-  top: auto !important;
-  bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
-  inset-inline-start: auto !important;
-  inset-inline-end: max(16px, env(safe-area-inset-right, 0px)) !important;
-  left: auto !important;
-  right: max(16px, env(safe-area-inset-right, 0px)) !important;
-  max-width: min(320px, calc(100vw - 32px)) !important;
-  z-index: 35 !important;
-  pointer-events: auto !important;
-}
-
-[dir='rtl'] body > div[style*='position: fixed']:not(.ambient-music-player):not(#root),
-[dir='rtl'] body > div[style*='position:fixed']:not(.ambient-music-player):not(#root),
-[dir='rtl'] body > aside[style*='position: fixed']:not(#root),
-[dir='rtl'] body > aside[style*='position:fixed']:not(#root) {
-  left: max(16px, env(safe-area-inset-left, 0px)) !important;
-  right: auto !important;
 }

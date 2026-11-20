@@ -261,7 +261,7 @@ export default function Book() {
 
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-full min-h-0 flex-1 flex-col overflow-x-hidden sm:max-h-[min(88vh,100%)] sm:w-[min(95%,72rem)] sm:max-w-7xl">
+        <div className="relative z-20 mx-auto flex w-full max-w-full min-h-0 flex-1 flex-col overflow-x-hidden sm:h-[min(88vh,calc(100dvh-5.5rem))] sm:max-h-[min(88vh,calc(100dvh-5.5rem))] sm:w-[min(95%,72rem)] sm:max-w-7xl">
           <div
             className={`book-tabs-fade scroll-fade-x relative z-20 w-full max-w-full shrink-0 ${
               showInsights ? 'hidden sm:block' : ''
@@ -301,7 +301,7 @@ export default function Book() {
           </div>
 
           <div
-            className={`open-book book-shadow paper-texture relative flex min-h-0 w-full min-w-0 flex-1 overflow-hidden rounded-[16px] border border-[var(--cover)]/40 sm:rounded-b-[30px] sm:rounded-t-[20px] ${
+            className={`open-book book-shadow paper-texture relative flex h-0 min-h-[min(58vh,28rem)] w-full min-w-0 flex-1 overflow-hidden rounded-[16px] border border-[var(--cover)]/40 sm:min-h-0 sm:rounded-b-[30px] sm:rounded-t-[20px] ${
               showInsights ? 'open-book--insights' : ''
             }`}
           >
