@@ -2928,13 +2928,10 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 
 /*
  * Fixed outer-margin sidebars — only mounted at ≥1360px (see JournalAdSidebars).
- * z-index below the notebook (z-20) so ads can never cover the book.
+ * display:contents avoids a full-viewport overlay that can trap/stack over Social Bar.
  */
 .journal-ad-sidebars {
-  position: fixed;
-  inset: 0;
-  z-index: 5;
-  pointer-events: none;
+  display: contents;
 }
 
 .journal-ad-sidebar {
@@ -2947,6 +2944,7 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   border-radius: 16px;
   box-sizing: border-box;
   pointer-events: auto;
+  z-index: 5;
   contain: layout paint;
 }
 
@@ -3047,4 +3045,32 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 .journal-ad-sidebar--left .adsterra-native__slot {
   width: 160px;
   max-width: 160px;
+}
+
+/*
+ * Adsterra Social Bar — body-level fixed widget.
+ * Visible on all viewports; below header (z-80); bottom-right clear of Prev/Next + music.
+ * Does not hide close/"Hide" controls.
+ */
+body > div[style*='position: fixed']:not(.ambient-music-player):not(#root):not(.journal-ad-sidebar),
+body > div[style*='position:fixed']:not(.ambient-music-player):not(#root):not(.journal-ad-sidebar),
+body > aside[style*='position: fixed']:not(.journal-ad-sidebar),
+body > aside[style*='position:fixed']:not(.journal-ad-sidebar) {
+  top: auto !important;
+  bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 56px)) !important;
+  left: auto !important;
+  right: max(12px, env(safe-area-inset-right, 0px)) !important;
+  z-index: 40 !important;
+  max-width: min(320px, calc(100vw - 24px)) !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+[dir='rtl'] body > div[style*='position: fixed']:not(.ambient-music-player):not(#root):not(.journal-ad-sidebar),
+[dir='rtl'] body > div[style*='position:fixed']:not(.ambient-music-player):not(#root):not(.journal-ad-sidebar),
+[dir='rtl'] body > aside[style*='position: fixed']:not(.journal-ad-sidebar),
+[dir='rtl'] body > aside[style*='position:fixed']:not(.journal-ad-sidebar) {
+  left: max(12px, env(safe-area-inset-left, 0px)) !important;
+  right: auto !important;
 }
