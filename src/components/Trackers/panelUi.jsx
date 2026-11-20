@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useId, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { RotateCcw } from 'lucide-react'
 import { useJournal } from '../../context/JournalContext'
@@ -257,20 +257,32 @@ export function FieldLabel({ children }) {
   return <ReviewHeading className="mb-2">{children}</ReviewHeading>
 }
 
-export function SoftInput(props) {
+function useFieldIdentity(id, name) {
+  const autoId = useId().replace(/:/g, '')
+  const fieldId = id || `field-${autoId}`
+  return { fieldId, fieldName: name || fieldId }
+}
+
+export function SoftInput({ id, name, ...props }) {
+  const { fieldId, fieldName } = useFieldIdentity(id, name)
   return (
     <input
       {...props}
+      id={fieldId}
+      name={fieldName}
       data-no-flip
       className={`soft-field relative z-20 min-h-11 w-full rounded-2xl border-0 bg-[var(--surface)] px-3.5 py-2.5 text-base text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 sm:min-h-0 sm:py-2 sm:text-sm ${props.className || ''}`}
     />
   )
 }
 
-export function SoftTextarea({ className = '', ...props }) {
+export function SoftTextarea({ className = '', id, name, ...props }) {
+  const { fieldId, fieldName } = useFieldIdentity(id, name)
   return (
     <textarea
       {...props}
+      id={fieldId}
+      name={fieldName}
       data-no-flip
       className={`soft-field relative z-20 w-full resize-y rounded-2xl border-0 bg-[var(--surface)] px-3.5 py-3 text-base leading-relaxed text-[var(--ink)] shadow-sm ring-1 ring-[var(--page-edge)]/60 outline-none transition duration-200 placeholder:text-[var(--ink-soft)]/70 focus:ring-2 focus:ring-[var(--accent)]/40 sm:px-3 sm:py-2.5 sm:text-sm ${
         className.includes('min-h-') ? '' : 'min-h-[7.5rem]'

@@ -52,6 +52,7 @@ export default function SoftTimePicker({
   'aria-label': ariaLabel = 'Time',
 }) {
   const listId = useId()
+  const fieldId = `${listId.replace(/:/g, '')}-time`
   const rootRef = useRef(null)
   const inputRef = useRef(null)
   const popoverRef = useRef(null)
@@ -299,6 +300,8 @@ export default function SoftTimePicker({
       <div className="flex w-full min-w-0 items-center gap-1.5">
         <input
           ref={inputRef}
+          id={fieldId}
+          name={fieldId}
           type="text"
           inputMode="text"
           autoComplete="off"
