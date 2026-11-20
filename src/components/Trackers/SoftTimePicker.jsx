@@ -353,6 +353,7 @@ export default function SoftTimePicker({
               <motion.div
                 key="time-sheet"
                 className="fixed inset-0 z-[90]"
+                data-selfix-portal="1"
                 data-no-flip
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -391,6 +392,7 @@ export default function SoftTimePicker({
                 id={listId}
                 role="dialog"
                 aria-label={title}
+                data-selfix-portal="1"
                 data-no-flip
                 initial={{ opacity: 0, y: 6, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}

@@ -101,7 +101,7 @@ export default function MobileLogSheet({ open, onClose, tracker, selectedDay }) 
   return createPortal(
     <AnimatePresence>
       {open && tracker && selectedDay ? (
-        <div className="mobile-log-sheet fixed inset-0 z-[80] md:hidden" data-no-flip>
+        <div className="mobile-log-sheet fixed inset-0 z-[80] md:hidden" data-selfix-portal="1" data-no-flip>
           <motion.button
             type="button"
             aria-label="Close log"

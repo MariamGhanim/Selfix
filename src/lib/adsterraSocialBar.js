@@ -6,6 +6,7 @@ const FLOAT_ATTR = 'data-adsterra-float'
 function isOurChrome(el) {
   if (!(el instanceof HTMLElement)) return true
   if (el.id === 'root' || el.closest?.('#root')) return true
+  if (el.hasAttribute?.('data-selfix-portal') || el.closest?.('[data-selfix-portal]')) return true
   if (el.classList?.contains('ambient-music-player') || el.closest?.('.ambient-music-player')) {
     return true
   }
@@ -13,6 +14,9 @@ function isOurChrome(el) {
     return true
   }
   if (el.hasAttribute?.('data-journal-ads') || el.closest?.('[data-journal-ads]')) return true
+  // Dialogs / sheets (Settings, pickers) — never treat as Social Bar
+  if (el.getAttribute?.('role') === 'dialog' || el.querySelector?.('[role="dialog"]')) return true
+  if (el.classList?.contains('settings-sheet') || el.querySelector?.('.settings-sheet')) return true
   return false
 }
 
@@ -26,13 +30,32 @@ function isFixedLike(el) {
   }
 }
 
+/** Full-screen overlays (Settings backdrop, etc.) must never get Social Bar CSS. */
+function isFullViewport(el) {
+  if (!(el instanceof HTMLElement)) return false
+  if (/\binset-0\b/.test(el.className || '')) return true
+  const w = el.offsetWidth
+  const h = el.offsetHeight
+  if (!w || !h) return false
+  return w >= window.innerWidth * 0.85 && h >= window.innerHeight * 0.85
+}
+
+function clearMistakenTags() {
+  document.querySelectorAll(`[${FLOAT_ATTR}]`).forEach((el) => {
+    if (isOurChrome(el) || isFullViewport(el)) {
+      el.removeAttribute(FLOAT_ATTR)
+    }
+  })
+}
+
 /** Tag Adsterra Social Bar hosts (body-level fixed widgets) for bottom-right CSS. */
 function tagFloatHosts() {
   if (typeof document === 'undefined' || !document.body) return
 
-  // Direct body children first (most common Adsterra inject path)
+  clearMistakenTags()
+
   for (const el of document.body.children) {
-    if (isOurChrome(el)) continue
+    if (isOurChrome(el) || isFullViewport(el)) continue
     if (el.tagName !== 'DIV' && el.tagName !== 'ASIDE' && el.tagName !== 'IFRAME') continue
     if (!isFixedLike(el)) continue
     el.setAttribute(FLOAT_ATTR, '1')
@@ -40,7 +63,7 @@ function tagFloatHosts() {
 
   // Nested fixed hosts Adsterra sometimes wraps under a plain body child
   for (const el of document.body.querySelectorAll(':scope > div div, :scope > div iframe, :scope > aside')) {
-    if (isOurChrome(el)) continue
+    if (isOurChrome(el) || isFullViewport(el)) continue
     if (!isFixedLike(el)) continue
     el.setAttribute(FLOAT_ATTR, '1')
   }
@@ -77,7 +100,7 @@ export function ensureAdsterraSocialBar() {
 
 let floatWatcherStarted = false
 
-/** Observe body for Social Bar hosts; do not rewrite creative HTML inside. */
+/** Observe body for Social Bar hosts; never restyle app portals/modals. */
 export function watchAdsterraSocialBarFloats() {
   if (typeof document === 'undefined' || !document.body || floatWatcherStarted) return
   floatWatcherStarted = true

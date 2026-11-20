@@ -241,7 +241,10 @@ export default function SettingsModal({ open, onClose }) {
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-[80] flex items-end justify-center px-0 py-0 sm:items-center sm:px-4 sm:py-6 pt-[max(0px,env(safe-area-inset-top))] pb-0 sm:pb-[max(1rem,env(safe-area-inset-bottom))]">
+    <div
+      data-selfix-portal="1"
+      className="fixed inset-0 z-[80] flex items-end justify-center px-0 py-0 sm:items-center sm:px-4 sm:py-6 pt-[max(0px,env(safe-area-inset-top))] pb-0 sm:pb-[max(1rem,env(safe-area-inset-bottom))]"
+    >
       <button
         type="button"
         aria-label="Close settings backdrop"

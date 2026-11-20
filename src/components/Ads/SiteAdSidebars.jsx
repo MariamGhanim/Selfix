@@ -25,7 +25,7 @@ export default function SiteAdSidebars() {
   if (!mounted || !desktop || typeof document === 'undefined') return null
 
   return createPortal(
-    <div className="journal-ad-sidebars" data-journal-ads="1">
+    <div className="journal-ad-sidebars" data-journal-ads="1" data-selfix-portal="1">
       <aside className="journal-ad-sidebar journal-ad-sidebar--left" aria-label="Sponsored">
         <AdsterraNativeBanner className="adsterra-native-section--sidebar" />
       </aside>
