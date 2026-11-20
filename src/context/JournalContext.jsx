@@ -22,6 +22,7 @@ import {
 } from '../data/trackerIcons'
 import { GUEST_JOURNAL_KEY, useAuth } from './AuthContext'
 import { loadJournalFromCloud, saveJournalToCloud } from '../lib/journalCloud'
+import { clampText, sanitizeJournalState, sanitizeJournalValue, TEXT_LIMITS } from '../lib/journalSanitize'
 
 const JournalContext = createContext(null)
 
@@ -79,7 +80,7 @@ function loadGuestJournal(fallback) {
 
 function saveGuestJournal(state) {
   try {
-    localStorage.setItem(GUEST_JOURNAL_KEY, JSON.stringify(state))
+    localStorage.setItem(GUEST_JOURNAL_KEY, JSON.stringify(sanitizeJournalState(state)))
   } catch {
     /* quota / private mode */
   }
@@ -237,7 +238,17 @@ export function JournalProvider({ children }) {
       }))
 
     const setProfile = (patch) =>
-      setState((s) => ({ ...s, profile: { ...s.profile, ...patch } }))
+      setState((s) => ({
+        ...s,
+        profile: {
+          ...s.profile,
+          ...patch,
+          displayName:
+            patch.displayName == null
+              ? s.profile.displayName
+              : clampText(patch.displayName, TEXT_LIMITS.displayName),
+        },
+      }))
 
     const setYear = (nextYear) => {
       const currentMax = new Date().getFullYear()
@@ -307,7 +318,7 @@ export function JournalProvider({ children }) {
       const key = noteKey(trackerId, month, day)
       setState((s) => ({
         ...s,
-        dailyNotes: { ...s.dailyNotes, [key]: text },
+        dailyNotes: { ...s.dailyNotes, [key]: clampText(text, TEXT_LIMITS.note) },
       }))
     }
 
@@ -317,10 +328,17 @@ export function JournalProvider({ children }) {
     const setTodos = (month, day, list, pixelValue) => {
       const key = cellKey(year, month, day)
       const pixelKey = `tasks:${key}`
+      const safeList = (Array.isArray(list) ? list : []).slice(0, 40).map((item) => {
+        if (!item || typeof item !== 'object') return item
+        const copy = { ...item }
+        if (copy.text != null) copy.text = clampText(copy.text, TEXT_LIMITS.todo)
+        if (copy.title != null) copy.title = clampText(copy.title, TEXT_LIMITS.todo)
+        return copy
+      })
       setState((s) => {
         const next = {
           ...s,
-          todos: { ...s.todos, [key]: list },
+          todos: { ...s.todos, [key]: safeList },
         }
         if (pixelValue !== undefined) {
           const nextPixels = { ...s.pixels }
@@ -346,11 +364,12 @@ export function JournalProvider({ children }) {
         const defaults =
           PANEL_DEFAULTS[trackerId] || customPanelDefaults(trackerId, s.trackerPrefs)
         const prev = { ...defaults, ...(s.panels?.[key] || {}) }
+        const safePatch = sanitizeJournalValue(patch || {})
         const next = {
           ...s,
           panels: {
             ...s.panels,
-            [key]: { ...prev, ...patch },
+            [key]: { ...prev, ...safePatch },
           },
         }
         if (pixelValue !== undefined) {
@@ -409,7 +428,7 @@ export function JournalProvider({ children }) {
       })
 
     const addCustomTracker = ({ title, icon, tabColor, panel, levels: rawLevels }) => {
-      const cleanTitle = String(title || '').trim()
+      const cleanTitle = clampText(String(title || '').trim(), TEXT_LIMITS.title)
       if (!cleanTitle) return null
       const id = `custom_${crypto.randomUUID().replace(/-/g, '').slice(0, 10)}`
       const type = panel || 'grid'

@@ -15,6 +15,7 @@ export default function AdsterraDisplayBanner({ className = '' }) {
   useEffect(() => {
     const onMessage = (event) => {
       const data = event?.data
+      if (event.origin !== window.location.origin) return
       if (!data || data.source !== 'adsterra-display-160x300') return
       setFilled(!!data.filled)
     }

@@ -6,6 +6,7 @@ export const NOTE_ENC_PREFIX = 'sfex1:'
 const PANEL_TEXT_KEYS = ['note', 'reflection', 'highlight', 'book', 'withWho']
 
 export function buildNoteSecret(uid) {
+  // Kept only in memory for AES. Never log this value or the env var.
   const appSecret = import.meta.env.VITE_NOTE_ENCRYPTION_SECRET || 'selfix-local-dev-key'
   return `${uid || 'anon'}::${appSecret}`
 }

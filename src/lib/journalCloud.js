@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
-import { db } from './firebase'
+import { auth, db } from './firebase'
 import { decryptJournalFromCloud, encryptJournalForCloud } from './noteCrypto'
+import { sanitizeJournalState } from './journalSanitize'
 
 const SYNC_TIMEOUT_MS = 10000
 
@@ -34,7 +35,7 @@ function mapFirestoreError(err) {
   const code = err?.code || ''
   if (code === 'permission-denied') {
     return new Error(
-      'Firestore permission denied. Deploy firestore.rules so users can read/write only their own users/{uid} data.',
+      'Firestore permission denied. Sign in with a verified email. Your account can only read and write its own journal.',
     )
   }
   if (code === 'unavailable' || code === 'deadline-exceeded') {
@@ -48,8 +49,13 @@ function sanitizeForFirestore(value) {
   return JSON.parse(JSON.stringify(value))
 }
 
+async function refreshAuthToken() {
+  if (auth?.currentUser) await auth.currentUser.getIdToken(true)
+}
+
 export async function loadJournalFromCloud(uid, defaults) {
   try {
+    await refreshAuthToken()
     const snap = await withTimeout(getDoc(journalDocRef(uid)), SYNC_TIMEOUT_MS, 'Loading journal')
     if (snap.exists()) {
       const data = snap.data()
@@ -62,7 +68,7 @@ export async function loadJournalFromCloud(uid, defaults) {
       return decryptJournalFromCloud(merged, uid)
     }
 
-    const seed = sanitizeForFirestore(defaults)
+    const seed = sanitizeJournalState(sanitizeForFirestore(defaults))
     const encryptedSeed = sanitizeForFirestore(encryptJournalForCloud(seed, uid))
     await withTimeout(
       setDoc(journalDocRef(uid), {
@@ -80,10 +86,10 @@ export async function loadJournalFromCloud(uid, defaults) {
 }
 
 export async function saveJournalToCloud(uid, state) {
-  try {
-    const encrypted = encryptJournalForCloud(state, uid)
-    const clean = sanitizeForFirestore(encrypted)
-    await withTimeout(
+  const encrypted = encryptJournalForCloud(sanitizeJournalState(state), uid)
+  const clean = sanitizeForFirestore(encrypted)
+  const write = () =>
+    withTimeout(
       setDoc(journalDocRef(uid), {
         ...clean,
         updatedAt: serverTimestamp(),
@@ -91,7 +97,19 @@ export async function saveJournalToCloud(uid, state) {
       SYNC_TIMEOUT_MS,
       'Saving journal',
     )
+
+  try {
+    await write()
   } catch (err) {
+    if (err?.code === 'permission-denied') {
+      try {
+        await refreshAuthToken()
+        await write()
+        return
+      } catch (retryErr) {
+        throw mapFirestoreError(retryErr)
+      }
+    }
     throw mapFirestoreError(err)
   }
 }

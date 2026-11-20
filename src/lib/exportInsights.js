@@ -1,4 +1,5 @@
 import { buildExportReport } from './insights'
+import { escapeHtml } from './escapeHtml'
 
 export function downloadTextReport(data, categoryLabel) {
   const text = buildExportReport(data, categoryLabel)
@@ -19,7 +20,7 @@ export function openPrintableReport(data, categoryLabel) {
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Selfix Life Insights Report — ${data.bounds.label}</title>
+  <title>Selfix Life Insights Report — ${escapeHtml(data.bounds.label)}</title>
   <style>
     body { font-family: Georgia, 'Times New Roman', serif; color: #5a4550; background: #fff9f6; margin: 0; padding: 32px; }
     h1 { font-size: 22px; margin: 0 0 4px; }
@@ -33,8 +34,8 @@ export function openPrintableReport(data, categoryLabel) {
 <body>
   <div class="actions"><button onclick="window.print()">Save / Print as PDF</button></div>
   <h1>Selfix Life Analytics Report</h1>
-  <p class="meta">${data.bounds.label} · ${categoryLabel}</p>
-  <pre>${text.replace(/</g, '&lt;')}</pre>
+  <p class="meta">${escapeHtml(data.bounds.label)} · ${escapeHtml(categoryLabel)}</p>
+  <pre>${escapeHtml(text)}</pre>
 </body>
 </html>`
   const win = window.open('', '_blank', 'noopener,noreferrer,width=900,height=700')

@@ -42,7 +42,7 @@
           try {
             parent.postMessage(
               { source: 'adsterra-display-160x300', filled: !!filled },
-              '*',
+              window.location.origin,
             )
           } catch (_) {
             /* ignore */

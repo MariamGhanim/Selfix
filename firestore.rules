@@ -1,11 +1,67 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isVerifiedOwner(userId) {
+      return request.auth != null
+        && request.auth.uid == userId
+        && request.auth.token.email_verified == true;
+    }
+
+    // The app writes one journal document. Notes are dynamic maps, so rules
+    // cannot loop every string. Caps below stop oversized documents; the client
+    // also clamps note length before encryption.
+    function validJournal(data) {
+      return data.keys().hasAll([
+          'theme',
+          'profile',
+          'pixels',
+          'dailyNotes',
+          'todos',
+          'panels',
+          'selectedLevel',
+          'trackerPrefs',
+          'updatedAt'
+        ])
+        && data.keys().size() <= 12
+        && data.theme is string
+        && data.theme.size() > 0
+        && data.theme.size() <= 32
+        && data.profile is map
+        && data.profile.keys().hasAll(['displayName', 'year'])
+        && data.profile.keys().size() <= 6
+        && data.profile.displayName is string
+        && data.profile.displayName.size() <= 80
+        && data.profile.year is int
+        && data.profile.year >= 2000
+        && data.profile.year <= 2100
+        && data.pixels is map
+        && data.pixels.size() <= 40000
+        && data.dailyNotes is map
+        && data.dailyNotes.size() <= 20000
+        && data.todos is map
+        && data.todos.size() <= 8000
+        && data.panels is map
+        && data.panels.size() <= 20000
+        && data.selectedLevel is map
+        && data.selectedLevel.size() <= 400
+        && data.trackerPrefs is map
+        && data.trackerPrefs.keys().size() <= 8
+        && data.updatedAt is timestamp
+        && (!('createdAt' in data) || data.createdAt is timestamp)
+        && request.resource.size() < 1000000;
+    }
+
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if false;
+
+      match /data/journal {
+        allow read: if isVerifiedOwner(userId);
+        allow create, update: if isVerifiedOwner(userId) && validJournal(request.resource.data);
+        allow delete: if isVerifiedOwner(userId);
+      }
 
       match /data/{docId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, write: if false;
       }
     }
 

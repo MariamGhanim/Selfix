@@ -92,6 +92,8 @@ export function AuthProvider({ children }) {
   const refreshUser = useCallback(async () => {
     if (!auth.currentUser) return null
     await reload(auth.currentUser)
+    // Rules check the ID token's email_verified claim, which reload() alone does not refresh.
+    await auth.currentUser.getIdToken(true)
     const next = snapshotUser(auth.currentUser)
     setUser(next)
     return next

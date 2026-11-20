@@ -1,0 +1,24 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isVerifiedOwner(userId) {
+      return request.auth != null
+        && request.auth.uid == userId
+        && request.auth.token.email_verified == true;
+    }
+
+    // Selfix Life does not upload files today. If Storage is enabled later,
+    // only a verified user can touch objects under their own prefix, and only
+    // up to 5 MB. Every other path is denied.
+    match /users/{userId}/{allPaths=**} {
+      allow read: if isVerifiedOwner(userId);
+      allow write: if isVerifiedOwner(userId)
+        && request.resource.size() < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(png|jpeg|webp)|text/plain|application/json');
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
