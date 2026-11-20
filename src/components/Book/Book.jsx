@@ -38,6 +38,7 @@ import FocusTimer, { FocusTimerProvider } from '../FocusTimer'
 import SettingsModal from '../Settings/SettingsModal'
 import LegalFooter from '../Legal/LegalFooter'
 import AdsterraNativeBanner from '../Ads/AdsterraNativeBanner'
+import AdsterraDisplayBanner from '../Ads/AdsterraDisplayBanner'
 import AmbientGlow from '../AmbientGlow'
 import DailyWhisper from '../DailyWhisper'
 import InsightsDashboard from '../Insights/InsightsDashboard'
@@ -261,130 +262,139 @@ export default function Book() {
 
         <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
-        <div className="relative z-10 mx-auto flex w-full max-w-full min-h-0 flex-1 flex-col overflow-x-hidden sm:max-h-[min(88vh,100%)] sm:w-[min(95%,72rem)] sm:max-w-7xl">
-          <div
-            className={`book-tabs-fade scroll-fade-x relative z-20 w-full max-w-full shrink-0 ${
-              showInsights ? 'hidden sm:block' : ''
-            }`}
-          >
-            <div
-              ref={tabsScrollRef}
-              className="book-tabs-scroll touch-scroll-x relative flex h-11 w-full items-end justify-start gap-1.5 px-2 pb-0 sm:h-9 sm:justify-center sm:gap-1 sm:px-8"
-            >
-              {trackers.map((t, i) => {
-                const TabIcon = ICONS[t.icon] || Star
-                const active = !showInsights && i === pageIndex
-                return (
-                  <button
-                    key={t.id}
-                    ref={(el) => {
-                      tabBtnRefs.current[i] = el
-                    }}
-                    type="button"
-                    onClick={() => go(i)}
-                    title={t.title}
-                    className={`relative inline-flex h-11 min-w-[2.75rem] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-t-xl px-3.5 text-[11px] font-bold leading-none transition-colors duration-150 sm:h-7 sm:min-w-0 sm:gap-1 sm:px-2 sm:text-[10px] ${
-                      active
-                        ? 'z-[1] text-white shadow-sm'
-                        : 'text-[var(--ink)] opacity-90 hover:opacity-100'
-                    }`}
-                    style={{
-                      background: active ? t.tabColor : `${t.tabColor}99`,
-                    }}
-                  >
-                    <TabIcon size={13} className="relative z-10 shrink-0" aria-hidden />
-                    <span className="relative z-10 whitespace-nowrap">{t.tab}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
+        <div className="book-shell relative z-10 mx-auto flex w-full max-w-full min-h-0 flex-1 flex-col overflow-x-hidden sm:max-h-[min(88vh,100%)] sm:w-[min(95%,72rem)] sm:max-w-7xl xl:w-[min(98%,96rem)] xl:max-w-[96rem]">
+          <div className="book-with-ads min-h-0 w-full min-w-0 flex-1">
+            <aside className="book-ad-rail book-ad-rail--left" aria-label="Sponsored">
+              <AdsterraNativeBanner
+                refreshToken={
+                  showInsights ? 'insights' : trackers[pageIndex]?.id || String(pageIndex)
+                }
+              />
+            </aside>
 
-          <div
-            className={`open-book book-shadow paper-texture relative flex min-h-0 w-full min-w-0 flex-1 overflow-hidden rounded-[16px] border border-[var(--cover)]/40 sm:rounded-b-[30px] sm:rounded-t-[20px] ${
-              showInsights ? 'open-book--insights' : ''
-            }`}
-          >
-            {/* Hardcover rim, stacked paper edges, spine + ribbon */}
-            <div className="open-book__cover-edge" aria-hidden />
-            <div className="open-book__page-stack open-book__page-stack--left hidden md:block" aria-hidden />
-            <div className="open-book__page-stack open-book__page-stack--right hidden md:block" aria-hidden />
-            {!showInsights && (
-              <>
-                <div className="open-book__spine hidden md:block" aria-hidden />
-                <div className="open-book__ribbon hidden md:block" aria-hidden />
-              </>
-            )}
-
-            <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-1">
-              {showInsights ? (
-                <div className="relative z-10 min-h-0 w-full min-w-0 flex-1 overflow-hidden">
-                  <InsightsDashboard />
+            <div className="book-stage-center flex min-h-0 min-w-0 flex-col">
+              <div
+                className={`book-tabs-fade scroll-fade-x relative z-20 w-full max-w-full shrink-0 ${
+                  showInsights ? 'hidden sm:block' : ''
+                }`}
+              >
+                <div
+                  ref={tabsScrollRef}
+                  className="book-tabs-scroll touch-scroll-x relative flex h-11 w-full items-end justify-start gap-1.5 px-2 pb-0 sm:h-9 sm:justify-center sm:gap-1 sm:px-8"
+                >
+                  {trackers.map((t, i) => {
+                    const TabIcon = ICONS[t.icon] || Star
+                    const active = !showInsights && i === pageIndex
+                    return (
+                      <button
+                        key={t.id}
+                        ref={(el) => {
+                          tabBtnRefs.current[i] = el
+                        }}
+                        type="button"
+                        onClick={() => go(i)}
+                        title={t.title}
+                        className={`relative inline-flex h-11 min-w-[2.75rem] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-t-xl px-3.5 text-[11px] font-bold leading-none transition-colors duration-150 sm:h-7 sm:min-w-0 sm:gap-1 sm:px-2 sm:text-[10px] ${
+                          active
+                            ? 'z-[1] text-white shadow-sm'
+                            : 'text-[var(--ink)] opacity-90 hover:opacity-100'
+                        }`}
+                        style={{
+                          background: active ? t.tabColor : `${t.tabColor}99`,
+                        }}
+                      >
+                        <TabIcon size={13} className="relative z-10 shrink-0" aria-hidden />
+                        <span className="relative z-10 whitespace-nowrap">{t.tab}</span>
+                      </button>
+                    )
+                  })}
                 </div>
-              ) : (
-                <PageFlipStage
-                  pageIndex={pageIndex}
-                  onPageChange={setPageIndex}
-                  selectedDay={selectedDay}
-                  onSelectDay={setSelectedDay}
-                  trackers={trackers}
-                />
-              )}
+              </div>
+
+              <div
+                className={`open-book book-shadow paper-texture relative flex min-h-0 w-full min-w-0 flex-1 overflow-hidden rounded-[16px] border border-[var(--cover)]/40 sm:rounded-b-[30px] sm:rounded-t-[20px] ${
+                  showInsights ? 'open-book--insights' : ''
+                }`}
+              >
+                <div className="open-book__cover-edge" aria-hidden />
+                <div className="open-book__page-stack open-book__page-stack--left hidden md:block" aria-hidden />
+                <div className="open-book__page-stack open-book__page-stack--right hidden md:block" aria-hidden />
+                {!showInsights && (
+                  <>
+                    <div className="open-book__spine hidden md:block" aria-hidden />
+                    <div className="open-book__ribbon hidden md:block" aria-hidden />
+                  </>
+                )}
+
+                <div className="relative z-10 flex min-h-0 w-full min-w-0 flex-1">
+                  {showInsights ? (
+                    <div className="relative z-10 min-h-0 w-full min-w-0 flex-1 overflow-hidden">
+                      <InsightsDashboard />
+                    </div>
+                  ) : (
+                    <PageFlipStage
+                      pageIndex={pageIndex}
+                      onPageChange={setPageIndex}
+                      selectedDay={selectedDay}
+                      onSelectDay={setSelectedDay}
+                      trackers={trackers}
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 sm:mt-1.5">
+                {showInsights ? (
+                  <>
+                    <span className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:inline">
+                      Insights view
+                    </span>
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => setShowInsights(false)}
+                      className="ml-auto inline-flex min-h-11 items-center gap-1 rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm font-bold shadow-md backdrop-blur sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
+                    >
+                      Back to journal
+                    </motion.button>
+                  </>
+                ) : (
+                  <>
+                    <motion.button
+                      type="button"
+                      disabled={pageIndex === 0}
+                      whileHover={pageIndex === 0 ? undefined : { x: -2, scale: 1.02 }}
+                      whileTap={pageIndex === 0 ? undefined : { scale: 0.96 }}
+                      onClick={() => go(pageIndex - 1)}
+                      className="inline-flex min-h-11 items-center gap-1 rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm font-bold shadow-md backdrop-blur disabled:opacity-35 sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
+                    >
+                      <ChevronLeft size={18} />
+                      <span className="hidden sm:inline">Previous</span>
+                    </motion.button>
+                    <p className="text-xs font-medium text-[var(--ink-soft)] sm:text-[10px]">
+                      {pageIndex + 1} / {trackers.length}
+                    </p>
+                    <motion.button
+                      type="button"
+                      disabled={pageIndex === trackers.length - 1}
+                      whileHover={pageIndex === trackers.length - 1 ? undefined : { x: 2, scale: 1.02 }}
+                      whileTap={pageIndex === trackers.length - 1 ? undefined : { scale: 0.96 }}
+                      onClick={() => go(pageIndex + 1)}
+                      className="inline-flex min-h-11 items-center gap-1 rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm font-bold shadow-md backdrop-blur disabled:opacity-35 sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
+                    >
+                      <span className="hidden sm:inline">Next</span>
+                      <ChevronRight size={18} />
+                    </motion.button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
 
-          <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 sm:mt-1.5">
-            {showInsights ? (
-              <>
-                <span className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:inline">
-                  Insights view
-                </span>
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={() => setShowInsights(false)}
-                  className="ml-auto inline-flex min-h-11 items-center gap-1 rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm font-bold shadow-md backdrop-blur sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
-                >
-                  Back to journal
-                </motion.button>
-              </>
-            ) : (
-              <>
-                <motion.button
-                  type="button"
-                  disabled={pageIndex === 0}
-                  whileHover={pageIndex === 0 ? undefined : { x: -2, scale: 1.02 }}
-                  whileTap={pageIndex === 0 ? undefined : { scale: 0.96 }}
-                  onClick={() => go(pageIndex - 1)}
-                  className="inline-flex min-h-11 items-center gap-1 rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm font-bold shadow-md backdrop-blur disabled:opacity-35 sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
-                >
-                  <ChevronLeft size={18} />
-                  <span className="hidden sm:inline">Previous</span>
-                </motion.button>
-                <p className="text-xs font-medium text-[var(--ink-soft)] sm:text-[10px]">
-                  {pageIndex + 1} / {trackers.length}
-                </p>
-                <motion.button
-                  type="button"
-                  disabled={pageIndex === trackers.length - 1}
-                  whileHover={pageIndex === trackers.length - 1 ? undefined : { x: 2, scale: 1.02 }}
-                  whileTap={pageIndex === trackers.length - 1 ? undefined : { scale: 0.96 }}
-                  onClick={() => go(pageIndex + 1)}
-                  className="inline-flex min-h-11 items-center gap-1 rounded-2xl bg-[var(--surface)] px-4 py-2.5 text-sm font-bold shadow-md backdrop-blur disabled:opacity-35 sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-xs"
-                >
-                  <span className="hidden sm:inline">Next</span>
-                  <ChevronRight size={18} />
-                </motion.button>
-              </>
-            )}
+            <aside className="book-ad-rail book-ad-rail--right" aria-label="Sponsored">
+              <AdsterraDisplayBanner className="adsterra-display-section--rail" />
+            </aside>
           </div>
-
-          <AdsterraNativeBanner
-            refreshToken={
-              showInsights ? 'insights' : trackers[pageIndex]?.id || String(pageIndex)
-            }
-          />
 
           <div className="adsterra-footer-gap pb-[max(3.4rem,calc(env(safe-area-inset-bottom)+2.6rem))] sm:pb-0">
             <LegalFooter />

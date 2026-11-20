@@ -2915,8 +2915,83 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   isolation: isolate;
 }
 
+/*
+ * Journal stage: Native (left) | Notebook (center) | Display 300×250 (right)
+ * <1280px → notebook full width, ad rails in a centered row under Prev/Next
+ */
+.book-with-ads {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    'center center'
+    'left right';
+  align-items: start;
+}
+
+.book-stage-center {
+  grid-area: center;
+  min-width: 0;
+  min-height: 0;
+}
+
+.book-ad-rail--left {
+  grid-area: left;
+}
+
+.book-ad-rail--right {
+  grid-area: right;
+}
+
+.book-ad-rail {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  justify-self: center;
+}
+
+@media (max-width: 1279px) {
+  .book-ad-rail {
+    max-height: 360px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .book-with-ads {
+    justify-items: center;
+  }
+
+  .book-ad-rail--left,
+  .book-ad-rail--right {
+    width: min(100%, 280px);
+  }
+}
+
+@media (min-width: 1280px) {
+  .book-with-ads {
+    grid-template-columns: minmax(160px, 200px) minmax(0, 1fr) minmax(160px, 200px);
+    grid-template-areas: 'left center right';
+    gap: 16px;
+    align-items: start;
+  }
+
+  .book-ad-rail {
+    width: 100%;
+    max-width: 200px;
+    max-height: none;
+    overflow: visible;
+    position: sticky;
+    top: 8px;
+    align-self: start;
+  }
+}
+
 .adsterra-sponsored-label {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   padding-inline: 2px;
   font-family: var(--font-body), Nunito, system-ui, sans-serif;
   font-size: 11px;
@@ -2928,12 +3003,12 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   text-align: start;
 }
 
-.adsterra-native-section {
+.adsterra-native-section,
+.adsterra-display-section {
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  margin: 32px auto 0;
-  padding-inline: 8px;
+  margin: 0;
   box-sizing: border-box;
 }
 
@@ -2944,15 +3019,15 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   min-width: 0;
   min-height: 120px;
   height: auto;
-  padding: 20px;
-  border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--page-edge) 85%, var(--accent));
-  background: rgba(255, 255, 255, 0.55);
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 182, 193, 0.3);
+  background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   box-shadow:
-    0 10px 28px color-mix(in srgb, var(--shadow) 35%, transparent),
-    0 1px 0 rgba(255, 255, 255, 0.45) inset;
+    0 8px 22px color-mix(in srgb, var(--shadow) 28%, transparent),
+    0 1px 0 rgba(255, 255, 255, 0.4) inset;
   box-sizing: border-box;
   overflow-x: clip;
 }
@@ -2972,23 +3047,14 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 }
 
 /*
- * Adsterra Native Banner DOM (from bauval.org invoke script string table):
- *
- * #container-c3285e03e15c00c634fafe432d75bdb3   ← mount point
- *   └─ [generatedRoot]                          ← often the flex/grid row
- *        └─ *.__bn-container  (×N)              ← each ad item shell
- *             └─ *.__bn
- *                  └─ a.__link
- *                       ├─ *.__img-container > img.__img
- *                       └─ *.__title
- *
- * Bug: previous CSS set display:grid on BOTH #container AND #container > div.
- * When > div nodes ARE the ad items, each item became a 4-col grid and crushed
- * __img / __title into ~40px columns (1–2 chars per line).
+ * Native Banner — vertical stack (no multi-column grid).
+ * Handles Adsterra’s inner wrapper via :has(> :only-child).
  */
-
 #container-c3285e03e15c00c634fafe432d75bdb3 {
   box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
@@ -2996,56 +3062,42 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   height: auto !important;
   margin: 0 !important;
   padding: 0 !important;
-  /* Default: items are direct children of #container */
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
-  gap: 16px !important;
-  align-items: start !important;
 }
 
-/* Single wrapper child → grid belongs on that wrapper, not on #container */
 #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) {
   display: block !important;
 }
 
 #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
-  gap: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box !important;
+  float: none !important;
 }
 
-/*
- * Reset item shells only — never the single wrapper that carries the grid.
- * (#container > *:not(:only-child) = multi-item mount;
- *  :has(> :only-child) > * > * = items under one wrapper)
- */
 #container-c3285e03e15c00c634fafe432d75bdb3 > *:not(:only-child),
 #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * > * {
-  width: auto !important;
+  width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
   float: none !important;
   display: block !important;
   flex: none !important;
-  flex-grow: 0 !important;
-  flex-shrink: 1 !important;
-  flex-basis: auto !important;
   box-sizing: border-box !important;
   margin: 0 !important;
 }
 
-/* Item shells must stay block (never nested grids) */
 #container-c3285e03e15c00c634fafe432d75bdb3 [class*='__bn']:not([class*='__bn-container']),
 #container-c3285e03e15c00c634fafe432d75bdb3 > [class*='__bn-container'],
 #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * > [class*='__bn-container'] {
   display: block !important;
-  width: auto !important;
+  width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
   float: none !important;
@@ -3063,14 +3115,14 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   text-decoration: none !important;
   color: var(--ink-soft) !important;
   font-family: var(--font-body), Nunito, system-ui, sans-serif !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   font-weight: 400 !important;
-  line-height: 1.35 !important;
-  text-align: start !important;
+  line-height: 1.4 !important;
+  text-align: left !important;
   white-space: normal !important;
   word-break: normal !important;
   overflow-wrap: break-word !important;
-  border-radius: 14px;
+  border-radius: 12px;
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease;
@@ -3079,7 +3131,7 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 #container-c3285e03e15c00c634fafe432d75bdb3 [class*='__link']:hover,
 #container-c3285e03e15c00c634fafe432d75bdb3 a:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px color-mix(in srgb, var(--shadow) 40%, transparent);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--shadow) 35%, transparent);
 }
 
 #container-c3285e03e15c00c634fafe432d75bdb3 [class*='__img-container'] {
@@ -3088,7 +3140,7 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   max-width: 100% !important;
   min-width: 0 !important;
   overflow: hidden !important;
-  border-radius: 14px !important;
+  border-radius: 12px !important;
 }
 
 #container-c3285e03e15c00c634fafe432d75bdb3 [class*='__img']:not([class*='__img-container']),
@@ -3097,9 +3149,9 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   width: 100% !important;
   max-width: 100% !important;
   height: auto !important;
-  aspect-ratio: 4 / 3 !important;
+  aspect-ratio: 16 / 10 !important;
   object-fit: cover !important;
-  border-radius: 14px !important;
+  border-radius: 12px !important;
   margin: 0 !important;
   background: color-mix(in srgb, var(--accent-glow) 70%, transparent);
 }
@@ -3108,51 +3160,30 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   width: 100% !important;
   max-width: 100% !important;
   min-width: 0 !important;
-  margin: 8px 0 0 !important;
+  margin: 6px 0 0 !important;
   padding: 0 !important;
   font-family: var(--font-body), Nunito, system-ui, sans-serif !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
   font-weight: 400 !important;
-  line-height: 1.35 !important;
+  line-height: 1.4 !important;
   color: var(--ink-soft) !important;
-  text-align: start !important;
+  text-align: left !important;
   white-space: normal !important;
   word-break: normal !important;
   overflow-wrap: break-word !important;
   writing-mode: horizontal-tb !important;
   display: -webkit-box !important;
   -webkit-box-orient: vertical !important;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   overflow: hidden !important;
-}
-
-@media (max-width: 640px) {
-  #container-c3285e03e15c00c634fafe432d75bdb3,
-  #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-@media (min-width: 641px) and (max-width: 900px) {
-  #container-c3285e03e15c00c634fafe432d75bdb3,
-  #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * {
-    grid-template-columns: repeat(2, minmax(180px, 1fr)) !important;
-  }
-}
-
-@media (min-width: 901px) {
-  #container-c3285e03e15c00c634fafe432d75bdb3,
-  #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
-  }
 }
 
 .adsterra-footer-gap {
   margin-top: 40px;
 }
 
-/* Blog 300×250 slot */
+/* Display 300×250 — blog full size; rail scales to fit 160–200px */
 .adsterra-display-section {
   width: 100%;
   max-width: 100%;
@@ -3172,6 +3203,21 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 .adsterra-display__host iframe,
 .adsterra-display__host img {
   max-width: 100% !important;
+}
+
+.book-ad-rail .adsterra-display-card {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.book-ad-rail .adsterra-display__host {
+  width: 300px;
+  min-height: 250px;
+  transform: scale(0.58);
+  transform-origin: top center;
+  margin-bottom: calc(250px * -0.42);
 }
 
 /*

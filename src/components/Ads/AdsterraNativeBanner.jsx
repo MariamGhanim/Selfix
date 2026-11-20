@@ -17,10 +17,10 @@ function injectNative(host, container) {
 }
 
 /**
- * Native Banner (4:1). Re-injects on refreshToken change after a 60s cooldown.
+ * Native Banner — left rail on desktop, stacked below book on smaller screens.
  * Wrapper/card styling only — container id and script src stay untouched.
  */
-export default function AdsterraNativeBanner({ refreshToken = 'default' }) {
+export default function AdsterraNativeBanner({ refreshToken = 'default', className = '' }) {
   const hostRef = useRef(null)
   const containerRef = useRef(null)
   const lastTokenRef = useRef(null)
@@ -63,7 +63,7 @@ export default function AdsterraNativeBanner({ refreshToken = 'default' }) {
   }, [refreshToken])
 
   return (
-    <section className="adsterra-native-section" aria-label="Sponsored">
+    <section className={`adsterra-native-section ${className}`} aria-label="Sponsored">
       <p className="adsterra-sponsored-label">Sponsored</p>
       <div className="adsterra-native-card">
         <div ref={hostRef} className="adsterra-native__host">

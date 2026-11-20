@@ -2,8 +2,7 @@ import { useEffect, useRef } from 'react'
 import { ADSTERRA_DISPLAY } from '../../lib/adsterraConfig'
 
 /**
- * 300×250 display banner for Blog / Guides only.
- * Injects atOptions + invoke.js once per mount (StrictMode-safe via deferred load).
+ * 300×250 display banner (blog + journal right rail).
  * Card chrome only — script key/src unchanged.
  */
 export default function AdsterraDisplayBanner({ className = '' }) {
@@ -58,11 +57,8 @@ export default function AdsterraDisplayBanner({ className = '' }) {
         <div
           ref={hostRef}
           className="adsterra-display__host"
-          style={{
-            width: ADSTERRA_DISPLAY.width,
-            maxWidth: '100%',
-            minHeight: ADSTERRA_DISPLAY.height,
-          }}
+          data-ad-width={ADSTERRA_DISPLAY.width}
+          data-ad-height={ADSTERRA_DISPLAY.height}
         />
       </div>
     </section>
