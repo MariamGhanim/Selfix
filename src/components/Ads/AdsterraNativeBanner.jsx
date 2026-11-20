@@ -1,0 +1,81 @@
+import { useEffect, useRef } from 'react'
+import { ADSTERRA_NATIVE } from '../../lib/adsterraConfig'
+
+/** Module-level so StrictMode remounts and tab switches share one cooldown clock. */
+let lastNativeRefreshAt = 0
+
+function injectNative(host, container) {
+  host.querySelectorAll('script[data-adsterra-native]').forEach((node) => node.remove())
+  container.replaceChildren()
+
+  const script = document.createElement('script')
+  script.async = true
+  script.setAttribute('data-cfasync', 'false')
+  script.dataset.adsterraNative = '1'
+  script.src = ADSTERRA_NATIVE.scriptSrc
+  host.insertBefore(script, container)
+}
+
+/**
+ * Native Banner (4:1). Re-injects on refreshToken change after a 60s cooldown.
+ * Deferred inject avoids duplicate loads under React StrictMode.
+ */
+export default function AdsterraNativeBanner({ refreshToken = 'default' }) {
+  const hostRef = useRef(null)
+  const containerRef = useRef(null)
+  const lastTokenRef = useRef(null)
+
+  useEffect(() => {
+    const host = hostRef.current
+    const container = containerRef.current
+    if (!host || !container) return undefined
+
+    let cancelled = false
+    const timer = window.setTimeout(() => {
+      if (cancelled) return
+
+      const now = Date.now()
+      const firstLoad = lastNativeRefreshAt === 0
+      const tokenChanged = lastTokenRef.current !== refreshToken
+      const cooled =
+        now - lastNativeRefreshAt >= ADSTERRA_NATIVE.refreshCooldownMs
+      const slotEmpty =
+        !container.childNodes.length &&
+        !host.querySelector('script[data-adsterra-native]')
+
+      // Remount with an empty slot: restore creative without burning a new impression window.
+      if (!firstLoad && !cooled && slotEmpty) {
+        lastTokenRef.current = refreshToken
+        injectNative(host, container)
+        return
+      }
+
+      if (!firstLoad && (!tokenChanged || !cooled)) return
+
+      lastNativeRefreshAt = now
+      lastTokenRef.current = refreshToken
+      injectNative(host, container)
+    }, 0)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+    }
+  }, [refreshToken])
+
+  return (
+    <aside
+      className="adsterra-native w-full max-w-full min-w-0 overflow-x-hidden px-2"
+      style={{ maxWidth: 820, margin: '24px auto' }}
+      aria-label="Sponsored"
+    >
+      <div ref={hostRef} className="adsterra-native__host w-full max-w-full min-w-0 overflow-x-hidden">
+        <div
+          id={ADSTERRA_NATIVE.containerId}
+          ref={containerRef}
+          className="adsterra-native__slot mx-auto w-full max-w-full min-w-0 overflow-x-hidden"
+        />
+      </div>
+    </aside>
+  )
+}

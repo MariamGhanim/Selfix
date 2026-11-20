@@ -37,6 +37,7 @@ import ThemeToggle from '../ThemeToggle'
 import FocusTimer, { FocusTimerProvider } from '../FocusTimer'
 import SettingsModal from '../Settings/SettingsModal'
 import LegalFooter from '../Legal/LegalFooter'
+import AdsterraNativeBanner from '../Ads/AdsterraNativeBanner'
 import AmbientGlow from '../AmbientGlow'
 import DailyWhisper from '../DailyWhisper'
 import InsightsDashboard from '../Insights/InsightsDashboard'
@@ -332,7 +333,7 @@ export default function Book() {
             </div>
           </div>
 
-          <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 pb-[max(3.4rem,calc(env(safe-area-inset-bottom)+2.6rem))] sm:mt-1.5 sm:pb-0">
+          <div className="book-bottom-nav mt-1 flex shrink-0 items-center justify-between gap-2 px-1 sm:mt-1.5">
             {showInsights ? (
               <>
                 <span className="hidden text-[10px] font-medium text-[var(--ink-soft)] sm:inline">
@@ -379,7 +380,15 @@ export default function Book() {
             )}
           </div>
 
-          <LegalFooter />
+          <AdsterraNativeBanner
+            refreshToken={
+              showInsights ? 'insights' : trackers[pageIndex]?.id || String(pageIndex)
+            }
+          />
+
+          <div className="pb-[max(3.4rem,calc(env(safe-area-inset-bottom)+2.6rem))] sm:pb-0">
+            <LegalFooter />
+          </div>
         </div>
       </div>
     </FocusTimerProvider>

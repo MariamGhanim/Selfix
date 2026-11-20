@@ -2907,3 +2907,28 @@ body:has(.mobile-log-sheet) .ambient-music-player {
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
   border: 1px solid color-mix(in srgb, var(--page-edge) 50%, transparent);
 }
+
+/* ——— Adsterra slots: keep pastel layout stable, no horizontal overflow ——— */
+.adsterra-native,
+.adsterra-native__host,
+.adsterra-native__slot,
+.adsterra-display,
+.adsterra-display__host {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+.adsterra-native__slot iframe,
+.adsterra-native__slot img {
+  max-width: 100% !important;
+}
+
+.adsterra-display__host {
+  width: min(300px, 100%);
+}
+
+.adsterra-display__host iframe,
+.adsterra-display__host img {
+  max-width: 100% !important;
+}
