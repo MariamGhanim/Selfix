@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, Clock, Search, Sparkles } from 'lucide-react'
 import PublicNav from '../components/Legal/PublicNav'
 import LegalFooter from '../components/Legal/LegalFooter'
-import AdsterraDisplayBanner from '../components/Ads/AdsterraDisplayBanner'
 import usePageMeta from '../hooks/usePageMeta'
 import { BLOG_CATEGORIES, getAllPosts } from '../data/blogPosts'
 
@@ -300,10 +299,6 @@ export default function BlogIndexPage() {
             <FeaturedCard post={featured} />
           </div>
         )}
-
-        <div className="mb-8">
-          <AdsterraDisplayBanner />
-        </div>
 
         <p className="mb-4 text-[12px] font-semibold text-[var(--ink-soft)]">
           {filtered.length} {filtered.length === 1 ? 'guide' : 'guides'}

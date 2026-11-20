@@ -3,7 +3,6 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, ExternalLink, Sparkles } from 'lucide-react'
 import PublicNav from '../components/Legal/PublicNav'
 import LegalFooter from '../components/Legal/LegalFooter'
-import AdsterraDisplayBanner from '../components/Ads/AdsterraDisplayBanner'
 import usePageMeta from '../hooks/usePageMeta'
 import { useAuth } from '../context/AuthContext'
 import { BLOG_CATEGORIES, getAllPosts, getPostBySlug } from '../data/blogPosts'
@@ -195,10 +194,6 @@ export default function BlogPostPage() {
             {post.sections.map((section, index) => (
               <SectionBlock key={`${section.type}-${index}`} section={section} />
             ))}
-          </div>
-
-          <div className="mt-10">
-            <AdsterraDisplayBanner />
           </div>
 
           {post.references?.length > 0 && (

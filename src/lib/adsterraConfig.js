@@ -8,11 +8,12 @@ export const ADSTERRA_NATIVE = {
   refreshCooldownMs: 60_000,
 }
 
+/** 160×300 vertical banner — journal right sidebar only */
 export const ADSTERRA_DISPLAY = {
-  key: '40fb81277b1735bc22ac0f0f94f1fcf7',
-  width: 300,
-  height: 250,
-  scriptSrc: 'https://bauval.org/22/40fb81277b1735bc22ac0f0f94f1fcf7',
+  key: '0981a973c3ae4360219ce07fa1df404f',
+  width: 160,
+  height: 300,
+  scriptSrc: 'https://bauval.org/22/0981a973c3ae4360219ce07fa1df404f',
 }
 
 export const ADSTERRA_SOCIAL_BAR_SRC =

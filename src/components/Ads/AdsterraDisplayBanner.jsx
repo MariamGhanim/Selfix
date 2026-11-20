@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react'
 import { ADSTERRA_DISPLAY } from '../../lib/adsterraConfig'
 
 /**
- * 300×250 display banner (blog + journal right rail).
- * Card chrome only — script key/src unchanged.
+ * 160×300 vertical display banner (journal right sidebar).
+ * StrictMode-safe: deferred inject + dataset guard; no double script load.
  */
 export default function AdsterraDisplayBanner({ className = '' }) {
   const hostRef = useRef(null)
@@ -53,12 +53,10 @@ export default function AdsterraDisplayBanner({ className = '' }) {
   return (
     <section className={`adsterra-display-section ${className}`} aria-label="Sponsored">
       <p className="adsterra-sponsored-label">Sponsored</p>
-      <div className="adsterra-display-card">
+      <div className="adsterra-display-card adsterra-display-card--160x300">
         <div
           ref={hostRef}
-          className="adsterra-display__host"
-          data-ad-width={ADSTERRA_DISPLAY.width}
-          data-ad-height={ADSTERRA_DISPLAY.height}
+          className="adsterra-display__host adsterra-display__host--160x300"
         />
       </div>
     </section>

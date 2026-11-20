@@ -3012,34 +3012,33 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   min-width: 0;
 }
 
-.adsterra-display__host {
-  margin-inline: auto;
-  width: min(300px, 100%);
-  min-height: 250px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* 160×300 vertical banner — exact fit, no scale/clip hacks */
+.adsterra-display-card--160x300 {
+  width: 160px;
+  height: 300px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.adsterra-display__host--160x300 {
+  width: 160px;
+  height: 300px;
+  min-height: 300px;
+  margin: 0;
+  display: block;
   overflow: hidden;
 }
 
-.adsterra-display__host iframe,
-.adsterra-display__host img {
-  max-width: 100%;
+.journal-ad-sidebar--right {
+  width: 160px;
+  height: auto;
+  max-height: none;
+  overflow: visible;
 }
 
-.journal-ad-sidebar--right .adsterra-display-card {
-  display: flex;
-  justify-content: center;
-  overflow: hidden;
-  padding: 6px;
-}
-
-.journal-ad-sidebar--right .adsterra-display__host {
-  width: 300px;
-  min-height: 250px;
-  transform: scale(0.5);
-  transform-origin: top center;
-  margin-bottom: calc(250px * -0.5);
+.journal-ad-sidebar--right .adsterra-display-section {
+  width: 160px;
 }
 
 .journal-ad-sidebar--left .adsterra-native-section,
