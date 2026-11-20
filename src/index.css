@@ -2942,6 +2942,8 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  min-height: 120px;
+  height: auto;
   padding: 20px;
   border-radius: 20px;
   border: 1px solid color-mix(in srgb, var(--page-edge) 85%, var(--accent));
@@ -2969,56 +2971,93 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   min-width: 0;
 }
 
-/* Reserve space to reduce CLS while creatives load */
-.adsterra-native__slot {
-  min-height: 220px;
+/*
+ * Adsterra Native Banner DOM (from bauval.org invoke script string table):
+ *
+ * #container-c3285e03e15c00c634fafe432d75bdb3   ← mount point
+ *   └─ [generatedRoot]                          ← often the flex/grid row
+ *        └─ *.__bn-container  (×N)              ← each ad item shell
+ *             └─ *.__bn
+ *                  └─ a.__link
+ *                       ├─ *.__img-container > img.__img
+ *                       └─ *.__title
+ *
+ * Bug: previous CSS set display:grid on BOTH #container AND #container > div.
+ * When > div nodes ARE the ad items, each item became a 4-col grid and crushed
+ * __img / __title into ~40px columns (1–2 chars per line).
+ */
+
+#container-c3285e03e15c00c634fafe432d75bdb3 {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 120px;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  /* Default: items are direct children of #container */
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: 16px !important;
+  align-items: start !important;
 }
 
-/* If Adsterra wraps units in one child, promote that child to the same grid */
-.adsterra-native__slot > div,
-.adsterra-native__slot > section,
-.adsterra-native__slot > ul,
-.adsterra-native__slot > table,
-.adsterra-native__slot > tbody,
-.adsterra-native__slot > tr {
+/* Single wrapper child → grid belongs on that wrapper, not on #container */
+#container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) {
+  display: block !important;
+}
+
+#container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * {
   display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
   gap: 16px !important;
   width: 100% !important;
   max-width: 100% !important;
+  min-width: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
+  box-sizing: border-box !important;
 }
 
-.adsterra-native__slot > table,
-.adsterra-native__slot table {
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
-}
-
-.adsterra-native__slot td,
-.adsterra-native__slot th {
+/*
+ * Reset item shells only — never the single wrapper that carries the grid.
+ * (#container > *:not(:only-child) = multi-item mount;
+ *  :has(> :only-child) > * > * = items under one wrapper)
+ */
+#container-c3285e03e15c00c634fafe432d75bdb3 > *:not(:only-child),
+#container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * > * {
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  float: none !important;
   display: block !important;
-  padding: 0 !important;
-  border: 0 !important;
-  vertical-align: top !important;
+  flex: none !important;
+  flex-grow: 0 !important;
+  flex-shrink: 1 !important;
+  flex-basis: auto !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
 }
 
-/* Individual creative tiles */
-.adsterra-native__slot a,
-.adsterra-native__slot > * > a,
-.adsterra-native__slot > * > * > a {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 8px !important;
+/* Item shells must stay block (never nested grids) */
+#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__bn']:not([class*='__bn-container']),
+#container-c3285e03e15c00c634fafe432d75bdb3 > [class*='__bn-container'],
+#container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * > [class*='__bn-container'] {
+  display: block !important;
+  width: auto !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  float: none !important;
+  flex: none !important;
+}
+
+#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__link'],
+#container-c3285e03e15c00c634fafe432d75bdb3 a {
+  display: block !important;
   width: 100% !important;
   max-width: 100% !important;
+  min-width: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
   text-decoration: none !important;
@@ -3028,20 +3067,32 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   font-weight: 400 !important;
   line-height: 1.35 !important;
   text-align: start !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
   border-radius: 14px;
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease;
 }
 
-.adsterra-native__slot a:hover,
-.adsterra-native__slot > * > a:hover,
-.adsterra-native__slot > * > * > a:hover {
+#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__link']:hover,
+#container-c3285e03e15c00c634fafe432d75bdb3 a:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 22px color-mix(in srgb, var(--shadow) 40%, transparent);
 }
 
-.adsterra-native__slot img {
+#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__img-container'] {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  border-radius: 14px !important;
+}
+
+#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__img']:not([class*='__img-container']),
+#container-c3285e03e15c00c634fafe432d75bdb3 img {
   display: block !important;
   width: 100% !important;
   max-width: 100% !important;
@@ -3053,20 +3104,22 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   background: color-mix(in srgb, var(--accent-glow) 70%, transparent);
 }
 
-/* Captions / titles injected beside or under images */
-.adsterra-native__slot a span,
-.adsterra-native__slot a p,
-.adsterra-native__slot a div,
-.adsterra-native__slot span,
-.adsterra-native__slot p {
+#container-c3285e03e15c00c634fafe432d75bdb3 [class*='__title'] {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 8px 0 0 !important;
+  padding: 0 !important;
   font-family: var(--font-body), Nunito, system-ui, sans-serif !important;
   font-size: 13px !important;
   font-weight: 400 !important;
   line-height: 1.35 !important;
   color: var(--ink-soft) !important;
   text-align: start !important;
-  margin: 0 !important;
-  max-width: 100% !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  writing-mode: horizontal-tb !important;
   display: -webkit-box !important;
   -webkit-box-orient: vertical !important;
   -webkit-line-clamp: 2;
@@ -3075,42 +3128,23 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 }
 
 @media (max-width: 640px) {
-  .adsterra-native__slot,
-  .adsterra-native__slot > div,
-  .adsterra-native__slot > section,
-  .adsterra-native__slot > ul,
-  .adsterra-native__slot > table,
-  .adsterra-native__slot > tbody,
-  .adsterra-native__slot > tr {
+  #container-c3285e03e15c00c634fafe432d75bdb3,
+  #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * {
     grid-template-columns: 1fr !important;
-  }
-
-  .adsterra-native__slot {
-    min-height: 180px;
   }
 }
 
 @media (min-width: 641px) and (max-width: 900px) {
-  .adsterra-native__slot,
-  .adsterra-native__slot > div,
-  .adsterra-native__slot > section,
-  .adsterra-native__slot > ul,
-  .adsterra-native__slot > table,
-  .adsterra-native__slot > tbody,
-  .adsterra-native__slot > tr {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  #container-c3285e03e15c00c634fafe432d75bdb3,
+  #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * {
+    grid-template-columns: repeat(2, minmax(180px, 1fr)) !important;
   }
 }
 
 @media (min-width: 901px) {
-  .adsterra-native__slot,
-  .adsterra-native__slot > div,
-  .adsterra-native__slot > section,
-  .adsterra-native__slot > ul,
-  .adsterra-native__slot > table,
-  .adsterra-native__slot > tbody,
-  .adsterra-native__slot > tr {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  #container-c3285e03e15c00c634fafe432d75bdb3,
+  #container-c3285e03e15c00c634fafe432d75bdb3:has(> :only-child) > * {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
   }
 }
 
