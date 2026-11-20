@@ -2940,11 +2940,17 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 }
 
 /*
- * Fixed outer-margin sidebars — only mounted at ≥1360px (see SiteAdSidebars).
- * display:contents avoids a full-viewport overlay that can trap/stack over Social Bar.
+ * Fixed outer-margin sidebars — first created at ≥1360px (see SiteAdSidebars).
+ * Below that they stay in the DOM and are parked, so a DevTools resize does not
+ * destroy a filled Adsterra slot. display:contents avoids a full-viewport overlay.
  */
 .journal-ad-sidebars {
   display: contents;
+}
+
+.journal-ad-sidebar--parked {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .journal-ad-sidebar {
