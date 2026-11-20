@@ -164,7 +164,7 @@ export default function Book() {
         }`}
       >
         <AmbientGlow />
-        <header className="app-topbar relative z-10 mb-1 flex w-full max-w-full shrink-0 flex-row items-center justify-between gap-1.5 sm:gap-2">
+        <header className="app-topbar relative z-[80] mb-1 flex w-full max-w-full shrink-0 flex-row items-center justify-between gap-1.5 sm:gap-2">
           <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
             <motion.div
               whileHover={{ scale: 1.02 }}
@@ -386,7 +386,7 @@ export default function Book() {
             }
           />
 
-          <div className="pb-[max(3.4rem,calc(env(safe-area-inset-bottom)+2.6rem))] sm:pb-0">
+          <div className="adsterra-footer-gap pb-[max(3.4rem,calc(env(safe-area-inset-bottom)+2.6rem))] sm:pb-0">
             <LegalFooter />
           </div>
         </div>

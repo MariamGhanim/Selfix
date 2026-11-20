@@ -18,7 +18,7 @@ function injectNative(host, container) {
 
 /**
  * Native Banner (4:1). Re-injects on refreshToken change after a 60s cooldown.
- * Deferred inject avoids duplicate loads under React StrictMode.
+ * Wrapper/card styling only — container id and script src stay untouched.
  */
 export default function AdsterraNativeBanner({ refreshToken = 'default' }) {
   const hostRef = useRef(null)
@@ -43,7 +43,6 @@ export default function AdsterraNativeBanner({ refreshToken = 'default' }) {
         !container.childNodes.length &&
         !host.querySelector('script[data-adsterra-native]')
 
-      // Remount with an empty slot: restore creative without burning a new impression window.
       if (!firstLoad && !cooled && slotEmpty) {
         lastTokenRef.current = refreshToken
         injectNative(host, container)
@@ -64,18 +63,17 @@ export default function AdsterraNativeBanner({ refreshToken = 'default' }) {
   }, [refreshToken])
 
   return (
-    <aside
-      className="adsterra-native w-full max-w-full min-w-0 overflow-x-hidden px-2"
-      style={{ maxWidth: 820, margin: '24px auto' }}
-      aria-label="Sponsored"
-    >
-      <div ref={hostRef} className="adsterra-native__host w-full max-w-full min-w-0 overflow-x-hidden">
-        <div
-          id={ADSTERRA_NATIVE.containerId}
-          ref={containerRef}
-          className="adsterra-native__slot mx-auto w-full max-w-full min-w-0 overflow-x-hidden"
-        />
+    <section className="adsterra-native-section" aria-label="Sponsored">
+      <p className="adsterra-sponsored-label">Sponsored</p>
+      <div className="adsterra-native-card">
+        <div ref={hostRef} className="adsterra-native__host">
+          <div
+            id={ADSTERRA_NATIVE.containerId}
+            ref={containerRef}
+            className="adsterra-native__slot"
+          />
+        </div>
       </div>
-    </aside>
+    </section>
   )
 }

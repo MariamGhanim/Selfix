@@ -2908,27 +2908,262 @@ body:has(.mobile-log-sheet) .ambient-music-player {
   border: 1px solid color-mix(in srgb, var(--page-edge) 50%, transparent);
 }
 
-/* ——— Adsterra slots: keep pastel layout stable, no horizontal overflow ——— */
-.adsterra-native,
-.adsterra-native__host,
-.adsterra-native__slot,
-.adsterra-display,
-.adsterra-display__host {
+/* ——— Adsterra layout chrome (styling only — do not alter scripts/IDs) ——— */
+
+.app-topbar {
+  z-index: 80;
+  isolation: isolate;
+}
+
+.adsterra-sponsored-label {
+  margin: 0 0 10px;
+  padding-inline: 2px;
+  font-family: var(--font-body), Nunito, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0.72;
+  text-align: start;
+}
+
+.adsterra-native-section {
+  width: 100%;
   max-width: 100%;
   min-width: 0;
-  overflow-x: hidden;
+  margin: 32px auto 0;
+  padding-inline: 8px;
+  box-sizing: border-box;
 }
 
-.adsterra-native__slot iframe,
-.adsterra-native__slot img {
+.adsterra-native-card,
+.adsterra-display-card {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--page-edge) 85%, var(--accent));
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow:
+    0 10px 28px color-mix(in srgb, var(--shadow) 35%, transparent),
+    0 1px 0 rgba(255, 255, 255, 0.45) inset;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+[data-theme='midnight'] .adsterra-native-card,
+[data-theme='midnight'] .adsterra-display-card {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--page-edge);
+  box-shadow: var(--panel-shadow);
+}
+
+.adsterra-native__host,
+.adsterra-native__slot {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Reserve space to reduce CLS while creatives load */
+.adsterra-native__slot {
+  min-height: 220px;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* If Adsterra wraps units in one child, promote that child to the same grid */
+.adsterra-native__slot > div,
+.adsterra-native__slot > section,
+.adsterra-native__slot > ul,
+.adsterra-native__slot > table,
+.adsterra-native__slot > tbody,
+.adsterra-native__slot > tr {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 16px !important;
+  width: 100% !important;
   max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.adsterra-native__slot > table,
+.adsterra-native__slot table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.adsterra-native__slot td,
+.adsterra-native__slot th {
+  display: block !important;
+  padding: 0 !important;
+  border: 0 !important;
+  vertical-align: top !important;
+}
+
+/* Individual creative tiles */
+.adsterra-native__slot a,
+.adsterra-native__slot > * > a,
+.adsterra-native__slot > * > * > a {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-decoration: none !important;
+  color: var(--ink-soft) !important;
+  font-family: var(--font-body), Nunito, system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+  text-align: start !important;
+  border-radius: 14px;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.adsterra-native__slot a:hover,
+.adsterra-native__slot > * > a:hover,
+.adsterra-native__slot > * > * > a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--shadow) 40%, transparent);
+}
+
+.adsterra-native__slot img {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 4 / 3 !important;
+  object-fit: cover !important;
+  border-radius: 14px !important;
+  margin: 0 !important;
+  background: color-mix(in srgb, var(--accent-glow) 70%, transparent);
+}
+
+/* Captions / titles injected beside or under images */
+.adsterra-native__slot a span,
+.adsterra-native__slot a p,
+.adsterra-native__slot a div,
+.adsterra-native__slot span,
+.adsterra-native__slot p {
+  font-family: var(--font-body), Nunito, system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+  color: var(--ink-soft) !important;
+  text-align: start !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden !important;
+}
+
+@media (max-width: 640px) {
+  .adsterra-native__slot,
+  .adsterra-native__slot > div,
+  .adsterra-native__slot > section,
+  .adsterra-native__slot > ul,
+  .adsterra-native__slot > table,
+  .adsterra-native__slot > tbody,
+  .adsterra-native__slot > tr {
+    grid-template-columns: 1fr !important;
+  }
+
+  .adsterra-native__slot {
+    min-height: 180px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .adsterra-native__slot,
+  .adsterra-native__slot > div,
+  .adsterra-native__slot > section,
+  .adsterra-native__slot > ul,
+  .adsterra-native__slot > table,
+  .adsterra-native__slot > tbody,
+  .adsterra-native__slot > tr {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (min-width: 901px) {
+  .adsterra-native__slot,
+  .adsterra-native__slot > div,
+  .adsterra-native__slot > section,
+  .adsterra-native__slot > ul,
+  .adsterra-native__slot > table,
+  .adsterra-native__slot > tbody,
+  .adsterra-native__slot > tr {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+.adsterra-footer-gap {
+  margin-top: 40px;
+}
+
+/* Blog 300×250 slot */
+.adsterra-display-section {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .adsterra-display__host {
+  margin-inline: auto;
   width: min(300px, 100%);
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: clip;
 }
 
 .adsterra-display__host iframe,
 .adsterra-display__host img {
   max-width: 100% !important;
+}
+
+/*
+ * Social Bar / floating Adsterra widgets:
+ * keep below header controls; park in bottom-end corner.
+ * Does not hide close/"Hide" controls or ad labels.
+ */
+body > div[style*='position: fixed']:not(.ambient-music-player):not(#root),
+body > div[style*='position:fixed']:not(.ambient-music-player):not(#root),
+body > aside[style*='position: fixed']:not(#root),
+body > aside[style*='position:fixed']:not(#root) {
+  top: auto !important;
+  bottom: max(16px, env(safe-area-inset-bottom, 0px)) !important;
+  inset-inline-start: auto !important;
+  inset-inline-end: max(16px, env(safe-area-inset-right, 0px)) !important;
+  left: auto !important;
+  right: max(16px, env(safe-area-inset-right, 0px)) !important;
+  max-width: min(320px, calc(100vw - 32px)) !important;
+  z-index: 35 !important;
+  pointer-events: auto !important;
+}
+
+[dir='rtl'] body > div[style*='position: fixed']:not(.ambient-music-player):not(#root),
+[dir='rtl'] body > div[style*='position:fixed']:not(.ambient-music-player):not(#root),
+[dir='rtl'] body > aside[style*='position: fixed']:not(#root),
+[dir='rtl'] body > aside[style*='position:fixed']:not(#root) {
+  left: max(16px, env(safe-area-inset-left, 0px)) !important;
+  right: auto !important;
 }

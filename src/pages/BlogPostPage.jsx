@@ -197,7 +197,7 @@ export default function BlogPostPage() {
             ))}
           </div>
 
-          <div className="mt-10 overflow-x-hidden rounded-2xl border border-[var(--page-edge)]/50 bg-white/50 px-3 py-5 backdrop-blur-sm">
+          <div className="mt-10">
             <AdsterraDisplayBanner />
           </div>
 

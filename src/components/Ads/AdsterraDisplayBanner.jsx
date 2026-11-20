@@ -4,6 +4,7 @@ import { ADSTERRA_DISPLAY } from '../../lib/adsterraConfig'
 /**
  * 300×250 display banner for Blog / Guides only.
  * Injects atOptions + invoke.js once per mount (StrictMode-safe via deferred load).
+ * Card chrome only — script key/src unchanged.
  */
 export default function AdsterraDisplayBanner({ className = '' }) {
   const hostRef = useRef(null)
@@ -28,7 +29,6 @@ export default function AdsterraDisplayBanner({ className = '' }) {
         params: {},
       }
 
-      // Adsterra reads the global atOptions when invoke.js runs.
       window.atOptions = options
 
       const conf = document.createElement('script')
@@ -52,19 +52,19 @@ export default function AdsterraDisplayBanner({ className = '' }) {
   }, [])
 
   return (
-    <aside
-      className={`adsterra-display flex w-full max-w-full min-w-0 justify-center overflow-x-hidden ${className}`}
-      aria-label="Sponsored"
-    >
-      <div
-        ref={hostRef}
-        className="adsterra-display__host mx-auto flex max-w-full min-w-0 items-center justify-center overflow-x-hidden"
-        style={{
-          width: ADSTERRA_DISPLAY.width,
-          maxWidth: '100%',
-          minHeight: ADSTERRA_DISPLAY.height,
-        }}
-      />
-    </aside>
+    <section className={`adsterra-display-section ${className}`} aria-label="Sponsored">
+      <p className="adsterra-sponsored-label">Sponsored</p>
+      <div className="adsterra-display-card">
+        <div
+          ref={hostRef}
+          className="adsterra-display__host"
+          style={{
+            width: ADSTERRA_DISPLAY.width,
+            maxWidth: '100%',
+            minHeight: ADSTERRA_DISPLAY.height,
+          }}
+        />
+      </div>
+    </section>
   )
 }
