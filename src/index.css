@@ -3048,29 +3048,8 @@ body:has(.mobile-log-sheet) .ambient-music-player {
 }
 
 /*
- * Adsterra Social Bar — body-level fixed widget.
- * Visible on all viewports; below header (z-80); bottom-right clear of Prev/Next + music.
- * Does not hide close/"Hide" controls.
+ * Adsterra Social Bar — do NOT force position/size/display on injected widgets.
+ * Forcing bottom/right/max-width broke Adsterra’s own templates (empty/hidden bar).
+ * Header stays above via .app-topbar { z-index: 80 }.
+ * Script: index.html + ensureAdsterraSocialBar() → bauval.org/14/fd13023e93fd3c0628c132081e0febde
  */
-body > div[style*='position: fixed']:not(.ambient-music-player):not(#root):not(.journal-ad-sidebar),
-body > div[style*='position:fixed']:not(.ambient-music-player):not(#root):not(.journal-ad-sidebar),
-body > aside[style*='position: fixed']:not(.journal-ad-sidebar),
-body > aside[style*='position:fixed']:not(.journal-ad-sidebar) {
-  top: auto !important;
-  bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 56px)) !important;
-  left: auto !important;
-  right: max(12px, env(safe-area-inset-right, 0px)) !important;
-  z-index: 40 !important;
-  max-width: min(320px, calc(100vw - 24px)) !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-[dir='rtl'] body > div[style*='position: fixed']:not(.ambient-music-player):not(#root):not(.journal-ad-sidebar),
-[dir='rtl'] body > div[style*='position:fixed']:not(.ambient-music-player):not(#root):not(.journal-ad-sidebar),
-[dir='rtl'] body > aside[style*='position: fixed']:not(.journal-ad-sidebar),
-[dir='rtl'] body > aside[style*='position:fixed']:not(.journal-ad-sidebar) {
-  left: max(12px, env(safe-area-inset-left, 0px)) !important;
-  right: auto !important;
-}
