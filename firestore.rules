@@ -10,6 +10,15 @@ service cloud.firestore {
     // The app writes one journal document. Notes are dynamic maps, so rules
     // cannot loop every string. Caps below stop oversized documents; the client
     // also clamps note length before encryption.
+    // The web SDK sends JavaScript numbers as floats. A whole year like 2026
+    // must still be accepted, or every save is permission-denied.
+    function isWholeYear(n) {
+      return (n is int || n is float)
+        && n >= 2000
+        && n <= 2100
+        && n == math.floor(n);
+    }
+
     function validJournal(data) {
       return data.keys().hasAll([
           'theme',
@@ -31,9 +40,7 @@ service cloud.firestore {
         && data.profile.keys().size() <= 6
         && data.profile.displayName is string
         && data.profile.displayName.size() <= 80
-        && data.profile.year is int
-        && data.profile.year >= 2000
-        && data.profile.year <= 2100
+        && isWholeYear(data.profile.year)
         && data.pixels is map
         && data.pixels.size() <= 40000
         && data.dailyNotes is map
