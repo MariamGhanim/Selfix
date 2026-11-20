@@ -77,8 +77,8 @@ export default function ContactPage() {
             </div>
             <p className="font-display text-lg font-semibold text-[var(--ink)]">Message received</p>
             <p className="mt-2 text-sm text-[var(--ink-soft)]">
-              Thank you, {name.trim().split(' ')[0] || 'friend'}. Your note is ready on this device.
-              For a direct reply, you can also email mariamgh.data@gmail.com.
+              Thank you, {name.trim().split(' ')[0] || 'friend'}. Your note stays on this device.
+              It is not emailed. Please do not send it to a personal address.
             </p>
             <button
               type="button"

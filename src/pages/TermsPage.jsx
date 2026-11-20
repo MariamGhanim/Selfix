@@ -118,7 +118,7 @@ export default function TermsPage() {
           <Link to="/contact" className="font-bold text-[var(--accent-deep)] underline-offset-2 hover:underline">
             Contact
           </Link>{' '}
-          page or mariamgh.data@gmail.com.
+          page. That form stays on your device. We do not accept requests at a personal email address.
         </p>
       </Section>
     </SiteLayout>
