@@ -14,6 +14,7 @@ import TermsPage from './pages/TermsPage'
 import ContactPage from './pages/ContactPage'
 import BlogIndexPage from './pages/BlogIndexPage'
 import BlogPostPage from './pages/BlogPostPage'
+import SiteAdSidebars from './components/Ads/SiteAdSidebars'
 
 function LoadingScreen({ label = 'Opening Selfix Life…' }) {
   return (
@@ -87,6 +88,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        {/* Global desktop sidebars — journal, blog, about, etc. */}
+        <SiteAdSidebars />
         <Routes>
           <Route path="/" element={<Gate />} />
           <Route path="/blog" element={<BlogIndexPage />} />

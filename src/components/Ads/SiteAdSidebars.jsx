@@ -6,10 +6,10 @@ import AdsterraDisplayBanner from './AdsterraDisplayBanner'
 const DESKTOP_MQ = '(min-width: 1360px)'
 
 /**
- * Fixed outer-margin ads only — portaled to <body>, desktop-only.
- * Never participates in the notebook flex layout.
+ * Global fixed sidebars for all routes (journal, blog, about, …).
+ * Desktop-only; portaled to <body> so they never enter page flex layouts.
  */
-export default function JournalAdSidebars({ refreshToken = 'default' }) {
+export default function SiteAdSidebars() {
   const [mounted, setMounted] = useState(false)
   const [desktop, setDesktop] = useState(false)
 
@@ -27,10 +27,7 @@ export default function JournalAdSidebars({ refreshToken = 'default' }) {
   return createPortal(
     <div className="journal-ad-sidebars" data-journal-ads="1">
       <aside className="journal-ad-sidebar journal-ad-sidebar--left" aria-label="Sponsored">
-        <AdsterraNativeBanner
-          refreshToken={refreshToken}
-          className="adsterra-native-section--sidebar"
-        />
+        <AdsterraNativeBanner className="adsterra-native-section--sidebar" />
       </aside>
       <aside className="journal-ad-sidebar journal-ad-sidebar--right" aria-label="Sponsored">
         <AdsterraDisplayBanner className="adsterra-display-section--sidebar" />

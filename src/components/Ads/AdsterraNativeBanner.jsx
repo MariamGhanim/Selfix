@@ -1,12 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { ADSTERRA_NATIVE } from '../../lib/adsterraConfig'
 
-/** Module-level so StrictMode remounts and tab switches share one cooldown clock. */
-let lastNativeRefreshAt = 0
+/** Prevents StrictMode double-inject and accidental reloads on tab changes. */
+let nativeInjected = false
 
 function injectNative(host, container) {
-  host.querySelectorAll('script[data-adsterra-native]').forEach((node) => node.remove())
-  container.replaceChildren()
+  if (nativeInjected && container.childNodes.length) return
+  if (host.querySelector('script[data-adsterra-native]')) {
+    nativeInjected = true
+    return
+  }
 
   const script = document.createElement('script')
   script.async = true
@@ -14,16 +17,16 @@ function injectNative(host, container) {
   script.dataset.adsterraNative = '1'
   script.src = ADSTERRA_NATIVE.scriptSrc
   host.insertBefore(script, container)
+  nativeInjected = true
 }
 
 /**
- * Native Banner — left rail on desktop, stacked below book on smaller screens.
- * Wrapper/card styling only — container id and script src stay untouched.
+ * Native Banner — load once and keep visible.
+ * Do not clear/re-inject on tracker tab changes (that emptied the left rail).
  */
-export default function AdsterraNativeBanner({ refreshToken = 'default', className = '' }) {
+export default function AdsterraNativeBanner({ className = '' }) {
   const hostRef = useRef(null)
   const containerRef = useRef(null)
-  const lastTokenRef = useRef(null)
 
   useEffect(() => {
     const host = hostRef.current
@@ -33,34 +36,15 @@ export default function AdsterraNativeBanner({ refreshToken = 'default', classNa
     let cancelled = false
     const timer = window.setTimeout(() => {
       if (cancelled) return
-
-      const now = Date.now()
-      const firstLoad = lastNativeRefreshAt === 0
-      const tokenChanged = lastTokenRef.current !== refreshToken
-      const cooled =
-        now - lastNativeRefreshAt >= ADSTERRA_NATIVE.refreshCooldownMs
-      const slotEmpty =
-        !container.childNodes.length &&
-        !host.querySelector('script[data-adsterra-native]')
-
-      if (!firstLoad && !cooled && slotEmpty) {
-        lastTokenRef.current = refreshToken
-        injectNative(host, container)
-        return
-      }
-
-      if (!firstLoad && (!tokenChanged || !cooled)) return
-
-      lastNativeRefreshAt = now
-      lastTokenRef.current = refreshToken
       injectNative(host, container)
     }, 0)
 
     return () => {
       cancelled = true
       window.clearTimeout(timer)
+      // Do NOT clear the container or reset nativeInjected — ads must survive remounts/tab switches.
     }
-  }, [refreshToken])
+  }, [])
 
   return (
     <section className={`adsterra-native-section ${className}`} aria-label="Sponsored">

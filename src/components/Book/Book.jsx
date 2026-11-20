@@ -37,7 +37,6 @@ import ThemeToggle from '../ThemeToggle'
 import FocusTimer, { FocusTimerProvider } from '../FocusTimer'
 import SettingsModal from '../Settings/SettingsModal'
 import LegalFooter from '../Legal/LegalFooter'
-import JournalAdSidebars from '../Ads/JournalAdSidebars'
 import AmbientGlow from '../AmbientGlow'
 import DailyWhisper from '../DailyWhisper'
 import InsightsDashboard from '../Insights/InsightsDashboard'
@@ -381,12 +380,6 @@ export default function Book() {
 
           <LegalFooter />
         </div>
-
-        <JournalAdSidebars
-          refreshToken={
-            showInsights ? 'insights' : trackers[pageIndex]?.id || String(pageIndex)
-          }
-        />
       </div>
     </FocusTimerProvider>
   )

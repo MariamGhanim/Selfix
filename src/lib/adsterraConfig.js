@@ -8,7 +8,7 @@ export const ADSTERRA_NATIVE = {
   refreshCooldownMs: 60_000,
 }
 
-/** 160×300 vertical banner — journal right sidebar only */
+/** 160×300 vertical banner — global right sidebar (all pages) */
 export const ADSTERRA_DISPLAY = {
   key: '0981a973c3ae4360219ce07fa1df404f',
   width: 160,
