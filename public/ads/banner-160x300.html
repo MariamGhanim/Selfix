@@ -16,7 +16,7 @@
     </style>
   </head>
   <body>
-    <!-- Exact Adsterra 160×300 dashboard code — runs in a real document so currentScript works -->
+    <!-- Exact Adsterra 160×300 dashboard code — real document so currentScript works -->
     <script>
       atOptions = {
         key: '0981a973c3ae4360219ce07fa1df404f',
@@ -27,5 +27,36 @@
       }
     </script>
     <script src="https://bauval.org/22/0981a973c3ae4360219ce07fa1df404f"></script>
+    <script>
+      // Tell parent if Adsterra never injected a creative (no-fill). Policy-safe.
+      ;(function notifyFillState() {
+        function hasCreative() {
+          return !!(
+            document.querySelector('iframe') ||
+            document.querySelector('img') ||
+            document.querySelector('ins') ||
+            document.querySelector('a[href]')
+          )
+        }
+        function send(filled) {
+          try {
+            parent.postMessage(
+              { source: 'adsterra-display-160x300', filled: !!filled },
+              '*',
+            )
+          } catch (_) {
+            /* ignore */
+          }
+        }
+        // Adsterra usually injects quickly; re-check a few times for slow fill.
+        var checks = [1200, 2500, 4500]
+        checks.forEach(function (ms, i) {
+          setTimeout(function () {
+            var filled = hasCreative()
+            if (filled || i === checks.length - 1) send(filled)
+          }, ms)
+        })
+      })()
+    </script>
   </body>
 </html>

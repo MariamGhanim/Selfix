@@ -26,7 +26,7 @@
   "rewrites": [
     { "source": "/about", "destination": "/about/index.html" },
     {
-      "source": "/((?!assets/|icons/|sitemap\\.xml$|robots\\.txt$|llms\\.txt$|manifest\\.json$|favicon\\.svg$|apple-touch-icon\\.png$|google[^/]+\\.html$).*)",
+      "source": "/((?!assets/|ads/|icons/|sitemap\\.xml$|robots\\.txt$|llms\\.txt$|manifest\\.json$|favicon\\.svg$|apple-touch-icon\\.png$|google[^/]+\\.html$).*)",
       "destination": "/index.html"
     }
   ]
